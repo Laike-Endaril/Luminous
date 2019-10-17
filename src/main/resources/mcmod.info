@@ -1,0 +1,16 @@
+[
+{
+  "modid": "luminous",
+  "name": "Luminous",
+  "description": "Efficient, server-side dynamic lights",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Laike_Endaril"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

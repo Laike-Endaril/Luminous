@@ -35,13 +35,13 @@ public class SPacketChunkData implements Packet<INetHandlerPlayClient>
 
     public SPacketChunkData(Chunk chunkIn, int changedSectionFilter)
     {
-        this.chunkX = chunkIn.x;
-        this.chunkZ = chunkIn.z;
-        this.fullChunk = changedSectionFilter == 65535;
+        chunkX = chunkIn.x;
+        chunkZ = chunkIn.z;
+        fullChunk = changedSectionFilter == 65535;
         boolean flag = chunkIn.getWorld().provider.hasSkyLight();
-        this.buffer = new byte[this.calculateChunkSize(chunkIn, flag, changedSectionFilter)];
-        this.availableSections = this.extractChunkData(new PacketBuffer(this.getWriteBuffer()), chunkIn, flag, changedSectionFilter);
-        this.tileEntityTags = Lists.<NBTTagCompound>newArrayList();
+        buffer = new byte[calculateChunkSize(chunkIn, flag, changedSectionFilter)];
+        availableSections = extractChunkData(new PacketBuffer(getWriteBuffer()), chunkIn, flag, changedSectionFilter);
+        tileEntityTags = Lists.<NBTTagCompound>newArrayList();
 
         for (Entry<BlockPos, TileEntity> entry : chunkIn.getTileEntityMap().entrySet())
         {
@@ -49,20 +49,20 @@ public class SPacketChunkData implements Packet<INetHandlerPlayClient>
             TileEntity tileentity = entry.getValue();
             int i = blockpos.getY() >> 4;
 
-            if (this.isFullChunk() || (changedSectionFilter & 1 << i) != 0)
+            if (isFullChunk() || (changedSectionFilter & 1 << i) != 0)
             {
                 NBTTagCompound nbttagcompound = tileentity.getUpdateTag();
-                this.tileEntityTags.add(nbttagcompound);
+                tileEntityTags.add(nbttagcompound);
             }
         }
     }
 
     public void readPacketData(PacketBuffer buf) throws IOException
     {
-        this.chunkX = buf.readInt();
-        this.chunkZ = buf.readInt();
-        this.fullChunk = buf.readBoolean();
-        this.availableSections = buf.readVarInt();
+        chunkX = buf.readInt();
+        chunkZ = buf.readInt();
+        fullChunk = buf.readBoolean();
+        availableSections = buf.readVarInt();
         int i = buf.readVarInt();
 
         if (i > 2097152)
@@ -71,29 +71,29 @@ public class SPacketChunkData implements Packet<INetHandlerPlayClient>
         }
         else
         {
-            this.buffer = new byte[i];
-            buf.readBytes(this.buffer);
+            buffer = new byte[i];
+            buf.readBytes(buffer);
             int j = buf.readVarInt();
-            this.tileEntityTags = Lists.<NBTTagCompound>newArrayList();
+            tileEntityTags = Lists.<NBTTagCompound>newArrayList();
 
             for (int k = 0; k < j; ++k)
             {
-                this.tileEntityTags.add(buf.readCompoundTag());
+                tileEntityTags.add(buf.readCompoundTag());
             }
         }
     }
 
     public void writePacketData(PacketBuffer buf) throws IOException
     {
-        buf.writeInt(this.chunkX);
-        buf.writeInt(this.chunkZ);
-        buf.writeBoolean(this.fullChunk);
-        buf.writeVarInt(this.availableSections);
-        buf.writeVarInt(this.buffer.length);
-        buf.writeBytes(this.buffer);
-        buf.writeVarInt(this.tileEntityTags.size());
+        buf.writeInt(chunkX);
+        buf.writeInt(chunkZ);
+        buf.writeBoolean(fullChunk);
+        buf.writeVarInt(availableSections);
+        buf.writeVarInt(buffer.length);
+        buf.writeBytes(buffer);
+        buf.writeVarInt(tileEntityTags.size());
 
-        for (NBTTagCompound nbttagcompound : this.tileEntityTags)
+        for (NBTTagCompound nbttagcompound : tileEntityTags)
         {
             buf.writeCompoundTag(nbttagcompound);
         }
@@ -107,29 +107,28 @@ public class SPacketChunkData implements Packet<INetHandlerPlayClient>
     @SideOnly(Side.CLIENT)
     public PacketBuffer getReadBuffer()
     {
-        return new PacketBuffer(Unpooled.wrappedBuffer(this.buffer));
+        return new PacketBuffer(Unpooled.wrappedBuffer(buffer));
     }
 
     private ByteBuf getWriteBuffer()
     {
-        ByteBuf bytebuf = Unpooled.wrappedBuffer(this.buffer);
+        ByteBuf bytebuf = Unpooled.wrappedBuffer(buffer);
         bytebuf.writerIndex(0);
         return bytebuf;
     }
 
     public int extractChunkData(PacketBuffer buf, Chunk chunkIn, boolean writeSkylight, int changedSectionFilter)
     {
-        int i = 0;
-        ExtendedBlockStorage[] aextendedblockstorage = chunkIn.getBlockStorageArray();
-        int j = 0;
+        int availableFlags = 0;
+        ExtendedBlockStorage[] blockStorageArray = chunkIn.getBlockStorageArray();
 
-        for (int k = aextendedblockstorage.length; j < k; ++j)
+        for (int i = 0; i < blockStorageArray.length; ++i)
         {
-            ExtendedBlockStorage extendedblockstorage = aextendedblockstorage[j];
+            ExtendedBlockStorage extendedblockstorage = blockStorageArray[i];
 
-            if (extendedblockstorage != Chunk.NULL_BLOCK_STORAGE && (!this.isFullChunk() || !extendedblockstorage.isEmpty()) && (changedSectionFilter & 1 << j) != 0)
+            if (extendedblockstorage != Chunk.NULL_BLOCK_STORAGE && (!isFullChunk() || !extendedblockstorage.isEmpty()) && (changedSectionFilter & 1 << i) != 0)
             {
-                i |= 1 << j;
+                availableFlags |= 1 << i;
                 extendedblockstorage.getData().write(buf);
 
 
@@ -162,70 +161,66 @@ public class SPacketChunkData implements Packet<INetHandlerPlayClient>
             }
         }
 
-        if (this.isFullChunk())
+        if (isFullChunk())
         {
             buf.writeBytes(chunkIn.getBiomeArray());
         }
 
-        return i;
+        return availableFlags;
     }
 
     protected int calculateChunkSize(Chunk chunkIn, boolean p_189556_2_, int p_189556_3_)
     {
-        int i = 0;
-        ExtendedBlockStorage[] aextendedblockstorage = chunkIn.getBlockStorageArray();
-        int j = 0;
+        int availableDataSize = 0;
+        ExtendedBlockStorage[] blockStorageArray = chunkIn.getBlockStorageArray();
 
-        for (int k = aextendedblockstorage.length; j < k; ++j)
+        for (int j = 0; j < blockStorageArray.length; ++j)
         {
-            ExtendedBlockStorage extendedblockstorage = aextendedblockstorage[j];
+            ExtendedBlockStorage extendedblockstorage = blockStorageArray[j];
 
-            if (extendedblockstorage != Chunk.NULL_BLOCK_STORAGE && (!this.isFullChunk() || !extendedblockstorage.isEmpty()) && (p_189556_3_ & 1 << j) != 0)
+            if (extendedblockstorage != Chunk.NULL_BLOCK_STORAGE && (!isFullChunk() || !extendedblockstorage.isEmpty()) && (p_189556_3_ & 1 << j) != 0)
             {
-                i = i + extendedblockstorage.getData().getSerializedSize();
-                i = i + extendedblockstorage.getBlockLight().getData().length;
+                availableDataSize = availableDataSize + extendedblockstorage.getData().getSerializedSize();
+                availableDataSize = availableDataSize + extendedblockstorage.getBlockLight().getData().length;
 
                 if (p_189556_2_)
                 {
-                    i += extendedblockstorage.getSkyLight().getData().length;
+                    availableDataSize += extendedblockstorage.getSkyLight().getData().length;
                 }
             }
         }
 
-        if (this.isFullChunk())
-        {
-            i += chunkIn.getBiomeArray().length;
-        }
+        if (isFullChunk()) availableDataSize += chunkIn.getBiomeArray().length;
 
-        return i;
+        return availableDataSize;
     }
 
     @SideOnly(Side.CLIENT)
     public int getChunkX()
     {
-        return this.chunkX;
+        return chunkX;
     }
 
     @SideOnly(Side.CLIENT)
     public int getChunkZ()
     {
-        return this.chunkZ;
+        return chunkZ;
     }
 
     @SideOnly(Side.CLIENT)
     public int getExtractedSize()
     {
-        return this.availableSections;
+        return availableSections;
     }
 
     public boolean isFullChunk()
     {
-        return this.fullChunk;
+        return fullChunk;
     }
 
     @SideOnly(Side.CLIENT)
     public List<NBTTagCompound> getTileEntityTags()
     {
-        return this.tileEntityTags;
+        return tileEntityTags;
     }
 }

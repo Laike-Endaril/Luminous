@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
@@ -48,5 +49,13 @@ public class Luminous
     {
         Entity entity = event.getEntity();
         if (entity instanceof EntityPlayer) pos = entity.getPosition();
+    }
+
+    public static int getLightLevel(BlockPos pos, EnumSkyBlock type, int defaultValue)
+    {
+        if (type == EnumSkyBlock.SKY) return defaultValue;
+
+        if (pos != null && pos.equals(Luminous.pos)) return 15;
+        return defaultValue;
     }
 }

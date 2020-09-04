@@ -47,7 +47,7 @@ import java.util.*;
 
 public abstract class World implements IBlockAccess, net.minecraftforge.common.capabilities.ICapabilityProvider
 {
-    public static double MAX_ENTITY_RADIUS = 2.0D;
+    public static double MAX_ENTITY_RADIUS = 2;
 
     private int seaLevel = 63;
     protected boolean scheduledUpdatesAreImmediate;
@@ -563,12 +563,6 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
 
             if (pos.getY() >= 256) pos = new BlockPos(pos.getX(), 255, pos.getZ());
 
-
-            //TODO Luminous Start
-//            if (pos.equals(Luminous.pos)) return 15;
-            //TODO Luminous End
-
-
             Chunk chunk = getChunkFromBlockCoords(pos);
             return chunk.getLightSubtracted(pos, skylightSubtracted);
         }
@@ -609,33 +603,32 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
     public int getLightFromNeighborsFor(EnumSkyBlock type, BlockPos pos)
     {
         if (!provider.hasSkyLight() && type == EnumSkyBlock.SKY) return 0;
-        else
+
+
+        if (pos.getY() < 0) pos = new BlockPos(pos.getX(), 0, pos.getZ());
+
+        if (!isValid(pos)) return type.defaultLightValue;
+        if (!isBlockLoaded(pos)) return type.defaultLightValue;
+
+
+        if (getBlockState(pos).useNeighborBrightness())
         {
-            if (pos.getY() < 0) pos = new BlockPos(pos.getX(), 0, pos.getZ());
+            int up = getLightFor(type, pos.up());
+            int east = getLightFor(type, pos.east());
+            int west = getLightFor(type, pos.west());
+            int south = getLightFor(type, pos.south());
+            int north = getLightFor(type, pos.north());
 
-            if (!isValid(pos)) return type.defaultLightValue;
-            if (!isBlockLoaded(pos)) return type.defaultLightValue;
+            if (east > up) up = east;
+            if (west > up) up = west;
+            if (south > up) up = south;
+            if (north > up) up = north;
 
-
-            if (getBlockState(pos).useNeighborBrightness())
-            {
-                int up = getLightFor(type, pos.up());
-                int east = getLightFor(type, pos.east());
-                int west = getLightFor(type, pos.west());
-                int south = getLightFor(type, pos.south());
-                int north = getLightFor(type, pos.north());
-
-                if (east > up) up = east;
-                if (west > up) up = west;
-                if (south > up) up = south;
-                if (north > up) up = north;
-
-                return up;
-            }
-
-            Chunk chunk = getChunkFromBlockCoords(pos);
-            return chunk.getLightFor(type, pos);
+            return up;
         }
+
+        Chunk chunk = getChunkFromBlockCoords(pos);
+        return chunk.getLightFor(type, pos);
     }
 
     public int getLightFor(EnumSkyBlock type, BlockPos pos)

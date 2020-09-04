@@ -1,5 +1,6 @@
 package net.minecraft.world.chunk;
 
+import com.fantasticsource.luminous.Luminous;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
@@ -584,10 +585,12 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
         int k = pos.getZ() & 15;
         ExtendedBlockStorage extendedblockstorage = storageArrays[j >> 4];
 
-        if (extendedblockstorage == NULL_BLOCK_STORAGE) return canSeeSky(pos) ? type.defaultLightValue : 0;
-        if (type == EnumSkyBlock.SKY) return !world.provider.hasSkyLight() ? 0 : extendedblockstorage.getSkyLight(i, j & 15, k);
+        int result;
+        if (extendedblockstorage == NULL_BLOCK_STORAGE) result = canSeeSky(pos) ? type.defaultLightValue : 0;
+        else if (type == EnumSkyBlock.SKY) result = !world.provider.hasSkyLight() ? 0 : extendedblockstorage.getSkyLight(i, j & 15, k);
+        else result = type == EnumSkyBlock.BLOCK ? extendedblockstorage.getBlockLight(i, j & 15, k) : type.defaultLightValue;
 
-        return type == EnumSkyBlock.BLOCK ? extendedblockstorage.getBlockLight(i, j & 15, k) : type.defaultLightValue;
+        return Luminous.getLightLevel(pos, type, result);
     }
 
     public void setLightFor(EnumSkyBlock type, BlockPos pos, int value)
@@ -630,19 +633,14 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
         {
             return world.provider.hasSkyLight() && amount < EnumSkyBlock.SKY.defaultLightValue ? EnumSkyBlock.SKY.defaultLightValue - amount : 0;
         }
-        else
-        {
-            int l = !world.provider.hasSkyLight() ? 0 : extendedblockstorage.getSkyLight(i, j & 15, k);
-            l = l - amount;
-            int i1 = extendedblockstorage.getBlockLight(i, j & 15, k);
 
-            if (i1 > l)
-            {
-                l = i1;
-            }
+        int blockLight = extendedblockstorage.getBlockLight(i, j & 15, k);
+        int skyLight = !world.provider.hasSkyLight() ? 0 : extendedblockstorage.getSkyLight(i, j & 15, k) - amount;
 
-            return l;
-        }
+        blockLight = Luminous.getLightLevel(pos, EnumSkyBlock.BLOCK, blockLight);
+        skyLight = Luminous.getLightLevel(pos, EnumSkyBlock.SKY, skyLight);
+
+        return blockLight > skyLight ? blockLight : skyLight;
     }
 
     public void addEntity(Entity entityIn)

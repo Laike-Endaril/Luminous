@@ -1,15 +1,12 @@
 package com.fantasticsource.luminous;
 
 import com.fantasticsource.mctools.MCTools;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -21,7 +18,6 @@ public class Luminous
     public static final String MODID = "luminous";
     public static final String NAME = "Luminous";
     public static final String VERSION = "1.12.2.000";
-    public static BlockPos pos = null;
 
     static
     {
@@ -44,18 +40,11 @@ public class Luminous
         if (event.getModID().equals(MODID)) ConfigManager.sync(MODID, Config.Type.INSTANCE);
     }
 
-    @SubscribeEvent
-    public static void test(LivingEvent.LivingUpdateEvent event)
-    {
-        Entity entity = event.getEntity();
-        if (entity instanceof EntityPlayer) pos = entity.getPosition();
-    }
-
     public static int getLightLevel(BlockPos pos, EnumSkyBlock type, int defaultValue)
     {
         if (type == EnumSkyBlock.SKY) return defaultValue;
 
-        if (pos != null && pos.equals(Luminous.pos)) return 15;
+        if (pos != null && pos.getX() % 20 == 0 && pos.getZ() % 20 == 0) return 15;
         return defaultValue;
     }
 }

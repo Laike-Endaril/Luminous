@@ -1,10 +1,14 @@
 package com.fantasticsource.luminous;
 
 import com.fantasticsource.mctools.MCTools;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -16,6 +20,7 @@ public class Luminous
     public static final String MODID = "luminous";
     public static final String NAME = "Luminous";
     public static final String VERSION = "1.12.2.000";
+    public static BlockPos pos = null;
 
     static
     {
@@ -38,17 +43,10 @@ public class Luminous
         if (event.getModID().equals(MODID)) ConfigManager.sync(MODID, Config.Type.INSTANCE);
     }
 
-//    @SubscribeEvent
-//    public static void test(InventoryChangedEvent event)
-//    {
-//        Entity entity = event.getEntity();
-//        ItemStack stack = GlobalInventory.getVanillaMainhandItem(entity);
-//        if (stack == null) return;
-//
-//        if (stack.isEmpty())
-//        {
-//            BlockPos pos = entity.getPosition();
-//            entity.world.getLightFromNeighbors()
-//        }
-//    }
+    @SubscribeEvent
+    public static void test(LivingEvent.LivingUpdateEvent event)
+    {
+        Entity entity = event.getEntity();
+        if (entity instanceof EntityPlayer) pos = entity.getPosition();
+    }
 }

@@ -10,7 +10,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
@@ -143,7 +142,6 @@ public class SPacketChunkData implements Packet<INetHandlerPlayClient>
                     BlockPos pos = entry.getKey();
                     if (pos.getY() < extendedblockstorage.getYLocation() || pos.getY() >= extendedblockstorage.getYLocation() + 16) continue;
 
-                    System.out.println(TextFormatting.AQUA + "Sending altered block light: " + pos + ", " + extendedblockstorage.getBlockLight().get(Tools.posMod(pos.getX(), 16), Tools.posMod(pos.getY(), 16), Tools.posMod(pos.getZ(), 16)) + " -> " + entry.getValue());
                     alteredNibbleArray.set(Tools.posMod(pos.getX(), 16), Tools.posMod(pos.getY(), 16), Tools.posMod(pos.getZ(), 16), entry.getValue());
                 }
                 buf.writeBytes(alteredLightBytes);
@@ -160,7 +158,6 @@ public class SPacketChunkData implements Packet<INetHandlerPlayClient>
                         BlockPos pos = entry.getKey();
                         if (pos.getY() < extendedblockstorage.getYLocation() || pos.getY() >= extendedblockstorage.getYLocation() + 16) continue;
 
-                        System.out.println(TextFormatting.AQUA + "Sending altered sky light: " + pos + ", " + extendedblockstorage.getSkyLight().get(Tools.posMod(pos.getX(), 16), Tools.posMod(pos.getY(), 16), Tools.posMod(pos.getZ(), 16)) + " -> " + entry.getValue());
                         alteredNibbleArray.set(Tools.posMod(pos.getX(), 16), Tools.posMod(pos.getY(), 16), Tools.posMod(pos.getZ(), 16), entry.getValue());
                     }
                     buf.writeBytes(alteredLightBytes);

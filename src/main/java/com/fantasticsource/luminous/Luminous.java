@@ -2,8 +2,12 @@ package com.fantasticsource.luminous;
 
 import com.fantasticsource.mctools.MCTools;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.SPacketChunkData;
+import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.WorldServer;
@@ -93,16 +97,30 @@ public class Luminous
     }
 
 
-    protected static void updateLight(WorldServer world, Chunk chunk, BlockPos pos, EnumSkyBlock type)
+    protected static void updateLight(WorldServer world, Chunk centerChunk, BlockPos pos, EnumSkyBlock type)
     {
-        world.setBlockState(pos, world.getBlockState(pos), 3);
-        for (BlockPos adjacent : new BlockPos[]{pos.up(), pos.down(), pos.north(), pos.south(), pos.west(), pos.east()}) world.checkLightFor(type, adjacent);
-//        PlayerChunkMapEntry playerChunkMapEntry = world.getPlayerChunkMap().getEntry(chunk.x, chunk.z);
-//        if (playerChunkMapEntry != null)
-//        {
-//            Packet<?> packet = new SPacketChunkData(chunk, 65535);
-//            for (EntityPlayerMP player : playerChunkMapEntry.getWatchingPlayers()) player.connection.sendPacket(packet);
-//        }
+        //Force light update on server
+        for (BlockPos involved : new BlockPos[]{pos, pos.up(), pos.down(), pos.north(), pos.south(), pos.west(), pos.east()}) world.checkLightFor(type, involved);
+
+
+        //Force light update on client (from server)
+        int yLayer = pos.getY() >> 4;
+        int changedLayerFlags = 1 << yLayer;
+        if (yLayer > 0) changedLayerFlags |= 1 << (yLayer - 1);
+        if (yLayer < 15) changedLayerFlags |= 1 << (yLayer + 1);
+
+        for (int xOffset = -1; xOffset <= 1; xOffset++)
+        {
+            for (int zOffset = -1; zOffset <= 1; zOffset++)
+            {
+                PlayerChunkMapEntry playerChunkMapEntry = world.getPlayerChunkMap().getEntry(centerChunk.x + xOffset, centerChunk.z + zOffset);
+                if (playerChunkMapEntry != null)
+                {
+                    Packet<?> packet = new SPacketChunkData(centerChunk, changedLayerFlags);
+                    for (EntityPlayerMP player : playerChunkMapEntry.getWatchingPlayers()) player.connection.sendPacket(packet);
+                }
+            }
+        }
     }
 
 

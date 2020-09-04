@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
@@ -45,36 +46,57 @@ public class Luminous
     }
 
 
-    public static void setBlockLightOverride(WorldServer world, BlockPos pos, int light)
+    public static boolean setBlockLightOverride(WorldServer world, BlockPos pos, int light)
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
         Integer oldVal = chunk.blockLightOverrides.put(pos, light);
-        if (oldVal == null || oldVal != light) updateLight(world, chunk, pos);
+        if (oldVal == null || oldVal != light)
+        {
+            updateLight(world, chunk, pos, EnumSkyBlock.BLOCK);
+            return true;
+        }
+        return false;
     }
 
-    public static void removeBlockLightOverride(WorldServer world, BlockPos pos)
+    public static boolean removeBlockLightOverride(WorldServer world, BlockPos pos)
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
-        if (chunk.blockLightOverrides.remove(pos) != null) updateLight(world, chunk, pos);
+        if (chunk.blockLightOverrides.remove(pos) != null)
+        {
+            updateLight(world, chunk, pos, EnumSkyBlock.BLOCK);
+            return true;
+        }
+        return false;
     }
 
-    public static void setSkyLightOverride(WorldServer world, BlockPos pos, int light)
+    public static boolean setSkyLightOverride(WorldServer world, BlockPos pos, int light)
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
         Integer oldVal = chunk.skyLightOverrides.put(pos, light);
-        if (oldVal == null || oldVal != light) updateLight(world, chunk, pos);
+        if (oldVal == null || oldVal != light)
+        {
+            updateLight(world, chunk, pos, EnumSkyBlock.BLOCK);
+            return true;
+        }
+        return false;
     }
 
-    public static void removeSkyLightOverride(WorldServer world, BlockPos pos)
+    public static boolean removeSkyLightOverride(WorldServer world, BlockPos pos)
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
-        if (chunk.skyLightOverrides.remove(pos) != null) updateLight(world, chunk, pos);
+        if (chunk.skyLightOverrides.remove(pos) != null)
+        {
+            updateLight(world, chunk, pos, EnumSkyBlock.BLOCK);
+            return true;
+        }
+        return false;
     }
 
 
-    protected static void updateLight(WorldServer world, Chunk chunk, BlockPos pos)
+    protected static void updateLight(WorldServer world, Chunk chunk, BlockPos pos, EnumSkyBlock type)
     {
         world.setBlockState(pos, world.getBlockState(pos), 3);
+        for (BlockPos adjacent : new BlockPos[]{pos.up(), pos.down(), pos.north(), pos.south(), pos.west(), pos.east()}) world.checkLightFor(type, adjacent);
 //        PlayerChunkMapEntry playerChunkMapEntry = world.getPlayerChunkMap().getEntry(chunk.x, chunk.z);
 //        if (playerChunkMapEntry != null)
 //        {
@@ -90,6 +112,8 @@ public class Luminous
         Entity entity = event.getEntity();
         if (entity.world.isRemote || !(entity instanceof EntitySnowball)) return;
 
-        setBlockLightOverride((WorldServer) entity.world, entity.getPosition().down(), 15);
+        WorldServer world = (WorldServer) entity.world;
+        BlockPos pos = entity.getPosition().down();
+        if (!setBlockLightOverride(world, pos, 15)) removeBlockLightOverride(world, pos);
     }
 }

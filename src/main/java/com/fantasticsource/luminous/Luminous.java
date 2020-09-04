@@ -49,26 +49,38 @@ public class Luminous
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
         Integer oldVal = chunk.blockLightOverrides.put(pos, light);
-        if (oldVal == null || oldVal != light) world.setBlockState(pos, world.getBlockState(pos), 3);
+        if (oldVal == null || oldVal != light) updateLight(world, chunk, pos);
     }
 
     public static void removeBlockLightOverride(WorldServer world, BlockPos pos)
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
-        if (chunk.blockLightOverrides.remove(pos) != null) world.setBlockState(pos, world.getBlockState(pos), 3);
+        if (chunk.blockLightOverrides.remove(pos) != null) updateLight(world, chunk, pos);
     }
 
     public static void setSkyLightOverride(WorldServer world, BlockPos pos, int light)
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
         Integer oldVal = chunk.skyLightOverrides.put(pos, light);
-        if (oldVal == null || oldVal != light) world.setBlockState(pos, world.getBlockState(pos), 3);
+        if (oldVal == null || oldVal != light) updateLight(world, chunk, pos);
     }
 
     public static void removeSkyLightOverride(WorldServer world, BlockPos pos)
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
-        if (chunk.skyLightOverrides.remove(pos) != null) world.setBlockState(pos, world.getBlockState(pos), 3);
+        if (chunk.skyLightOverrides.remove(pos) != null) updateLight(world, chunk, pos);
+    }
+
+
+    protected static void updateLight(WorldServer world, Chunk chunk, BlockPos pos)
+    {
+        world.setBlockState(pos, world.getBlockState(pos), 3);
+//        PlayerChunkMapEntry playerChunkMapEntry = world.getPlayerChunkMap().getEntry(chunk.x, chunk.z);
+//        if (playerChunkMapEntry != null)
+//        {
+//            Packet<?> packet = new SPacketChunkData(chunk, 65535);
+//            for (EntityPlayerMP player : playerChunkMapEntry.getWatchingPlayers()) player.connection.sendPacket(packet);
+//        }
     }
 
 

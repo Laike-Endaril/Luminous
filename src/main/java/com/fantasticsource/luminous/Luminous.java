@@ -1,6 +1,8 @@
 package com.fantasticsource.luminous;
 
 import com.fantasticsource.mctools.MCTools;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -8,6 +10,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -41,6 +44,7 @@ public class Luminous
         if (event.getModID().equals(MODID)) ConfigManager.sync(MODID, Config.Type.INSTANCE);
     }
 
+
     public static void setBlockLightOverride(WorldServer world, BlockPos pos, int light)
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
@@ -65,5 +69,15 @@ public class Luminous
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
         if (chunk.skyLightOverrides.remove(pos) != null) world.getPlayerChunkMap().markBlockForUpdate(pos);
+    }
+
+
+    @SubscribeEvent
+    public static void test(EntityJoinWorldEvent event)
+    {
+        Entity entity = event.getEntity();
+        if (entity.world.isRemote || !(entity instanceof EntitySnowball)) return;
+
+        setBlockLightOverride((WorldServer) entity.world, entity.getPosition(), 15);
     }
 }

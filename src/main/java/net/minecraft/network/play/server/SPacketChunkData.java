@@ -1,5 +1,6 @@
 package net.minecraft.network.play.server;
 
+import com.fantasticsource.tools.Tools;
 import com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -41,7 +42,7 @@ public class SPacketChunkData implements Packet<INetHandlerPlayClient>
         boolean flag = chunkIn.getWorld().provider.hasSkyLight();
         buffer = new byte[calculateChunkSize(chunkIn, flag, changedSectionFilter)];
         availableSections = extractChunkData(new PacketBuffer(getWriteBuffer()), chunkIn, flag, changedSectionFilter);
-        tileEntityTags = Lists.<NBTTagCompound>newArrayList();
+        tileEntityTags = Lists.newArrayList();
 
         for (Entry<BlockPos, TileEntity> entry : chunkIn.getTileEntityMap().entrySet())
         {
@@ -132,6 +133,7 @@ public class SPacketChunkData implements Packet<INetHandlerPlayClient>
                 extendedblockstorage.getData().write(buf);
 
 
+                //Luminous start
                 byte[] lightBytes = extendedblockstorage.getBlockLight().getData(), alteredLightBytes = new byte[lightBytes.length];
                 System.arraycopy(lightBytes, 0, alteredLightBytes, 0, lightBytes.length);
                 NibbleArray alteredNibbleArray = new NibbleArray(alteredLightBytes);
@@ -140,13 +142,16 @@ public class SPacketChunkData implements Packet<INetHandlerPlayClient>
                     BlockPos pos = entry.getKey();
                     if (pos.getY() < extendedblockstorage.getYLocation() || pos.getY() >= extendedblockstorage.getYLocation() + 16) continue;
 
-                    alteredNibbleArray.set(pos.getX() % 16, pos.getY() % 16, pos.getZ() % 16, entry.getValue());
+                    System.out.println("Sending altered block light: " + pos + ", " + extendedblockstorage.getBlockLight().get(Tools.posMod(pos.getX(), 16), Tools.posMod(pos.getY(), 16), Tools.posMod(pos.getZ(), 16)) + " -> " + entry.getValue());
+                    alteredNibbleArray.set(Tools.posMod(pos.getX(), 16), Tools.posMod(pos.getY(), 16), Tools.posMod(pos.getZ(), 16), entry.getValue());
                 }
                 buf.writeBytes(alteredLightBytes);
+                //Luminous end
 
 
                 if (writeSkylight)
                 {
+                    //Luminous start
                     lightBytes = extendedblockstorage.getSkyLight().getData();
                     System.arraycopy(lightBytes, 0, alteredLightBytes, 0, lightBytes.length);
                     for (Map.Entry<BlockPos, Integer> entry : chunkIn.skyLightOverrides.entrySet())
@@ -154,9 +159,11 @@ public class SPacketChunkData implements Packet<INetHandlerPlayClient>
                         BlockPos pos = entry.getKey();
                         if (pos.getY() < extendedblockstorage.getYLocation() || pos.getY() >= extendedblockstorage.getYLocation() + 16) continue;
 
-                        alteredNibbleArray.set(pos.getX() % 16, pos.getY() % 16, pos.getZ() % 16, entry.getValue());
+                        System.out.println("Sending altered sky light: " + pos + ", " + extendedblockstorage.getSkyLight().get(Tools.posMod(pos.getX(), 16), Tools.posMod(pos.getY(), 16), Tools.posMod(pos.getZ(), 16)) + " -> " + entry.getValue());
+                        alteredNibbleArray.set(Tools.posMod(pos.getX(), 16), Tools.posMod(pos.getY(), 16), Tools.posMod(pos.getZ(), 16), entry.getValue());
                     }
                     buf.writeBytes(alteredLightBytes);
+                    //Luminous end
                 }
             }
         }

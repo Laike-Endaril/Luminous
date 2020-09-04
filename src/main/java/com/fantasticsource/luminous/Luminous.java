@@ -49,26 +49,26 @@ public class Luminous
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
         Integer oldVal = chunk.blockLightOverrides.put(pos, light);
-        if (oldVal == null || oldVal != light) world.getPlayerChunkMap().markBlockForUpdate(pos);
+        if (oldVal == null || oldVal != light) world.setBlockState(pos, world.getBlockState(pos), 3);
     }
 
     public static void removeBlockLightOverride(WorldServer world, BlockPos pos)
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
-        if (chunk.blockLightOverrides.remove(pos) != null) world.getPlayerChunkMap().markBlockForUpdate(pos);
+        if (chunk.blockLightOverrides.remove(pos) != null) world.setBlockState(pos, world.getBlockState(pos), 3);
     }
 
     public static void setSkyLightOverride(WorldServer world, BlockPos pos, int light)
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
         Integer oldVal = chunk.skyLightOverrides.put(pos, light);
-        if (oldVal == null || oldVal != light) world.getPlayerChunkMap().markBlockForUpdate(pos);
+        if (oldVal == null || oldVal != light) world.setBlockState(pos, world.getBlockState(pos), 3);
     }
 
     public static void removeSkyLightOverride(WorldServer world, BlockPos pos)
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
-        if (chunk.skyLightOverrides.remove(pos) != null) world.getPlayerChunkMap().markBlockForUpdate(pos);
+        if (chunk.skyLightOverrides.remove(pos) != null) world.setBlockState(pos, world.getBlockState(pos), 3);
     }
 
 
@@ -78,6 +78,6 @@ public class Luminous
         Entity entity = event.getEntity();
         if (entity.world.isRemote || !(entity instanceof EntitySnowball)) return;
 
-        setBlockLightOverride((WorldServer) entity.world, entity.getPosition(), 15);
+        setBlockLightOverride((WorldServer) entity.world, entity.getPosition().down(), 15);
     }
 }

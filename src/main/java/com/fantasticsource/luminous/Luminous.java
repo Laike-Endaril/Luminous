@@ -40,6 +40,7 @@ public class Luminous
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event)
     {
+        Network.init();
         MinecraftForge.EVENT_BUS.register(Luminous.class);
     }
 
@@ -100,7 +101,10 @@ public class Luminous
     protected static void updateLight(WorldServer world, Chunk centerChunk, BlockPos pos, EnumSkyBlock type)
     {
         //Force light update on server
-        for (BlockPos involved : new BlockPos[]{pos, pos.up(), pos.down(), pos.north(), pos.south(), pos.west(), pos.east()}) world.checkLightFor(type, involved);
+        for (BlockPos involved : new BlockPos[]{pos, pos.up(), pos.down(), pos.north(), pos.south(), pos.west(), pos.east()})
+        {
+            world.checkLightFor(type, involved);
+        }
 
 
         //Force light update on client (from server)
@@ -121,6 +125,9 @@ public class Luminous
                 }
             }
         }
+
+
+        //Sending custom packets that trigger world.checkLightFor() on client-side actually reverted light states to vanilla on client-side
     }
 
 

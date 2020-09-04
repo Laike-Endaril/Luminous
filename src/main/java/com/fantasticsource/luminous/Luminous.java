@@ -3,7 +3,8 @@ package com.fantasticsource.luminous;
 import com.fantasticsource.mctools.MCTools;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
@@ -40,11 +41,29 @@ public class Luminous
         if (event.getModID().equals(MODID)) ConfigManager.sync(MODID, Config.Type.INSTANCE);
     }
 
-    public static int getLightLevel(BlockPos pos, EnumSkyBlock type, int defaultValue)
+    public static void setBlockLightOverride(WorldServer world, BlockPos pos, int light)
     {
-        if (type == EnumSkyBlock.SKY) return defaultValue;
+        Chunk chunk = world.getChunkFromBlockCoords(pos);
+        Integer oldVal = chunk.blockLightOverrides.put(pos, light);
+        if (oldVal == null || oldVal != light) world.getPlayerChunkMap().markBlockForUpdate(pos);
+    }
 
-        if (pos != null && pos.getX() % 20 == 0 && pos.getZ() % 20 == 0) return 15;
-        return defaultValue;
+    public static void removeBlockLightOverride(WorldServer world, BlockPos pos)
+    {
+        Chunk chunk = world.getChunkFromBlockCoords(pos);
+        if (chunk.blockLightOverrides.remove(pos) != null) world.getPlayerChunkMap().markBlockForUpdate(pos);
+    }
+
+    public static void setSkyLightOverride(WorldServer world, BlockPos pos, int light)
+    {
+        Chunk chunk = world.getChunkFromBlockCoords(pos);
+        Integer oldVal = chunk.skyLightOverrides.put(pos, light);
+        if (oldVal == null || oldVal != light) world.getPlayerChunkMap().markBlockForUpdate(pos);
+    }
+
+    public static void removeSkyLightOverride(WorldServer world, BlockPos pos)
+    {
+        Chunk chunk = world.getChunkFromBlockCoords(pos);
+        if (chunk.skyLightOverrides.remove(pos) != null) world.getPlayerChunkMap().markBlockForUpdate(pos);
     }
 }

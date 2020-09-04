@@ -14,8 +14,7 @@ import static com.fantasticsource.luminous.Luminous.MODID;
 public class LuminousTransformer implements IClassTransformer
 {
     private static final ArrayList<String> REPLACEMENTS = new ArrayList<>(Arrays.asList(
-            "net.minecraft.world.chunk.Chunk",
-            "net.minecraft.world.chunk.Chunk$EnumCreateEntityType"
+            "net.minecraft.world.chunk.Chunk"
     ));
 
     @Override

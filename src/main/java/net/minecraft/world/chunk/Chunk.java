@@ -1,6 +1,5 @@
 package net.minecraft.world.chunk;
 
-import com.fantasticsource.luminous.Luminous;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
@@ -35,14 +34,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Chunk implements net.minecraftforge.common.capabilities.ICapabilityProvider
 {
+    public LinkedHashMap<BlockPos, Integer> blockLightOverrides = new LinkedHashMap<>(), skyLightOverrides = new LinkedHashMap<>();
     private static final Logger LOGGER = LogManager.getLogger();
     public static final ExtendedBlockStorage NULL_BLOCK_STORAGE = null;
     private final ExtendedBlockStorage[] storageArrays;
@@ -580,17 +577,18 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
 
     public int getLightFor(EnumSkyBlock type, BlockPos pos)
     {
+        Integer override = type == EnumSkyBlock.BLOCK ? blockLightOverrides.get(pos) : skyLightOverrides.get(pos);
+        if (override != null) return override;
+
+
         int i = pos.getX() & 15;
         int j = pos.getY();
         int k = pos.getZ() & 15;
         ExtendedBlockStorage extendedblockstorage = storageArrays[j >> 4];
 
-        int result;
-        if (extendedblockstorage == NULL_BLOCK_STORAGE) result = canSeeSky(pos) ? type.defaultLightValue : 0;
-        else if (type == EnumSkyBlock.SKY) result = !world.provider.hasSkyLight() ? 0 : extendedblockstorage.getSkyLight(i, j & 15, k);
-        else result = type == EnumSkyBlock.BLOCK ? extendedblockstorage.getBlockLight(i, j & 15, k) : type.defaultLightValue;
-
-        return Luminous.getLightLevel(pos, type, result);
+        if (extendedblockstorage == NULL_BLOCK_STORAGE) return canSeeSky(pos) ? type.defaultLightValue : 0;
+        if (type == EnumSkyBlock.SKY) return !world.provider.hasSkyLight() ? 0 : extendedblockstorage.getSkyLight(i, j & 15, k);
+        return type == EnumSkyBlock.BLOCK ? extendedblockstorage.getBlockLight(i, j & 15, k) : type.defaultLightValue;
     }
 
     public void setLightFor(EnumSkyBlock type, BlockPos pos, int value)
@@ -634,11 +632,12 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
             return world.provider.hasSkyLight() && amount < EnumSkyBlock.SKY.defaultLightValue ? EnumSkyBlock.SKY.defaultLightValue - amount : 0;
         }
 
-        int blockLight = extendedblockstorage.getBlockLight(i, j & 15, k);
-        int skyLight = !world.provider.hasSkyLight() ? 0 : extendedblockstorage.getSkyLight(i, j & 15, k) - amount;
 
-        blockLight = Luminous.getLightLevel(pos, EnumSkyBlock.BLOCK, blockLight);
-        skyLight = Luminous.getLightLevel(pos, EnumSkyBlock.SKY, skyLight);
+        Integer blockOverride = blockLightOverrides.get(pos), skyOverride = skyLightOverrides.get(pos);
+
+
+        int blockLight = blockOverride != null ? blockOverride : extendedblockstorage.getBlockLight(i, j & 15, k);
+        int skyLight = skyOverride != null ? skyOverride : !world.provider.hasSkyLight() ? 0 : extendedblockstorage.getSkyLight(i, j & 15, k) - amount;
 
         return blockLight > skyLight ? blockLight : skyLight;
     }

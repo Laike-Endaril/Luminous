@@ -1,0 +1,2 @@
+Client sync issue: after leaving a world and then returning (via nether portal), the source light block appears darkened (but all others are fine)
+Client sync issue: after leaving a world and then returning (via nether portal), if you remove a light override, it doesn't sync until you leave and return once again

@@ -195,8 +195,8 @@ public class Luminous
 //    }
 
 
-    protected static World[] litWorlds = new World[]{null, null};
-    protected static BlockPos[] litPositions = new BlockPos[]{null, null};
+    protected static World litWorld = null;
+    protected static BlockPos litPosition = null;
 
     @SubscribeEvent
     public static void test(TickEvent.PlayerTickEvent event)
@@ -205,33 +205,15 @@ public class Luminous
 
 
         EntityPlayerMP player = (EntityPlayerMP) event.player;
-        World world = player.world, recentWorld = litWorlds[0], oldWorld = litWorlds[1];
-        BlockPos eyePos = new BlockPos(player.getPositionEyes(0)), recentPos = litPositions[0], oldPos = litPositions[1];
+        World world = player.world;
+        BlockPos eyePos = new BlockPos(player.getPositionEyes(0));
 
-        if (world != recentWorld || !eyePos.equals(recentPos))
+        if (world != litWorld || !eyePos.equals(litPosition))
         {
-            if (world == oldWorld && eyePos.equals(oldPos))
-            {
-                litWorlds[1] = recentWorld;
-                litPositions[1] = recentPos;
-            }
-            else
-            {
-                if (oldWorld != null)
-                {
-                    System.out.println("Remove");
-                    setLightOverride(oldWorld, oldPos, EnumSkyBlock.BLOCK, null);
-                }
-
-                System.out.println("Add");
-                setLightOverride(world, eyePos, EnumSkyBlock.BLOCK, 15);
-
-                litWorlds[1] = litWorlds[0];
-                litPositions[1] = litPositions[0];
-            }
-
-            litWorlds[0] = world;
-            litPositions[0] = eyePos;
+            setLightOverride(world, eyePos, EnumSkyBlock.BLOCK, 15);
+            if (litWorld != null) setLightOverride(litWorld, litPosition, EnumSkyBlock.BLOCK, null);
+            litWorld = world;
+            litPosition = eyePos;
         }
     }
 }

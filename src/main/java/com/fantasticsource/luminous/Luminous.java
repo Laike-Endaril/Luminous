@@ -18,12 +18,14 @@ import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Mod(modid = Luminous.MODID, name = Luminous.NAME, version = Luminous.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.036x,)")
 public class Luminous
@@ -135,7 +137,7 @@ public class Luminous
     }
 
     @SubscribeEvent
-    protected static void loadChunk(ChunkEvent.Load event)
+    public static void loadChunk(ChunkEvent.Load event)
     {
         World world = event.getWorld();
         if (!(world instanceof WorldServer)) return;
@@ -168,6 +170,25 @@ public class Luminous
                     }
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void watchChunk(ChunkWatchEvent event)
+    {
+        EntityPlayerMP player = event.getPlayer();
+        Chunk chunk = event.getChunkInstance();
+
+        //TODO batch these
+        for (Map.Entry<BlockPos, Integer> entry : chunk.skyLightOverrides.entrySet())
+        {
+            Network.WRAPPER.sendTo(new Network.UpdateLightOverridePacket(entry.getKey(), EnumSkyBlock.SKY, entry.getValue()), player);
+        }
+
+        //TODO batch these
+        for (Map.Entry<BlockPos, Integer> entry : chunk.blockLightOverrides.entrySet())
+        {
+            Network.WRAPPER.sendTo(new Network.UpdateLightOverridePacket(entry.getKey(), EnumSkyBlock.BLOCK, entry.getValue()), player);
         }
     }
 }

@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -21,24 +20,26 @@ public class Network
 
     public static void init()
     {
-        WRAPPER.registerMessage(UpdateLightPacketHandler.class, UpdateLightPacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(UpdateLightOverridePacketHandler.class, UpdateLightOverridePacket.class, discriminator++, Side.CLIENT);
     }
 
 
-    public static class UpdateLightPacket implements IMessage
+    public static class UpdateLightOverridePacket implements IMessage
     {
         public BlockPos pos;
         public EnumSkyBlock type;
+        public Integer value;
 
-        public UpdateLightPacket()
+        public UpdateLightOverridePacket()
         {
             //Required
         }
 
-        public UpdateLightPacket(BlockPos pos, EnumSkyBlock type)
+        public UpdateLightOverridePacket(BlockPos pos, EnumSkyBlock type, Integer value)
         {
             this.pos = pos;
             this.type = type;
+            this.value = value;
         }
 
         @Override
@@ -48,6 +49,8 @@ public class Network
             buf.writeInt(pos.getY());
             buf.writeInt(pos.getZ());
             buf.writeBoolean(type == EnumSkyBlock.BLOCK);
+            buf.writeBoolean(value != null);
+            if (value != null) buf.writeInt(value);
         }
 
         @Override
@@ -55,26 +58,18 @@ public class Network
         {
             pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
             type = buf.readBoolean() ? EnumSkyBlock.BLOCK : EnumSkyBlock.SKY;
+            value = buf.readBoolean() ? buf.readInt() : null;
         }
     }
 
-    public static class UpdateLightPacketHandler implements IMessageHandler<UpdateLightPacket, IMessage>
+    public static class UpdateLightOverridePacketHandler implements IMessageHandler<UpdateLightOverridePacket, IMessage>
     {
         @Override
         @SideOnly(Side.CLIENT)
-        public IMessage onMessage(UpdateLightPacket packet, MessageContext ctx)
+        public IMessage onMessage(UpdateLightOverridePacket packet, MessageContext ctx)
         {
             Minecraft mc = Minecraft.getMinecraft();
-            mc.addScheduledTask(() ->
-            {
-                World world = mc.world;
-                EnumSkyBlock type = packet.type;
-                BlockPos pos = packet.pos;
-                for (BlockPos involved : new BlockPos[]{pos, pos.up(), pos.down(), pos.north(), pos.south(), pos.west(), pos.east()})
-                {
-                    world.checkLightFor(type, involved);
-                }
-            });
+            mc.addScheduledTask(() -> Luminous.setLightOverride(mc.world, packet.pos, packet.type, packet.value));
             return null;
         }
     }

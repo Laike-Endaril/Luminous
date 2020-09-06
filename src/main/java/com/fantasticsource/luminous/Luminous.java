@@ -5,11 +5,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.SPacketChunkData;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
@@ -20,6 +19,8 @@ import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import java.util.LinkedHashMap;
 
 @Mod(modid = Luminous.MODID, name = Luminous.NAME, version = Luminous.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.036,)")
 public class Luminous
@@ -51,83 +52,54 @@ public class Luminous
     }
 
 
-    public static boolean setBlockLightOverride(WorldServer world, BlockPos pos, int light)
+    public static boolean setLightOverride(World world, BlockPos pos, EnumSkyBlock type, Integer light)
     {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
-        Integer oldVal = chunk.blockLightOverrides.put(pos, light);
-        if (oldVal == null || oldVal != light)
-        {
-            updateLight(world, chunk, pos, EnumSkyBlock.BLOCK);
-            return true;
-        }
-        return false;
-    }
+        LinkedHashMap<BlockPos, Integer> map = type == EnumSkyBlock.SKY ? chunk.skyLightOverrides : chunk.blockLightOverrides;
 
-    public static boolean removeBlockLightOverride(WorldServer world, BlockPos pos)
-    {
-        Chunk chunk = world.getChunkFromBlockCoords(pos);
-        if (chunk.blockLightOverrides.remove(pos) != null)
+        //Remove
+        if (light == null)
         {
-            updateLight(world, chunk, pos, EnumSkyBlock.BLOCK);
-            return true;
+            if (map.remove(pos) != null)
+            {
+                updateLight(world, chunk, pos, type, null);
+                return true;
+            }
+            return false;
         }
-        return false;
-    }
 
-    public static boolean setSkyLightOverride(WorldServer world, BlockPos pos, int light)
-    {
-        Chunk chunk = world.getChunkFromBlockCoords(pos);
-        Integer oldVal = chunk.skyLightOverrides.put(pos, light);
-        if (oldVal == null || oldVal != light)
+        //Set / change
+        Integer oldVal = map.put(pos, light);
+        if (oldVal == null || oldVal != light.intValue())
         {
-            updateLight(world, chunk, pos, EnumSkyBlock.BLOCK);
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean removeSkyLightOverride(WorldServer world, BlockPos pos)
-    {
-        Chunk chunk = world.getChunkFromBlockCoords(pos);
-        if (chunk.skyLightOverrides.remove(pos) != null)
-        {
-            updateLight(world, chunk, pos, EnumSkyBlock.BLOCK);
+            updateLight(world, chunk, pos, type, light);
             return true;
         }
         return false;
     }
 
 
-    protected static void updateLight(WorldServer world, Chunk centerChunk, BlockPos pos, EnumSkyBlock type)
+    protected static void updateLight(World world, Chunk centerChunk, BlockPos pos, EnumSkyBlock type, Integer light)
     {
-        //Force light update on server
+        //Force local light update
         for (BlockPos involved : new BlockPos[]{pos, pos.up(), pos.down(), pos.north(), pos.south(), pos.west(), pos.east()})
         {
             world.checkLightFor(type, involved);
         }
 
 
-        //Force light update on client (from server)
-        int yLayer = pos.getY() >> 4;
-        int changedLayerFlags = 1 << yLayer;
-        if (yLayer > 0) changedLayerFlags |= 1 << (yLayer - 1);
-        if (yLayer < 15) changedLayerFlags |= 1 << (yLayer + 1);
-
-        for (int xOffset = -1; xOffset <= 1; xOffset++)
+        //If server, forward light update packet to tracking clients
+        if (world instanceof WorldServer)
         {
-            for (int zOffset = -1; zOffset <= 1; zOffset++)
+            PlayerChunkMapEntry playerChunkMapEntry = ((WorldServer) world).getPlayerChunkMap().getEntry(centerChunk.x, centerChunk.z);
+            if (playerChunkMapEntry != null)
             {
-                PlayerChunkMapEntry playerChunkMapEntry = world.getPlayerChunkMap().getEntry(centerChunk.x + xOffset, centerChunk.z + zOffset);
-                if (playerChunkMapEntry != null)
+                for (EntityPlayerMP player : playerChunkMapEntry.getWatchingPlayers())
                 {
-                    Packet<?> packet = new SPacketChunkData(centerChunk, changedLayerFlags);
-                    for (EntityPlayerMP player : playerChunkMapEntry.getWatchingPlayers()) player.connection.sendPacket(packet);
+                    Network.WRAPPER.sendTo(new Network.UpdateLightOverridePacket(pos, type, light), player);
                 }
             }
         }
-
-
-        //Sending custom packets that trigger world.checkLightFor() on client-side actually reverted light states to vanilla on client-side
     }
 
 
@@ -139,6 +111,6 @@ public class Luminous
 
         WorldServer world = (WorldServer) entity.world;
         BlockPos pos = entity.getPosition().down();
-        if (!setBlockLightOverride(world, pos, 15)) removeBlockLightOverride(world, pos);
+        if (!setLightOverride(world, pos, EnumSkyBlock.BLOCK, 15)) setLightOverride(world, pos, EnumSkyBlock.BLOCK, null);
     }
 }

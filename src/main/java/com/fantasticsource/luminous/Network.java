@@ -69,7 +69,7 @@ public class Network
         public IMessage onMessage(UpdateLightOverridePacket packet, MessageContext ctx)
         {
             Minecraft mc = Minecraft.getMinecraft();
-            mc.addScheduledTask(() -> Luminous.setLightOverride(mc.world, packet.pos, packet.type, packet.value));
+            mc.addScheduledTask(() -> LightHandler.setCurrentClientLightOverride(mc.world, packet));
             return null;
         }
     }

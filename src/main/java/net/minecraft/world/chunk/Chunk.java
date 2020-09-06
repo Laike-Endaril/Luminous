@@ -1,5 +1,6 @@
 package net.minecraft.world.chunk;
 
+import com.fantasticsource.luminous.Luminous;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
@@ -1368,7 +1369,7 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
         net.minecraftforge.fml.common.ModContainer activeModContainer = net.minecraftforge.fml.common.Loader.instance().activeModContainer();
         String format = "{} loaded a new chunk {} in dimension {} ({}) while populating chunk {}, causing cascading worldgen lag.";
 
-        if (activeModContainer == null)
+        if (activeModContainer == null || activeModContainer.getName().equals(Luminous.NAME))
         {
             net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", getPos(), world.provider.getDimension(), world.provider.getDimensionType().getName(), populating);
             net.minecraftforge.fml.common.FMLLog.log.debug("Consider setting 'fixVanillaCascading' to 'true' in the Forge config to fix many cases where this occurs in the base game.");

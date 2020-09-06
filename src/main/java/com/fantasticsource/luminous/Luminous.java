@@ -2,9 +2,7 @@ package com.fantasticsource.luminous;
 
 import com.fantasticsource.fantasticlib.api.FLibAPI;
 import com.fantasticsource.mctools.MCTools;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.management.PlayerChunkMapEntry;
@@ -16,13 +14,14 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -113,18 +112,6 @@ public class Luminous
     }
 
 
-    @SubscribeEvent
-    public static void test(EntityJoinWorldEvent event)
-    {
-        Entity entity = event.getEntity();
-        if (entity.world.isRemote || !(entity instanceof EntitySnowball)) return;
-
-        WorldServer world = (WorldServer) entity.world;
-        BlockPos pos = entity.getPosition().down();
-        if (!setLightOverride(world, pos, EnumSkyBlock.BLOCK, 15)) setLightOverride(world, pos, EnumSkyBlock.BLOCK, null);
-    }
-
-
     protected static void updateLightOverrideNBTCap(WorldServer world, Chunk chunk, BlockPos pos, EnumSkyBlock type, Integer light)
     {
         NBTTagCompound compound = FLibAPI.getNBTCap(world).getCompound(MODID);
@@ -189,6 +176,62 @@ public class Luminous
         for (Map.Entry<BlockPos, Integer> entry : chunk.blockLightOverrides.entrySet())
         {
             Network.WRAPPER.sendTo(new Network.UpdateLightOverridePacket(entry.getKey(), EnumSkyBlock.BLOCK, entry.getValue()), player);
+        }
+    }
+
+
+//    @SubscribeEvent
+//    public static void test(EntityJoinWorldEvent event)
+//    {
+//        Entity entity = event.getEntity();
+//        if (entity.world.isRemote || !(entity instanceof EntitySnowball)) return;
+//
+//        WorldServer world = (WorldServer) entity.world;
+//        BlockPos pos = entity.getPosition().down();
+//        if (!setLightOverride(world, pos, EnumSkyBlock.BLOCK, 15))
+//        {
+//            setLightOverride(world, pos, EnumSkyBlock.BLOCK, null);
+//        }
+//    }
+
+
+    protected static World[] litWorlds = new World[]{null, null};
+    protected static BlockPos[] litPositions = new BlockPos[]{null, null};
+
+    @SubscribeEvent
+    public static void test(TickEvent.PlayerTickEvent event)
+    {
+        if (event.side != Side.SERVER || event.phase != TickEvent.Phase.START) return;
+
+
+        EntityPlayerMP player = (EntityPlayerMP) event.player;
+        World world = player.world, recentWorld = litWorlds[0], oldWorld = litWorlds[1];
+        BlockPos eyePos = new BlockPos(player.getPositionEyes(0)), recentPos = litPositions[0], oldPos = litPositions[1];
+
+        if (world != recentWorld || !eyePos.equals(recentPos))
+        {
+            if (world == oldWorld && eyePos.equals(oldPos))
+            {
+                litWorlds[1] = recentWorld;
+                litPositions[1] = recentPos;
+            }
+            else
+            {
+                if (oldWorld != null)
+                {
+                    System.out.println("Remove");
+                    setLightOverride(oldWorld, oldPos, EnumSkyBlock.BLOCK, null);
+                }
+
+                System.out.println("Add");
+                setLightOverride(world, eyePos, EnumSkyBlock.BLOCK, 15);
+
+                litWorlds[1] = litWorlds[0];
+                litPositions[1] = litPositions[0];
+            }
+
+            litWorlds[0] = world;
+            litPositions[0] = eyePos;
         }
     }
 }

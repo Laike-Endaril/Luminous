@@ -32,8 +32,7 @@ public class Luminous
     {
         if (!MCTools.devEnv())
         {
-            LaunchClassLoader classLoader = (LaunchClassLoader) Luminous.class.getClassLoader();
-            classLoader.registerTransformer("com.fantasticsource.luminous.LuminousTransformer");
+            ((LaunchClassLoader) Luminous.class.getClassLoader()).registerTransformer("com.fantasticsource.luminous.LuminousTransformer");
         }
     }
 

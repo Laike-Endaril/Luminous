@@ -14,8 +14,8 @@ import static com.fantasticsource.luminous.Luminous.MODID;
 public class LuminousTransformer implements IClassTransformer
 {
     private static final ArrayList<String> REPLACEMENTS = new ArrayList<>(Arrays.asList(
-            "net.minecraft.world.chunk.Chunk",
-            "net.minecraft.network.play.server.SPacketChunkData"
+            "net.minecraft.block.state.BlockStateContainer",
+            "net.minecraft.world.chunk.Chunk"
     ));
 
     @Override
@@ -27,8 +27,7 @@ public class LuminousTransformer implements IClassTransformer
             InputStream stream = MCTools.getJarResourceStream(LuminousTransformer.class, name2);
             if (stream == null)
             {
-                System.err.println(TextFormatting.RED + "Resource not found: " + name2);
-                return bytes;
+                throw new IllegalStateException(TextFormatting.RED + "Resource not found: " + name2);
             }
             byte[] buf = new byte[10000];
             try

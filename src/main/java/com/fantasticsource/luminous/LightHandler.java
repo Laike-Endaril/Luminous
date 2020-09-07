@@ -88,7 +88,7 @@ public class LightHandler
         world.profiler.startSection(Luminous.NAME + ": setCurrentLightOverride");
 
         Chunk chunk = world.getChunkFromBlockCoords(pos);
-        LinkedHashMap<BlockPos, Integer> map = type == EnumSkyBlock.SKY ? chunk.skyLightOverrides : chunk.blockLightOverrides;
+        LinkedHashMap<BlockPos, Integer> map = type == EnumSkyBlock.SKY ? chunk.moddedSkyLights : chunk.moddedBlockLights;
 
         //Remove
         if (light == null)
@@ -209,13 +209,13 @@ public class LightHandler
         Chunk chunk = event.getChunkInstance();
 
         //TODO batch these
-        for (Map.Entry<BlockPos, Integer> entry : chunk.skyLightOverrides.entrySet())
+        for (Map.Entry<BlockPos, Integer> entry : chunk.moddedSkyLights.entrySet())
         {
             Network.WRAPPER.sendTo(new Network.UpdateLightOverridePacket(entry.getKey(), EnumSkyBlock.SKY, entry.getValue()), player);
         }
 
         //TODO batch these
-        for (Map.Entry<BlockPos, Integer> entry : chunk.blockLightOverrides.entrySet())
+        for (Map.Entry<BlockPos, Integer> entry : chunk.moddedBlockLights.entrySet())
         {
             Network.WRAPPER.sendTo(new Network.UpdateLightOverridePacket(entry.getKey(), EnumSkyBlock.BLOCK, entry.getValue()), player);
         }

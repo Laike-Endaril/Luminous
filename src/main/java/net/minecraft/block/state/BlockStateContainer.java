@@ -518,14 +518,10 @@ public class BlockStateContainer
         public int getLightValue(IBlockAccess world, BlockPos pos)
         {
             //Luminous start
-            if (world instanceof World)
-            {
-                Integer override = ((World) world).getChunkFromBlockCoords(pos).blockLightOverrides.get(pos);
-                if (override != null) return override;
-            }
+            Integer modded = world instanceof World ? ((World) world).getChunkFromBlockCoords(pos).moddedBlockLights.get(pos) : null;
+            int vanilla = block.getLightValue(this, world, pos);
+            return modded == null || modded < vanilla ? vanilla : modded;
             //Luminous end
-
-            return this.block.getLightValue(this, world, pos);
         }
 
         @Override

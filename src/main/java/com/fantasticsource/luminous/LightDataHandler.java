@@ -20,7 +20,7 @@ import java.util.Set;
 
 import static com.fantasticsource.luminous.Luminous.MODID;
 
-public class LightHandler
+public class LightDataHandler
 {
     public static Integer setModdedLight(WorldServer world, BlockPos pos, EnumSkyBlock type, String modid, String id, Integer light)
     {

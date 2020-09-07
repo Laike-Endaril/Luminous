@@ -69,7 +69,7 @@ public class Network
         public IMessage onMessage(UpdateModdedLightPacket packet, MessageContext ctx)
         {
             Minecraft mc = Minecraft.getMinecraft();
-            mc.addScheduledTask(() -> LightHandler.setCurrentClientModdedLight(mc.world, packet));
+            mc.addScheduledTask(() -> LightDataHandler.setCurrentClientModdedLight(mc.world, packet));
             return null;
         }
     }

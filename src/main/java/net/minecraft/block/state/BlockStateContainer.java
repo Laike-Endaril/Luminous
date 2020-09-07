@@ -519,6 +519,9 @@ public class BlockStateContainer
         {
             //Luminous start
             Integer modded = world instanceof World ? ((World) world).getChunkFromBlockCoords(pos).moddedBlockLights.get(pos) : null;
+            if (modded != null && modded == 15) return modded;
+
+
             int vanilla = block.getLightValue(this, world, pos);
             return modded == null || modded < vanilla ? vanilla : modded;
             //Luminous end

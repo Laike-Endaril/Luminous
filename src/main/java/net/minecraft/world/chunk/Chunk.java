@@ -581,6 +581,8 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
     {
         //Luminous start
         Integer modded = type == EnumSkyBlock.BLOCK ? moddedBlockLights.get(pos) : moddedSkyLights.get(pos);
+        if (modded != null && modded == 15) return 15;
+
 
         int i = pos.getX() & 15;
         int j = pos.getY();
@@ -640,12 +642,21 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
 
 
         Integer moddedBlock = moddedBlockLights.get(pos), moddedSky = moddedSkyLights.get(pos);
+        if (moddedBlock == null) moddedBlock = 0;
+        if (moddedBlock == 15) return 15;
+
+        int vanillaBlock = extendedblockstorage.getBlockLight(i, j & 15, k);
+        if (vanillaBlock == 15) return 15;
 
 
-        int vanillaBlock = extendedblockstorage.getBlockLight(i, j & 15, k), vanillaSky = !world.provider.hasSkyLight() ? 0 : extendedblockstorage.getSkyLight(i, j & 15, k) - amount;
+        if (moddedSky == null) moddedSky = 0;
+        if (moddedSky == 15) return moddedSky - amount;
 
-        int blockLight = moddedBlock == null || moddedBlock < vanillaBlock ? vanillaBlock : moddedBlock;
-        int skyLight = moddedSky == null || moddedSky < vanillaSky ? vanillaSky : moddedSky;
+        int vanillaSky = !world.provider.hasSkyLight() ? 0 : extendedblockstorage.getSkyLight(i, j & 15, k) - amount;
+        moddedSky--;
+
+        int blockLight = moddedBlock < vanillaBlock ? vanillaBlock : moddedBlock;
+        int skyLight = moddedSky < vanillaSky ? vanillaSky : moddedSky;
 
         return blockLight > skyLight ? blockLight : skyLight;
         //Luminous end

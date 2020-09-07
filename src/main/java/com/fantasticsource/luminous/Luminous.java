@@ -1,11 +1,16 @@
 package com.fantasticsource.luminous;
 
 import com.fantasticsource.fantasticlib.api.FLibAPI;
+import com.fantasticsource.luminous.lights.LightHandler;
+import com.fantasticsource.luminous.lights.type.Light;
 import com.fantasticsource.mctools.MCTools;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.WorldServer;
@@ -14,6 +19,7 @@ import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -41,7 +47,9 @@ public class Luminous
     {
         Network.init();
         MinecraftForge.EVENT_BUS.register(Luminous.class);
+        MinecraftForge.EVENT_BUS.register(Light.class);
         FLibAPI.attachNBTCapToWorldIf(MODID, o -> o instanceof WorldServer);
+        MinecraftForge.EVENT_BUS.register(LightDataHandler.class);
         MinecraftForge.EVENT_BUS.register(LightHandler.class);
     }
 
@@ -63,10 +71,10 @@ public class Luminous
         world.profiler.startSection(Luminous.NAME + ": staticLightTest");
 
         BlockPos pos = entity.getPosition().down();
-        Integer oldVal = LightHandler.setModdedLight(world, pos, EnumSkyBlock.BLOCK, MODID, "snow", 15);
+        Integer oldVal = LightDataHandler.setModdedLight(world, pos, EnumSkyBlock.BLOCK, MODID, "snow", 15);
         if (oldVal != null && oldVal == 15)
         {
-            LightHandler.setModdedLight(world, pos, EnumSkyBlock.BLOCK, MODID, "snow", null);
+            LightDataHandler.setModdedLight(world, pos, EnumSkyBlock.BLOCK, MODID, "snow", null);
         }
 
         world.profiler.endSection();
@@ -91,12 +99,25 @@ public class Luminous
 
         if (world != litWorld || !eyePos.equals(litPosition))
         {
-            LightHandler.setModdedLight(world, eyePos, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), 15);
-            if (litWorld != null) LightHandler.setModdedLight(litWorld, litPosition, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), null);
+            LightDataHandler.setModdedLight(world, eyePos, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), 15);
+            if (litWorld != null) LightDataHandler.setModdedLight(litWorld, litPosition, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), null);
             LIT_WORLDS.put(livingBase, world);
             LIT_POSITIONS.put(livingBase, eyePos);
         }
 
         world.profiler.endSection();
     }
+//
+//
+//    @SubscribeEvent
+//    public static void lightsTest(PlayerInteractEvent.EntityInteractSpecific event)
+//    {
+//        EntityPlayer player = event.getEntityPlayer();
+//        if (!(player instanceof EntityPlayerMP) || event.getHand() != EnumHand.MAIN_HAND) return;
+//
+//        if (!LightHandler.addMovingLightToEntity(MODID, player, 15))
+//        {
+//            LightHandler.removeMovingLightFromEntity(MODID, player);
+//        }
+//    }
 }

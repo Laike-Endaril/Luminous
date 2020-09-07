@@ -518,7 +518,8 @@ public class BlockStateContainer
         public int getLightValue(IBlockAccess world, BlockPos pos)
         {
             //Luminous start
-            int modded = world instanceof World ? ((World) world).getChunkFromBlockCoords(pos).moddedBlockLights.get(pos) : 0;
+            Integer modded = world instanceof World ? ((World) world).getChunkFromBlockCoords(pos).moddedBlockLights.get(pos) : 0;
+            if (modded == null) modded = 0;
             if (modded == 15) return modded;
 
 

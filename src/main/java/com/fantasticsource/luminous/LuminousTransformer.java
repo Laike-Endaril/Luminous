@@ -15,7 +15,8 @@ public class LuminousTransformer implements IClassTransformer
 {
     private static final ArrayList<String> REPLACEMENTS = new ArrayList<>(Arrays.asList(
             "net.minecraft.block.state.BlockStateContainer",
-            "net.minecraft.world.chunk.Chunk"
+            "net.minecraft.world.chunk.Chunk",
+            "net.minecraft.world.World"
     ));
 
     @Override

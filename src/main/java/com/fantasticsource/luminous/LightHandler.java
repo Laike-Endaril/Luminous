@@ -22,14 +22,14 @@ import static com.fantasticsource.luminous.Luminous.MODID;
 
 public class LightHandler
 {
-    public static Integer setLightOverride(WorldServer world, BlockPos pos, EnumSkyBlock type, String modid, String id, Integer light)
+    public static Integer setModdedLight(WorldServer world, BlockPos pos, EnumSkyBlock type, String modid, String id, Integer light)
     {
-        world.profiler.startSection(Luminous.NAME + ": setLightOverride");
+        world.profiler.startSection(Luminous.NAME + ": setModdedLight");
 
-        String fullID = modid + id;
+        String fullID = modid + ":" + id;
 
         NBTTagCompound compound = FLibAPI.getNBTCap(world).getCompound(MODID);
-        if (light == null)
+        if (light == null || light == 0)
         {
             NBTTagCompound subCompound = MCTools.getSubCompoundIfExists(compound, "array", "" + type, "" + pos.getX(), "" + pos.getZ(), "" + pos.getY());
             if (subCompound != null && subCompound.hasKey(fullID))
@@ -45,7 +45,7 @@ public class LightHandler
                     int light2 = subCompound.getInteger(key);
                     if (light2 > max) max = light2;
                 }
-                setCurrentLightOverride(world, pos, type, max == -1 ? null : max);
+                setCurrentModdedLight(world, pos, type, max == -1 ? null : max);
 
                 if (keySet.size() == 0) MCTools.removeSubNBTAndClean(compound, "array", "" + type, "" + pos.getX(), "" + pos.getZ(), "" + pos.getY());
 
@@ -70,7 +70,7 @@ public class LightHandler
                 int light2 = subCompound.getInteger(key);
                 if (light2 > max) max = light2;
             }
-            setCurrentLightOverride(world, pos, type, max == -1 ? null : max);
+            setCurrentModdedLight(world, pos, type, max == -1 ? null : max);
 
             world.profiler.endSection();
             return oldVal;
@@ -78,20 +78,20 @@ public class LightHandler
     }
 
 
-    public static Integer setCurrentClientLightOverride(World world, Network.UpdateLightOverridePacket packet)
+    public static Integer setCurrentClientModdedLight(World world, Network.UpdateModdedLightPacket packet)
     {
-        return setCurrentLightOverride(world, packet.pos, packet.type, packet.value);
+        return setCurrentModdedLight(world, packet.pos, packet.type, packet.value);
     }
 
-    private static Integer setCurrentLightOverride(World world, BlockPos pos, EnumSkyBlock type, Integer light)
+    private static Integer setCurrentModdedLight(World world, BlockPos pos, EnumSkyBlock type, Integer light)
     {
-        world.profiler.startSection(Luminous.NAME + ": setCurrentLightOverride");
+        world.profiler.startSection(Luminous.NAME + ": setCurrentModdedLight");
 
         Chunk chunk = world.getChunkFromBlockCoords(pos);
         LinkedHashMap<BlockPos, Integer> map = type == EnumSkyBlock.SKY ? chunk.moddedSkyLights : chunk.moddedBlockLights;
 
         //Remove
-        if (light == null)
+        if (light == null || light == 0)
         {
             Integer oldVal = map.remove(pos);
             if (oldVal != null) updateLight(world, chunk, pos, type, null);
@@ -123,8 +123,8 @@ public class LightHandler
         //If server...
         if (world instanceof WorldServer)
         {
-            //Save persistent override data
-            updateLightOverrideNBTCap((WorldServer) world, chunk, pos, type, light);
+            //Save persistent modded light data
+            updateModdedLightNBTCap((WorldServer) world, chunk, pos, type, light);
 
             //Sync to client
             PlayerChunkMapEntry playerChunkMapEntry = ((WorldServer) world).getPlayerChunkMap().getEntry(chunk.x, chunk.z);
@@ -132,7 +132,7 @@ public class LightHandler
             {
                 for (EntityPlayerMP player : playerChunkMapEntry.getWatchingPlayers())
                 {
-                    Network.WRAPPER.sendTo(new Network.UpdateLightOverridePacket(pos, type, light), player);
+                    Network.WRAPPER.sendTo(new Network.UpdateModdedLightPacket(pos, type, light), player);
                 }
             }
         }
@@ -141,12 +141,12 @@ public class LightHandler
     }
 
 
-    protected static void updateLightOverrideNBTCap(WorldServer world, Chunk chunk, BlockPos pos, EnumSkyBlock type, Integer light)
+    protected static void updateModdedLightNBTCap(WorldServer world, Chunk chunk, BlockPos pos, EnumSkyBlock type, Integer light)
     {
-        world.profiler.startSection(Luminous.NAME + ": updateLightOverrideNBTCap");
+        world.profiler.startSection(Luminous.NAME + ": updateModdedLightNBTCap");
 
         NBTTagCompound compound = FLibAPI.getNBTCap(world).getCompound(MODID);
-        if (light == null) MCTools.removeSubNBTAndClean(compound, "current", "" + chunk.x, "" + chunk.z, type.name(), "" + pos.getY(), "" + pos.getX(), "" + pos.getZ());
+        if (light == null || light == 0) MCTools.removeSubNBTAndClean(compound, "current", "" + chunk.x, "" + chunk.z, type.name(), "" + pos.getY(), "" + pos.getX(), "" + pos.getZ());
         else
         {
             compound = MCTools.getOrGenerateSubCompound(compound, "current", "" + chunk.x, "" + chunk.z, type.name(), "" + pos.getY(), "" + pos.getX());
@@ -189,7 +189,7 @@ public class LightHandler
                     {
                         int z = Integer.parseInt(zString);
                         int light = xCompound.getInteger(zString);
-                        setCurrentLightOverride(world, new BlockPos(x, y, z), type, light);
+                        setCurrentModdedLight(world, new BlockPos(x, y, z), type, light);
                     }
                 }
             }
@@ -211,13 +211,13 @@ public class LightHandler
         //TODO batch these
         for (Map.Entry<BlockPos, Integer> entry : chunk.moddedSkyLights.entrySet())
         {
-            Network.WRAPPER.sendTo(new Network.UpdateLightOverridePacket(entry.getKey(), EnumSkyBlock.SKY, entry.getValue()), player);
+            Network.WRAPPER.sendTo(new Network.UpdateModdedLightPacket(entry.getKey(), EnumSkyBlock.SKY, entry.getValue()), player);
         }
 
         //TODO batch these
         for (Map.Entry<BlockPos, Integer> entry : chunk.moddedBlockLights.entrySet())
         {
-            Network.WRAPPER.sendTo(new Network.UpdateLightOverridePacket(entry.getKey(), EnumSkyBlock.BLOCK, entry.getValue()), player);
+            Network.WRAPPER.sendTo(new Network.UpdateModdedLightPacket(entry.getKey(), EnumSkyBlock.BLOCK, entry.getValue()), player);
         }
 
         world.profiler.endSection();

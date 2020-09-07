@@ -20,22 +20,22 @@ public class Network
 
     public static void init()
     {
-        WRAPPER.registerMessage(UpdateLightOverridePacketHandler.class, UpdateLightOverridePacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(UpdateModdedLightPacketHandler.class, UpdateModdedLightPacket.class, discriminator++, Side.CLIENT);
     }
 
 
-    public static class UpdateLightOverridePacket implements IMessage
+    public static class UpdateModdedLightPacket implements IMessage
     {
         public BlockPos pos;
         public EnumSkyBlock type;
         public Integer value;
 
-        public UpdateLightOverridePacket()
+        public UpdateModdedLightPacket()
         {
             //Required
         }
 
-        public UpdateLightOverridePacket(BlockPos pos, EnumSkyBlock type, Integer value)
+        public UpdateModdedLightPacket(BlockPos pos, EnumSkyBlock type, Integer value)
         {
             this.pos = pos;
             this.type = type;
@@ -62,14 +62,14 @@ public class Network
         }
     }
 
-    public static class UpdateLightOverridePacketHandler implements IMessageHandler<UpdateLightOverridePacket, IMessage>
+    public static class UpdateModdedLightPacketHandler implements IMessageHandler<UpdateModdedLightPacket, IMessage>
     {
         @Override
         @SideOnly(Side.CLIENT)
-        public IMessage onMessage(UpdateLightOverridePacket packet, MessageContext ctx)
+        public IMessage onMessage(UpdateModdedLightPacket packet, MessageContext ctx)
         {
             Minecraft mc = Minecraft.getMinecraft();
-            mc.addScheduledTask(() -> LightHandler.setCurrentClientLightOverride(mc.world, packet));
+            mc.addScheduledTask(() -> LightHandler.setCurrentClientModdedLight(mc.world, packet));
             return null;
         }
     }

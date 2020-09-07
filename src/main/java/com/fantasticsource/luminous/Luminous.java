@@ -63,10 +63,10 @@ public class Luminous
         world.profiler.startSection(Luminous.NAME + ": staticLightTest");
 
         BlockPos pos = entity.getPosition().down();
-        Integer oldVal = LightHandler.setLightOverride(world, pos, EnumSkyBlock.BLOCK, MODID, "snow", 15);
+        Integer oldVal = LightHandler.setModdedLight(world, pos, EnumSkyBlock.BLOCK, MODID, "snow", 15);
         if (oldVal != null && oldVal == 15)
         {
-            LightHandler.setLightOverride(world, pos, EnumSkyBlock.BLOCK, MODID, "snow", null);
+            LightHandler.setModdedLight(world, pos, EnumSkyBlock.BLOCK, MODID, "snow", null);
         }
 
         world.profiler.endSection();
@@ -91,8 +91,8 @@ public class Luminous
 
         if (world != litWorld || !eyePos.equals(litPosition))
         {
-            LightHandler.setLightOverride(world, eyePos, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), 15);
-            if (litWorld != null) LightHandler.setLightOverride(litWorld, litPosition, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), null);
+            LightHandler.setModdedLight(world, eyePos, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), 15);
+            if (litWorld != null) LightHandler.setModdedLight(litWorld, litPosition, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), null);
             LIT_WORLDS.put(livingBase, world);
             LIT_POSITIONS.put(livingBase, eyePos);
         }

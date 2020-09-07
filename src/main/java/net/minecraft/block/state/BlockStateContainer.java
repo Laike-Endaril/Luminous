@@ -518,12 +518,12 @@ public class BlockStateContainer
         public int getLightValue(IBlockAccess world, BlockPos pos)
         {
             //Luminous start
-            Integer modded = world instanceof World ? ((World) world).getChunkFromBlockCoords(pos).moddedBlockLights.get(pos) : null;
-            if (modded != null && modded == 15) return modded;
+            int modded = world instanceof World ? ((World) world).getChunkFromBlockCoords(pos).moddedBlockLights.get(pos) : 0;
+            if (modded == 15) return modded;
 
 
             int vanilla = block.getLightValue(this, world, pos);
-            return modded == null || modded < vanilla ? vanilla : modded;
+            return modded < vanilla ? vanilla : modded;
             //Luminous end
         }
 

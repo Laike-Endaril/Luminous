@@ -20,7 +20,7 @@ public abstract class Light
 
     protected WorldServer prevWorld = null;
     protected BlockPos prevPos = null;
-    protected Integer prevIntensity = null;
+    protected int prevIntensity = 0;
 
 
     public Light(String modid, String id, EnumSkyBlock type, LightActivator lightActivator, LightIntensity lightIntensity)
@@ -38,7 +38,7 @@ public abstract class Light
     {
         if (!lightActivator.active())
         {
-            LightDataHandler.setModdedLight(world, pos, type, modid, id, null);
+            clean();
             return;
         }
 
@@ -53,13 +53,13 @@ public abstract class Light
         boolean moved = world != prevWorld || pos != prevPos;
         int intensity = lightIntensity.intensity();
         if (moved || intensity != prevIntensity) LightDataHandler.setModdedLight(world, pos, type, modid, id, intensity);
-        if (moved) LightDataHandler.setModdedLight(prevWorld, prevPos, type, modid, id, null);
+        if (moved) LightDataHandler.setModdedLight(prevWorld, prevPos, type, modid, id, 0);
     }
 
 
     public final void clean()
     {
-        LightDataHandler.setModdedLight(world, pos, type, modid, id, null);
+        LightDataHandler.setModdedLight(world, pos, type, modid, id, 0);
     }
 
 

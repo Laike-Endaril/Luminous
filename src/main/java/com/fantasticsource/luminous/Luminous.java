@@ -71,43 +71,42 @@ public class Luminous
         world.profiler.startSection(Luminous.NAME + ": staticLightTest");
 
         BlockPos pos = entity.getPosition().down();
-        Integer oldVal = LightDataHandler.setModdedLight(world, pos, EnumSkyBlock.BLOCK, MODID, "snow", 15);
-        if (oldVal != null && oldVal == 15)
+        if (LightDataHandler.setModdedLight(world, pos, EnumSkyBlock.BLOCK, MODID, "snow", 7) != 0)
         {
-            LightDataHandler.setModdedLight(world, pos, EnumSkyBlock.BLOCK, MODID, "snow", null);
+            LightDataHandler.setModdedLight(world, pos, EnumSkyBlock.BLOCK, MODID, "snow", 0);
         }
 
         world.profiler.endSection();
     }
 
 
-    protected static final LinkedHashMap<EntityLivingBase, WorldServer> LIT_WORLDS = new LinkedHashMap<>();
-    protected static final LinkedHashMap<EntityLivingBase, BlockPos> LIT_POSITIONS = new LinkedHashMap<>();
-
-    @SubscribeEvent
-    public static void movingLightTest(LivingEvent.LivingUpdateEvent event)
-    {
-        EntityLivingBase livingBase = event.getEntityLiving();
-        if (livingBase.world.isRemote) return;
-
-
-        WorldServer world = (WorldServer) livingBase.world, litWorld = LIT_WORLDS.get(livingBase);
-
-        world.profiler.startSection(Luminous.NAME + ": movingLightTest");
-
-        BlockPos eyePos = new BlockPos(livingBase.getPositionEyes(0)), litPosition = LIT_POSITIONS.get(livingBase);
-
-        if (world != litWorld || !eyePos.equals(litPosition))
-        {
-            LightDataHandler.setModdedLight(world, eyePos, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), 15);
-            if (litWorld != null) LightDataHandler.setModdedLight(litWorld, litPosition, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), null);
-            LIT_WORLDS.put(livingBase, world);
-            LIT_POSITIONS.put(livingBase, eyePos);
-        }
-
-        world.profiler.endSection();
-    }
+//    protected static final LinkedHashMap<EntityLivingBase, WorldServer> LIT_WORLDS = new LinkedHashMap<>();
+//    protected static final LinkedHashMap<EntityLivingBase, BlockPos> LIT_POSITIONS = new LinkedHashMap<>();
 //
+//    @SubscribeEvent
+//    public static void movingLightTest(LivingEvent.LivingUpdateEvent event)
+//    {
+//        EntityLivingBase livingBase = event.getEntityLiving();
+//        if (livingBase.world.isRemote) return;
+//
+//
+//        WorldServer world = (WorldServer) livingBase.world, litWorld = LIT_WORLDS.get(livingBase);
+//
+//        world.profiler.startSection(Luminous.NAME + ": movingLightTest");
+//
+//        BlockPos eyePos = new BlockPos(livingBase.getPositionEyes(0)), litPosition = LIT_POSITIONS.get(livingBase);
+//
+//        if (world != litWorld || !eyePos.equals(litPosition))
+//        {
+//            LightDataHandler.setModdedLight(world, eyePos, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), 15);
+//            if (litWorld != null) LightDataHandler.setModdedLight(litWorld, litPosition, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), null);
+//            LIT_WORLDS.put(livingBase, world);
+//            LIT_POSITIONS.put(livingBase, eyePos);
+//        }
+//
+//        world.profiler.endSection();
+//    }
+
 //
 //    @SubscribeEvent
 //    public static void lightsTest(PlayerInteractEvent.EntityInteractSpecific event)

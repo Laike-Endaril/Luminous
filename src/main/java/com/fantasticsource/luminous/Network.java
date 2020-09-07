@@ -28,14 +28,14 @@ public class Network
     {
         public BlockPos pos;
         public EnumSkyBlock type;
-        public Integer value;
+        public int value;
 
         public UpdateModdedLightPacket()
         {
             //Required
         }
 
-        public UpdateModdedLightPacket(BlockPos pos, EnumSkyBlock type, Integer value)
+        public UpdateModdedLightPacket(BlockPos pos, EnumSkyBlock type, int value)
         {
             this.pos = pos;
             this.type = type;
@@ -49,8 +49,7 @@ public class Network
             buf.writeInt(pos.getY());
             buf.writeInt(pos.getZ());
             buf.writeBoolean(type == EnumSkyBlock.BLOCK);
-            buf.writeBoolean(value != null);
-            if (value != null) buf.writeInt(value);
+            buf.writeInt(value);
         }
 
         @Override
@@ -58,7 +57,7 @@ public class Network
         {
             pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
             type = buf.readBoolean() ? EnumSkyBlock.BLOCK : EnumSkyBlock.SKY;
-            value = buf.readBoolean() ? buf.readInt() : null;
+            value = buf.readInt();
         }
     }
 

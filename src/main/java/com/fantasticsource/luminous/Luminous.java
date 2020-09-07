@@ -3,7 +3,7 @@ package com.fantasticsource.luminous;
 import com.fantasticsource.fantasticlib.api.FLibAPI;
 import com.fantasticsource.mctools.MCTools;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.math.BlockPos;
@@ -13,12 +13,11 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.LinkedHashMap;
 
@@ -75,28 +74,28 @@ public class Luminous
     }
 
 
-    protected static final LinkedHashMap<EntityPlayerMP, WorldServer> LIT_WORLDS = new LinkedHashMap<>();
-    protected static final LinkedHashMap<EntityPlayerMP, BlockPos> LIT_POSITIONS = new LinkedHashMap<>();
+    protected static final LinkedHashMap<EntityLivingBase, WorldServer> LIT_WORLDS = new LinkedHashMap<>();
+    protected static final LinkedHashMap<EntityLivingBase, BlockPos> LIT_POSITIONS = new LinkedHashMap<>();
 
     @SubscribeEvent
-    public static void movingLightTest(TickEvent.PlayerTickEvent event)
+    public static void movingLightTest(LivingEvent.LivingUpdateEvent event)
     {
-        if (event.side != Side.SERVER || event.phase != TickEvent.Phase.START) return;
+        EntityLivingBase livingBase = event.getEntityLiving();
+        if (livingBase.world.isRemote) return;
 
 
-        EntityPlayerMP player = (EntityPlayerMP) event.player;
-        WorldServer world = (WorldServer) player.world, litWorld = LIT_WORLDS.get(player);
+        WorldServer world = (WorldServer) livingBase.world, litWorld = LIT_WORLDS.get(livingBase);
 
         world.profiler.startSection(Luminous.NAME + ": movingLightTest");
 
-        BlockPos eyePos = new BlockPos(player.getPositionEyes(0)), litPosition = LIT_POSITIONS.get(player);
+        BlockPos eyePos = new BlockPos(livingBase.getPositionEyes(0)), litPosition = LIT_POSITIONS.get(livingBase);
 
         if (world != litWorld || !eyePos.equals(litPosition))
         {
-            LightHandler.setLightOverride(world, eyePos, EnumSkyBlock.BLOCK, MODID, "" + player.getUniqueID(), 15);
-            if (litWorld != null) LightHandler.setLightOverride(litWorld, litPosition, EnumSkyBlock.BLOCK, MODID, "" + player.getUniqueID(), null);
-            LIT_WORLDS.put(player, world);
-            LIT_POSITIONS.put(player, eyePos);
+            LightHandler.setLightOverride(world, eyePos, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), 15);
+            if (litWorld != null) LightHandler.setLightOverride(litWorld, litPosition, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), null);
+            LIT_WORLDS.put(livingBase, world);
+            LIT_POSITIONS.put(livingBase, eyePos);
         }
 
         world.profiler.endSection();

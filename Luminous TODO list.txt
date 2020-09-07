@@ -1,0 +1,6 @@
+Moving light handler
+...attach(predicate<entity>, modid, id, light level)
+...make sure to remove lights for entities that don't exist *only on server side*
+
+Sky light does not seem to propagate or render, though it does set the source block's server-side value correctly (detected by DS light gauge)
+Note: sky light doesn't burn zombies if they can't "see the sky".  This is just normal behavior

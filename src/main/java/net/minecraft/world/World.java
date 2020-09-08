@@ -185,12 +185,9 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
         return this.getBlockState(blockpos);
     }
 
-    /**
-     * Check if the given BlockPos has valid coordinates
-     */
     public boolean isValid(BlockPos pos)
     {
-        return !this.isOutsideBuildHeight(pos) && pos.getX() >= -30000000 && pos.getZ() >= -30000000 && pos.getX() < 30000000 && pos.getZ() < 30000000;
+        return !isOutsideBuildHeight(pos) && pos.getX() >= -30000000 && pos.getZ() >= -30000000 && pos.getX() < 30000000 && pos.getZ() < 30000000;
     }
 
     public boolean isOutsideBuildHeight(BlockPos pos)
@@ -198,10 +195,6 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
         return pos.getY() < 0 || pos.getY() >= 256;
     }
 
-    /**
-     * Checks to see if an air block exists at the provided location. Note that this only checks to see if the blocks
-     * material is set to air, meaning it is possible for non-vanilla blocks to still pass this check.
-     */
     public boolean isAirBlock(BlockPos pos)
     {
         return this.getBlockState(pos).getBlock().isAir(this.getBlockState(pos), this, pos);
@@ -209,12 +202,12 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
 
     public boolean isBlockLoaded(BlockPos pos)
     {
-        return this.isBlockLoaded(pos, true);
+        return isBlockLoaded(pos, true);
     }
 
     public boolean isBlockLoaded(BlockPos pos, boolean allowEmpty)
     {
-        return this.isChunkLoaded(pos.getX() >> 4, pos.getZ() >> 4, allowEmpty);
+        return isChunkLoaded(pos.getX() >> 4, pos.getZ() >> 4, allowEmpty);
     }
 
     public boolean isAreaLoaded(BlockPos center, int radius)
@@ -260,47 +253,35 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
             {
                 for (int j = zStart; j <= zEnd; ++j)
                 {
-                    if (!this.isChunkLoaded(i, j, allowEmpty))
-                    {
-                        return false;
-                    }
+                    if (!isChunkLoaded(i, j, allowEmpty)) return false;
                 }
             }
 
+
             return true;
         }
-        else
-        {
-            return false;
-        }
+
+
+        return false;
     }
 
     protected abstract boolean isChunkLoaded(int x, int z, boolean allowEmpty);
 
     public Chunk getChunkFromBlockCoords(BlockPos pos)
     {
-        return this.getChunkFromChunkCoords(pos.getX() >> 4, pos.getZ() >> 4);
+        return getChunkFromChunkCoords(pos.getX() >> 4, pos.getZ() >> 4);
     }
 
-    /**
-     * Gets the chunk at the specified location.
-     */
     public Chunk getChunkFromChunkCoords(int chunkX, int chunkZ)
     {
-        return this.chunkProvider.provideChunk(chunkX, chunkZ);
+        return chunkProvider.provideChunk(chunkX, chunkZ);
     }
 
     public boolean isChunkGeneratedAt(int x, int z)
     {
-        return this.isChunkLoaded(x, z, false) ? true : this.chunkProvider.isChunkGeneratedAt(x, z);
+        return isChunkLoaded(x, z, false) || chunkProvider.isChunkGeneratedAt(x, z);
     }
 
-    /**
-     * Flag 1 will cause a block update. Flag 2 will send the change to clients. Flag 4 will prevent the block from
-     * being re-rendered, if this is a client world. Flag 8 will force any re-renders to run on the main thread instead
-     * of the worker pool, if this is a client world and flag 4 is clear. Flag 16 will prevent observers from seeing
-     * this change. Flags can be OR-ed
-     */
     public boolean setBlockState(BlockPos pos, IBlockState newState, int flags)
     {
         if (this.isOutsideBuildHeight(pos))
@@ -814,11 +795,11 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
             }
             else if (this.getBlockState(pos).useNeighborBrightness())
             {
-                int i1 = this.getLightFor(type, pos.up());
-                int i = this.getLightFor(type, pos.east());
-                int j = this.getLightFor(type, pos.west());
-                int k = this.getLightFor(type, pos.south());
-                int l = this.getLightFor(type, pos.north());
+                int i1 = getLightFor(type, pos.up());
+                int i = getLightFor(type, pos.east());
+                int j = getLightFor(type, pos.west());
+                int k = getLightFor(type, pos.south());
+                int l = getLightFor(type, pos.north());
 
                 if (i > i1)
                 {
@@ -852,33 +833,21 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
 
     public int getLightFor(EnumSkyBlock type, BlockPos pos)
     {
+        //Luminous start
         profiler.startSection("getLightFor");
-        profiler.startSection("adjust");
-        if (pos.getY() < 0) pos = new BlockPos(pos.getX(), 0, pos.getZ());
 
-        profiler.endStartSection("valid");
-        if (!isValid(pos))
+        int yy = pos.getY();
+        if (yy < 0 || yy >= 256 || !isBlockLoaded(pos))
         {
-            profiler.endSection();
             profiler.endSection();
             return type.defaultLightValue;
         }
 
-        profiler.endStartSection("loaded");
-        if (!isBlockLoaded(pos))
-        {
-            profiler.endSection();
-            profiler.endSection();
-            return type.defaultLightValue;
-        }
+        int result = getChunkFromBlockCoords(pos).getLightFor(type, pos);
 
-        profiler.endStartSection("getChunk");
-        Chunk chunk = getChunkFromBlockCoords(pos);
-        profiler.endStartSection("chunkGetLightFor");
-        int result = chunk.getLightFor(type, pos);
-        profiler.endSection();
         profiler.endSection();
         return result;
+        //Luminous end
     }
 
     public void setLightFor(EnumSkyBlock type, BlockPos pos, int lightValue)
@@ -896,10 +865,7 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
 
     public void notifyLightSet(BlockPos pos)
     {
-        for (int i = 0; i < this.eventListeners.size(); ++i)
-        {
-            ((IWorldEventListener) this.eventListeners.get(i)).notifyLightSet(pos);
-        }
+        for (IWorldEventListener eventListener : this.eventListeners) eventListener.notifyLightSet(pos);
     }
 
     @SideOnly(Side.CLIENT)

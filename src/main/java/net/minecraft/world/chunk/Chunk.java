@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Chunk implements net.minecraftforge.common.capabilities.ICapabilityProvider
 {
-    public LinkedHashMap<BlockPos, Integer> moddedBlockLights = new LinkedHashMap<>(); //Luminous
+    public HashMap<BlockPos, Integer> moddedBlockLights = new HashMap<>(); //Luminous
 
     private static final Logger LOGGER = LogManager.getLogger();
     public static final ExtendedBlockStorage NULL_BLOCK_STORAGE = null;

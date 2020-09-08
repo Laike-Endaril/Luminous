@@ -3,7 +3,6 @@ package com.fantasticsource.luminous;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -27,7 +26,6 @@ public class Network
     public static class UpdateModdedLightPacket implements IMessage
     {
         public BlockPos pos;
-        public EnumSkyBlock type;
         public int value;
 
         public UpdateModdedLightPacket()
@@ -35,10 +33,9 @@ public class Network
             //Required
         }
 
-        public UpdateModdedLightPacket(BlockPos pos, EnumSkyBlock type, int value)
+        public UpdateModdedLightPacket(BlockPos pos, int value)
         {
             this.pos = pos;
-            this.type = type;
             this.value = value;
         }
 
@@ -48,7 +45,6 @@ public class Network
             buf.writeInt(pos.getX());
             buf.writeInt(pos.getY());
             buf.writeInt(pos.getZ());
-            buf.writeBoolean(type == EnumSkyBlock.BLOCK);
             buf.writeInt(value);
         }
 
@@ -56,7 +52,6 @@ public class Network
         public void fromBytes(ByteBuf buf)
         {
             pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-            type = buf.readBoolean() ? EnumSkyBlock.BLOCK : EnumSkyBlock.SKY;
             value = buf.readInt();
         }
     }

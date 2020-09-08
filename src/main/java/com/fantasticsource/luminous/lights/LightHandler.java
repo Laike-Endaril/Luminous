@@ -7,7 +7,6 @@ import com.fantasticsource.luminous.lights.type.Light;
 import com.fantasticsource.luminous.lights.type.LightEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.profiler.Profiler;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -27,7 +26,7 @@ public class LightHandler
         String fullID = modid + ":" + entity.getPersistentID();
         if (!LIGHTS.containsKey(fullID))
         {
-            LIGHTS.put(fullID, new LightEntity(MODID, "" + entity.getPersistentID(), EnumSkyBlock.BLOCK, new LightActivatorEntityActive(entity), new LightIntensityStatic(light), entity));
+            LIGHTS.put(fullID, new LightEntity(MODID, "" + entity.getPersistentID(), new LightActivatorEntityActive(entity), new LightIntensityStatic(light), entity));
             return true;
         }
         return false;

@@ -9,7 +9,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
@@ -67,9 +66,9 @@ public class Luminous
         world.profiler.startSection(Luminous.NAME + ": staticLightTest");
 
         BlockPos pos = entity.getPosition().down();
-        if (LightDataHandler.setModdedLight(world, pos, EnumSkyBlock.BLOCK, MODID, "snow", 7) != 0)
+        if (LightDataHandler.setModdedLight(world, pos, MODID, "snow", 7) != 0)
         {
-            LightDataHandler.setModdedLight(world, pos, EnumSkyBlock.BLOCK, MODID, "snow", 0);
+            LightDataHandler.setModdedLight(world, pos, MODID, "snow", 0);
         }
 
         world.profiler.endSection();
@@ -94,8 +93,8 @@ public class Luminous
 
         if (world != litWorld || !eyePos.equals(litPosition))
         {
-            LightDataHandler.setModdedLight(world, eyePos, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), 15);
-            if (litWorld != null) LightDataHandler.setModdedLight(litWorld, litPosition, EnumSkyBlock.BLOCK, MODID, "" + livingBase.getUniqueID(), 0);
+            LightDataHandler.setModdedLight(world, eyePos, MODID, "" + livingBase.getUniqueID(), 15);
+            if (litWorld != null) LightDataHandler.setModdedLight(litWorld, litPosition, MODID, "" + livingBase.getUniqueID(), 0);
             LIT_WORLDS.put(livingBase, world);
             LIT_POSITIONS.put(livingBase, eyePos);
         }

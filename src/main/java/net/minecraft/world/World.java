@@ -852,24 +852,33 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
 
     public int getLightFor(EnumSkyBlock type, BlockPos pos)
     {
-        if (pos.getY() < 0)
+        profiler.startSection("getLightFor");
+        profiler.startSection("adjust");
+        if (pos.getY() < 0) pos = new BlockPos(pos.getX(), 0, pos.getZ());
+
+        profiler.endStartSection("valid");
+        if (!isValid(pos))
         {
-            pos = new BlockPos(pos.getX(), 0, pos.getZ());
+            profiler.endSection();
+            profiler.endSection();
+            return type.defaultLightValue;
         }
 
-        if (!this.isValid(pos))
+        profiler.endStartSection("loaded");
+        if (!isBlockLoaded(pos))
         {
+            profiler.endSection();
+            profiler.endSection();
             return type.defaultLightValue;
         }
-        else if (!this.isBlockLoaded(pos))
-        {
-            return type.defaultLightValue;
-        }
-        else
-        {
-            Chunk chunk = this.getChunkFromBlockCoords(pos);
-            return chunk.getLightFor(type, pos);
-        }
+
+        profiler.endStartSection("getChunk");
+        Chunk chunk = getChunkFromBlockCoords(pos);
+        profiler.endStartSection("chunkGetLightFor");
+        int result = chunk.getLightFor(type, pos);
+        profiler.endSection();
+        profiler.endSection();
+        return result;
     }
 
     public void setLightFor(EnumSkyBlock type, BlockPos pos, int lightValue)
@@ -2953,27 +2962,54 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
 
     private int getRawLight(BlockPos pos, EnumSkyBlock lightType)
     {
-        if (lightType == EnumSkyBlock.SKY && canSeeSky(pos)) return 15;
+        profiler.startSection("getRawLight");
+        profiler.startSection("1");
+        if (lightType == EnumSkyBlock.SKY && canSeeSky(pos))
+        {
+            profiler.endSection();
+            profiler.endSection();
+            return 15;
+        }
 
 
+        profiler.endStartSection("2");
         IBlockState blockState = getBlockState(pos);
+        profiler.endStartSection("3");
         int l = lightType == EnumSkyBlock.SKY ? 0 : blockState.getBlock().getLightValue(blockState, this, pos);
+        profiler.endStartSection("4");
 
         int opacity = blockState.getBlock().getLightOpacity(blockState, this, pos);
+        profiler.endStartSection("5");
         if (opacity < 1) opacity = 1;
 
-        if (opacity >= 15 || l >= 14) return l;
+        if (opacity >= 15 || l >= 14)
+        {
+            profiler.endSection();
+            profiler.endSection();
+            return l;
+        }
 
 
+        profiler.endStartSection("6");
         for (EnumFacing enumfacing : EnumFacing.values())
         {
             int lightFor = getLightFor(lightType, pos.offset(enumfacing)) - opacity;
+            profiler.startSection("other");
 
             if (lightFor > l) l = lightFor;
 
-            if (l >= 14) return l;
+            if (l >= 14)
+            {
+                profiler.endSection();
+                profiler.endSection();
+                profiler.endSection();
+                return l;
+            }
+            profiler.endSection();
         }
 
+        profiler.endSection();
+        profiler.endSection();
         return l;
     }
 
@@ -3001,6 +3037,7 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
         if (rawLightCenter > lightForCenter) lightUpdateBlockList[writeIndex++] = 133152; //light = 0, xOff = 0, yOff = 0, zOff = 0
         else if (rawLightCenter < lightForCenter)
         {
+            profiler.startSection("firstPass");
             lightUpdateBlockList[writeIndex++] = 133152 | lightForCenter << 18; //light = lightForCenter, xOff = 0, yOff = 0, zOff = 0
 
             int dataLight, lightFor;
@@ -3051,9 +3088,11 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
             }
 
             readIndex = 0;
+            profiler.endSection();
         }
 
 
+        profiler.startSection("finalPass");
         int lightForDataPos, rawLightDataPos;
 
         while (readIndex < writeIndex)
@@ -3084,8 +3123,8 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
                             xx = dataX + enumfacing.getFrontOffsetX();
                             yy = dataY + enumfacing.getFrontOffsetY();
                             zz = dataZ + enumfacing.getFrontOffsetZ();
-
                             pos.setPos(xx, yy, zz);
+
                             if (getLightFor(lightType, pos) < rawLightDataPos)
                             {
                                 lightUpdateBlockList[writeIndex++] = xx - centerX + 32 | yy - centerY + 32 << 6 | zz - centerZ + 32 << 12; //light = 0, xOff = xx, yOff = yy, zOff = zz
@@ -3097,6 +3136,8 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
         }
 
         profiler.endSection();
+        profiler.endSection();
+
         return true;
         //Luminous end
     }

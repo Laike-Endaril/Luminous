@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Chunk implements net.minecraftforge.common.capabilities.ICapabilityProvider
 {
-    public LinkedHashMap<BlockPos, Integer> moddedBlockLights = new LinkedHashMap<>(), moddedSkyLights = new LinkedHashMap<>(); //Luminous
+    public LinkedHashMap<BlockPos, Integer> moddedBlockLights = new LinkedHashMap<>(); //Luminous
 
     private static final Logger LOGGER = LogManager.getLogger();
     public static final ExtendedBlockStorage NULL_BLOCK_STORAGE = null;
@@ -110,7 +110,7 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
                     {
                         int i1 = l >> 4;
 
-                        if (storageArrays[i1] == NULL_BLOCK_STORAGE)
+                        if (storageArrays[i1] == null)
                         {
                             storageArrays[i1] = new ExtendedBlockStorage(i1 << 4, flag);
                         }
@@ -142,7 +142,7 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
     {
         for (int i = storageArrays.length - 1; i >= 0; --i)
         {
-            if (storageArrays[i] != NULL_BLOCK_STORAGE) return storageArrays[i];
+            if (storageArrays[i] != null) return storageArrays[i];
         }
         return null;
     }
@@ -227,7 +227,7 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
                         {
                             ExtendedBlockStorage extendedblockstorage = storageArrays[i1 >> 4];
 
-                            if (extendedblockstorage != NULL_BLOCK_STORAGE)
+                            if (extendedblockstorage != null)
                             {
                                 extendedblockstorage.setSkyLight(j, i1 & 15, k, k1);
                                 world.notifyLightSet(new BlockPos((this.x << 4) + j, i1, (this.z << 4) + k));
@@ -346,7 +346,7 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
                     {
                         ExtendedBlockStorage extendedblockstorage2 = storageArrays[j1 >> 4];
 
-                        if (extendedblockstorage2 != NULL_BLOCK_STORAGE)
+                        if (extendedblockstorage2 != null)
                         {
                             extendedblockstorage2.setSkyLight(x, j1 & 15, z, 15);
                             world.notifyLightSet(new BlockPos((this.x << 4) + x, j1, (this.z << 4) + z));
@@ -359,7 +359,7 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
                     {
                         ExtendedBlockStorage extendedblockstorage = storageArrays[i1 >> 4];
 
-                        if (extendedblockstorage != NULL_BLOCK_STORAGE)
+                        if (extendedblockstorage != null)
                         {
                             extendedblockstorage.setSkyLight(x, i1 & 15, z, 0);
                             world.notifyLightSet(new BlockPos((this.x << 4) + x, i1, (this.z << 4) + z));
@@ -388,7 +388,7 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
 
                     ExtendedBlockStorage extendedblockstorage1 = storageArrays[j >> 4];
 
-                    if (extendedblockstorage1 != NULL_BLOCK_STORAGE)
+                    if (extendedblockstorage1 != null)
                     {
                         extendedblockstorage1.setSkyLight(x, j & 15, z, k1);
                     }
@@ -466,7 +466,7 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
                 {
                     ExtendedBlockStorage extendedblockstorage = storageArrays[y >> 4];
 
-                    if (extendedblockstorage != NULL_BLOCK_STORAGE)
+                    if (extendedblockstorage != null)
                     {
                         return extendedblockstorage.get(x & 15, y & 15, z & 15);
                     }
@@ -509,7 +509,7 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
         ExtendedBlockStorage extendedblockstorage = storageArrays[j >> 4];
         boolean flag = false;
 
-        if (extendedblockstorage == NULL_BLOCK_STORAGE)
+        if (extendedblockstorage == null)
         {
             if (block == Blocks.AIR) return null;
 
@@ -580,21 +580,34 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
     public int getLightFor(EnumSkyBlock type, BlockPos pos)
     {
         //Luminous start
-        Integer modded = type == EnumSkyBlock.BLOCK ? moddedBlockLights.get(pos) : moddedSkyLights.get(pos);
-        if (modded != null && modded == 15) return 15;
+        if (type == EnumSkyBlock.BLOCK)
+        {
+            int yy = pos.getY();
+            ExtendedBlockStorage extendedblockstorage = storageArrays[yy >> 4];
+            if (extendedblockstorage == null) return 0;
 
 
-        int i = pos.getX() & 15;
-        int j = pos.getY();
-        int k = pos.getZ() & 15;
-        ExtendedBlockStorage extendedblockstorage = storageArrays[j >> 4];
+            int modded = moddedBlockLights.getOrDefault(pos, 0);
+            if (modded == 15) return 15;
 
-        int vanilla;
-        if (extendedblockstorage == NULL_BLOCK_STORAGE) vanilla = canSeeSky(pos) ? type.defaultLightValue : 0;
-        else if (type == EnumSkyBlock.SKY) vanilla = !world.provider.hasSkyLight() ? 0 : extendedblockstorage.getSkyLight(i, j & 15, k);
-        else vanilla = type == EnumSkyBlock.BLOCK ? extendedblockstorage.getBlockLight(i, j & 15, k) : type.defaultLightValue;
 
-        return modded == null || modded < vanilla ? vanilla : modded;
+            int xx = pos.getX() & 15;
+            int zz = pos.getZ() & 15;
+
+            int vanilla = extendedblockstorage.getBlockLight(xx, yy & 15, zz);
+
+            return modded < vanilla ? vanilla : modded;
+        }
+        else
+        {
+            if (!world.provider.hasSkyLight()) return 0;
+
+            int yy = pos.getY();
+            if (yy > 255) return 15;
+
+            ExtendedBlockStorage extendedblockstorage = storageArrays[yy >> 4];
+            return extendedblockstorage == null ? 0 : extendedblockstorage.getSkyLight(pos.getX() & 15, yy & 15, pos.getZ() & 15);
+        }
         //Luminous end
     }
 
@@ -605,7 +618,7 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
         int k = pos.getZ() & 15;
         ExtendedBlockStorage extendedblockstorage = storageArrays[j >> 4];
 
-        if (extendedblockstorage == NULL_BLOCK_STORAGE)
+        if (extendedblockstorage == null)
         {
             extendedblockstorage = new ExtendedBlockStorage(j >> 4 << 4, world.provider.hasSkyLight());
             storageArrays[j >> 4] = extendedblockstorage;
@@ -635,28 +648,22 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
         int k = pos.getZ() & 15;
         ExtendedBlockStorage extendedblockstorage = storageArrays[j >> 4];
 
-        if (extendedblockstorage == NULL_BLOCK_STORAGE)
+        if (extendedblockstorage == null)
         {
             return world.provider.hasSkyLight() && amount < EnumSkyBlock.SKY.defaultLightValue ? EnumSkyBlock.SKY.defaultLightValue - amount : 0;
         }
 
 
-        Integer moddedBlock = moddedBlockLights.get(pos), moddedSky = moddedSkyLights.get(pos);
-        if (moddedBlock == null) moddedBlock = 0;
-        if (moddedSky == null) moddedSky = 0;
-
-
+        int moddedBlock = moddedBlockLights.getOrDefault(pos, 0);
         if (moddedBlock == 15) return 15;
+
 
         int vanillaBlock = extendedblockstorage.getBlockLight(i, j & 15, k);
         if (vanillaBlock == 15) return 15;
 
 
-        int vanillaSky = !world.provider.hasSkyLight() ? 0 : extendedblockstorage.getSkyLight(i, j & 15, k) - amount;
-        moddedSky -= amount;
-
         int blockLight = moddedBlock < vanillaBlock ? vanillaBlock : moddedBlock;
-        int skyLight = moddedSky < vanillaSky ? vanillaSky : moddedSky;
+        int skyLight = !world.provider.hasSkyLight() ? 0 : extendedblockstorage.getSkyLight(i, j & 15, k) - amount;
 
         return blockLight > skyLight ? blockLight : skyLight;
         //Luminous end
@@ -1002,7 +1009,7 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
         for (int i = startY; i <= endY; i += 16)
         {
             ExtendedBlockStorage extendedblockstorage = storageArrays[i >> 4];
-            if (extendedblockstorage != NULL_BLOCK_STORAGE && !extendedblockstorage.isEmpty()) return false;
+            if (extendedblockstorage != null && !extendedblockstorage.isEmpty()) return false;
         }
 
         return true;
@@ -1038,14 +1045,14 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
 
             if ((availableSections & 1 << i) == 0)
             {
-                if (groundUpContinuous && extendedblockstorage != NULL_BLOCK_STORAGE)
+                if (groundUpContinuous && extendedblockstorage != null)
                 {
-                    storageArrays[i] = NULL_BLOCK_STORAGE;
+                    storageArrays[i] = null;
                 }
             }
             else
             {
-                if (extendedblockstorage == NULL_BLOCK_STORAGE)
+                if (extendedblockstorage == null)
                 {
                     extendedblockstorage = new ExtendedBlockStorage(i << 4, flag);
                     storageArrays[i] = extendedblockstorage;
@@ -1068,7 +1075,7 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
 
         for (int j = 0; j < storageArrays.length; ++j)
         {
-            if (storageArrays[j] != NULL_BLOCK_STORAGE && (availableSections & 1 << j) != 0)
+            if (storageArrays[j] != null && (availableSections & 1 << j) != 0)
             {
                 storageArrays[j].recalculateRefCounts();
             }
@@ -1153,7 +1160,7 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
                     BlockPos blockpos1 = blockpos.add(k, (j << 4) + i1, l);
                     boolean flag = i1 == 0 || i1 == 15 || k == 0 || k == 15 || l == 0 || l == 15;
 
-                    if (storageArrays[j] == NULL_BLOCK_STORAGE && flag || storageArrays[j] != NULL_BLOCK_STORAGE && storageArrays[j].get(k, i1, l).getBlock().isAir(storageArrays[j].get(k, i1, l), world, blockpos1))
+                    if (storageArrays[j] == null && flag || storageArrays[j] != null && storageArrays[j].get(k, i1, l).getBlock().isAir(storageArrays[j].get(k, i1, l), world, blockpos1))
                     {
                         for (EnumFacing enumfacing : EnumFacing.values())
                         {

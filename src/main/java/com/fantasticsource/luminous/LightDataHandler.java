@@ -14,7 +14,6 @@ import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,7 +21,7 @@ import static com.fantasticsource.luminous.Luminous.MODID;
 
 public class LightDataHandler
 {
-    public static int setModdedLight(WorldServer world, BlockPos pos, EnumSkyBlock type, String modid, String id, int light)
+    public static int setModdedLight(WorldServer world, BlockPos pos, String modid, String id, int light)
     {
         world.profiler.startSection(Luminous.NAME + ": setModdedLight");
 
@@ -31,7 +30,7 @@ public class LightDataHandler
         NBTTagCompound compound = FLibAPI.getNBTCap(world).getCompound(MODID);
         if (light == 0)
         {
-            NBTTagCompound subCompound = MCTools.getSubCompoundIfExists(compound, "array", "" + type, "" + pos.getX(), "" + pos.getZ(), "" + pos.getY());
+            NBTTagCompound subCompound = MCTools.getSubCompoundIfExists(compound, "array", "" + pos.getX(), "" + pos.getZ(), "" + pos.getY());
             if (subCompound != null && subCompound.hasKey(fullID))
             {
                 int oldVal = subCompound.getInteger(fullID);
@@ -45,9 +44,9 @@ public class LightDataHandler
                     int light2 = subCompound.getInteger(key);
                     if (light2 > max) max = light2;
                 }
-                setCurrentModdedLight(world, pos, type, max);
+                setCurrentModdedLight(world, pos, max);
 
-                if (keySet.size() == 0) MCTools.removeSubNBTAndClean(compound, "array", "" + type, "" + pos.getX(), "" + pos.getZ(), "" + pos.getY());
+                if (keySet.size() == 0) MCTools.removeSubNBTAndClean(compound, "array", "" + pos.getX(), "" + pos.getZ(), "" + pos.getY());
 
                 world.profiler.endSection();
                 return oldVal;
@@ -58,7 +57,7 @@ public class LightDataHandler
         }
         else
         {
-            NBTTagCompound subCompound = MCTools.getOrGenerateSubCompound(compound, "array", "" + type, "" + pos.getX(), "" + pos.getZ(), "" + pos.getY());
+            NBTTagCompound subCompound = MCTools.getOrGenerateSubCompound(compound, "array", "" + pos.getX(), "" + pos.getZ(), "" + pos.getY());
 
             int oldVal = subCompound.getInteger(fullID);
 
@@ -70,7 +69,7 @@ public class LightDataHandler
                 int light2 = subCompound.getInteger(key);
                 if (light2 > max) max = light2;
             }
-            setCurrentModdedLight(world, pos, type, max);
+            setCurrentModdedLight(world, pos, max);
 
             world.profiler.endSection();
             return oldVal;
@@ -80,43 +79,42 @@ public class LightDataHandler
 
     public static int setCurrentClientModdedLight(World world, Network.UpdateModdedLightPacket packet)
     {
-        return setCurrentModdedLight(world, packet.pos, packet.type, packet.value);
+        return setCurrentModdedLight(world, packet.pos, packet.value);
     }
 
-    private static int setCurrentModdedLight(World world, BlockPos pos, EnumSkyBlock type, int light)
+    private static int setCurrentModdedLight(World world, BlockPos pos, int light)
     {
         world.profiler.startSection(Luminous.NAME + ": setCurrentModdedLight");
 
         Chunk chunk = world.getChunkFromBlockCoords(pos);
-        LinkedHashMap<BlockPos, Integer> map = type == EnumSkyBlock.SKY ? chunk.moddedSkyLights : chunk.moddedBlockLights;
 
         //Remove
         if (light == 0)
         {
-            Integer oldVal = map.remove(pos);
-            if (oldVal != null) updateModdedLight(world, chunk, pos, type, 0);
+            Integer oldVal = chunk.moddedBlockLights.remove(pos);
+            if (oldVal != null) updateModdedLight(world, chunk, pos, 0);
 
             world.profiler.endSection();
             return oldVal == null ? 0 : oldVal;
         }
 
         //Set / change
-        Integer oldVal = map.put(pos, light);
-        if (oldVal == null || oldVal != light) updateModdedLight(world, chunk, pos, type, light);
+        Integer oldVal = chunk.moddedBlockLights.put(pos, light);
+        if (oldVal == null || oldVal != light) updateModdedLight(world, chunk, pos, light);
 
         world.profiler.endSection();
         return oldVal == null ? 0 : oldVal;
     }
 
 
-    protected static void updateModdedLight(World world, Chunk chunk, BlockPos pos, EnumSkyBlock type, int light)
+    protected static void updateModdedLight(World world, Chunk chunk, BlockPos pos, int light)
     {
         world.profiler.startSection(Luminous.NAME + ": updateModdedLight");
 
         //Force local light update
         for (BlockPos involved : new BlockPos[]{pos, pos.up(), pos.down(), pos.north(), pos.south(), pos.west(), pos.east()})
         {
-            world.checkLightFor(type, involved);
+            world.checkLightFor(EnumSkyBlock.BLOCK, involved);
         }
 
 
@@ -124,7 +122,7 @@ public class LightDataHandler
         if (world instanceof WorldServer)
         {
             //Save persistent modded light data
-            updateModdedLightNBTCap((WorldServer) world, chunk, pos, type, light);
+            updateModdedLightNBTCap((WorldServer) world, chunk, pos, light);
 
             //Sync to client
             PlayerChunkMapEntry playerChunkMapEntry = ((WorldServer) world).getPlayerChunkMap().getEntry(chunk.x, chunk.z);
@@ -132,7 +130,7 @@ public class LightDataHandler
             {
                 for (EntityPlayerMP player : playerChunkMapEntry.getWatchingPlayers())
                 {
-                    Network.WRAPPER.sendTo(new Network.UpdateModdedLightPacket(pos, type, light), player);
+                    Network.WRAPPER.sendTo(new Network.UpdateModdedLightPacket(pos, light), player);
                 }
             }
         }
@@ -141,15 +139,15 @@ public class LightDataHandler
     }
 
 
-    protected static void updateModdedLightNBTCap(WorldServer world, Chunk chunk, BlockPos pos, EnumSkyBlock type, int light)
+    protected static void updateModdedLightNBTCap(WorldServer world, Chunk chunk, BlockPos pos, int light)
     {
         world.profiler.startSection(Luminous.NAME + ": updateModdedLightNBTCap");
 
         NBTTagCompound compound = FLibAPI.getNBTCap(world).getCompound(MODID);
-        if (light == 0) MCTools.removeSubNBTAndClean(compound, "current", "" + chunk.x, "" + chunk.z, type.name(), "" + pos.getY(), "" + pos.getX(), "" + pos.getZ());
+        if (light == 0) MCTools.removeSubNBTAndClean(compound, "current", "" + chunk.x, "" + chunk.z, "" + pos.getY(), "" + pos.getX(), "" + pos.getZ());
         else
         {
-            compound = MCTools.getOrGenerateSubCompound(compound, "current", "" + chunk.x, "" + chunk.z, type.name(), "" + pos.getY(), "" + pos.getX());
+            compound = MCTools.getOrGenerateSubCompound(compound, "current", "" + chunk.x, "" + chunk.z, "" + pos.getY(), "" + pos.getX());
             compound.setInteger("" + pos.getZ(), light);
         }
 
@@ -170,27 +168,21 @@ public class LightDataHandler
 
         world.profiler.startSection(Luminous.NAME + ": loadChunk");
 
-        for (String typeString : compound.getKeySet())
+        for (String yString : compound.getKeySet())
         {
-            EnumSkyBlock type = EnumSkyBlock.valueOf(typeString);
-            NBTTagCompound typeCompound = compound.getCompoundTag(typeString);
+            int y = Integer.parseInt(yString);
+            NBTTagCompound yCompound = compound.getCompoundTag(yString);
 
-            for (String yString : typeCompound.getKeySet())
+            for (String xString : yCompound.getKeySet())
             {
-                int y = Integer.parseInt(yString);
-                NBTTagCompound yCompound = typeCompound.getCompoundTag(yString);
+                int x = Integer.parseInt(xString);
+                NBTTagCompound xCompound = yCompound.getCompoundTag(xString);
 
-                for (String xString : yCompound.getKeySet())
+                for (String zString : xCompound.getKeySet())
                 {
-                    int x = Integer.parseInt(xString);
-                    NBTTagCompound xCompound = yCompound.getCompoundTag(xString);
-
-                    for (String zString : xCompound.getKeySet())
-                    {
-                        int z = Integer.parseInt(zString);
-                        int light = xCompound.getInteger(zString);
-                        setCurrentModdedLight(world, new BlockPos(x, y, z), type, light);
-                    }
+                    int z = Integer.parseInt(zString);
+                    int light = xCompound.getInteger(zString);
+                    setCurrentModdedLight(world, new BlockPos(x, y, z), light);
                 }
             }
         }
@@ -209,15 +201,9 @@ public class LightDataHandler
         Chunk chunk = event.getChunkInstance();
 
         //TODO batch these
-        for (Map.Entry<BlockPos, Integer> entry : chunk.moddedSkyLights.entrySet())
-        {
-            Network.WRAPPER.sendTo(new Network.UpdateModdedLightPacket(entry.getKey(), EnumSkyBlock.SKY, entry.getValue()), player);
-        }
-
-        //TODO batch these
         for (Map.Entry<BlockPos, Integer> entry : chunk.moddedBlockLights.entrySet())
         {
-            Network.WRAPPER.sendTo(new Network.UpdateModdedLightPacket(entry.getKey(), EnumSkyBlock.BLOCK, entry.getValue()), player);
+            Network.WRAPPER.sendTo(new Network.UpdateModdedLightPacket(entry.getKey(), entry.getValue()), player);
         }
 
         world.profiler.endSection();

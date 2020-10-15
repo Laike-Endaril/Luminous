@@ -834,19 +834,9 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
     public int getLightFor(EnumSkyBlock type, BlockPos pos)
     {
         //Luminous start
-        profiler.startSection("getLightFor");
-
         int yy = pos.getY();
-        if (yy < 0 || yy >= 256 || !isBlockLoaded(pos))
-        {
-            profiler.endSection();
-            return type.defaultLightValue;
-        }
-
-        int result = getChunkFromBlockCoords(pos).getLightFor(type, pos);
-
-        profiler.endSection();
-        return result;
+        if (yy < 0 || yy >= 256 || !isBlockLoaded(pos)) return type.defaultLightValue;
+        return getChunkFromBlockCoords(pos).getLightFor(type, pos);
         //Luminous end
     }
 
@@ -2928,54 +2918,30 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
 
     private int getRawLight(BlockPos pos, EnumSkyBlock lightType)
     {
-        profiler.startSection("getRawLight");
-        profiler.startSection("1");
-        if (lightType == EnumSkyBlock.SKY && canSeeSky(pos))
-        {
-            profiler.endSection();
-            profiler.endSection();
-            return 15;
-        }
+        if (lightType == EnumSkyBlock.SKY && canSeeSky(pos)) return 15;
 
 
-        profiler.endStartSection("2");
         IBlockState blockState = getBlockState(pos);
-        profiler.endStartSection("3");
         int l = lightType == EnumSkyBlock.SKY ? 0 : blockState.getBlock().getLightValue(blockState, this, pos);
-        profiler.endStartSection("4");
 
         int opacity = blockState.getBlock().getLightOpacity(blockState, this, pos);
-        profiler.endStartSection("5");
         if (opacity < 1) opacity = 1;
 
-        if (opacity >= 15 || l >= 14)
-        {
-            profiler.endSection();
-            profiler.endSection();
-            return l;
-        }
+        if (opacity >= 15 || l >= 14) return l;
 
 
-        profiler.endStartSection("6");
         for (EnumFacing enumfacing : EnumFacing.values())
         {
-            int lightFor = getLightFor(lightType, pos.offset(enumfacing)) - opacity;
-            profiler.startSection("other");
+            BlockPos pos1 = pos.offset(enumfacing);
+            int lightFor;
+            lightFor = getLightFor(lightType, pos1);
+            lightFor -= opacity;
 
             if (lightFor > l) l = lightFor;
 
-            if (l >= 14)
-            {
-                profiler.endSection();
-                profiler.endSection();
-                profiler.endSection();
-                return l;
-            }
-            profiler.endSection();
+            if (l >= 14) return l;
         }
 
-        profiler.endSection();
-        profiler.endSection();
         return l;
     }
 
@@ -2984,8 +2950,6 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
         //Luminous start
         if (!isAreaLoaded(centerPos, 16, false)) return false;
 
-
-        profiler.startSection("checkLightFor");
 
         int updateRange = isAreaLoaded(centerPos, 18, false) ? 17 : 15;
         int readIndex = 0, writeIndex = 0;
@@ -3003,7 +2967,6 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
         if (rawLightCenter > lightForCenter) lightUpdateBlockList[writeIndex++] = 133152; //light = 0, xOff = 0, yOff = 0, zOff = 0
         else if (rawLightCenter < lightForCenter)
         {
-            profiler.startSection("firstPass");
             lightUpdateBlockList[writeIndex++] = 133152 | lightForCenter << 18; //light = lightForCenter, xOff = 0, yOff = 0, zOff = 0
 
             int dataLight, lightFor;
@@ -3054,11 +3017,9 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
             }
 
             readIndex = 0;
-            profiler.endSection();
         }
 
 
-        profiler.startSection("finalPass");
         int lightForDataPos, rawLightDataPos;
 
         while (readIndex < writeIndex)
@@ -3100,9 +3061,6 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
                 }
             }
         }
-
-        profiler.endSection();
-        profiler.endSection();
 
         return true;
         //Luminous end

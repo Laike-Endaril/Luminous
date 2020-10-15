@@ -109,8 +109,6 @@ public class LightDataHandler
 
     protected static void updateModdedLight(World world, Chunk chunk, BlockPos pos, int light)
     {
-        world.profiler.startSection(Luminous.NAME + ": updateModdedLight");
-
         //Force local light update
         for (BlockPos involved : new BlockPos[]{pos, pos.up(), pos.down(), pos.north(), pos.south(), pos.west(), pos.east()})
         {
@@ -134,15 +132,11 @@ public class LightDataHandler
                 }
             }
         }
-
-        world.profiler.endSection();
     }
 
 
     protected static void updateModdedLightNBTCap(WorldServer world, Chunk chunk, BlockPos pos, int light)
     {
-        world.profiler.startSection(Luminous.NAME + ": updateModdedLightNBTCap");
-
         NBTTagCompound compound = FLibAPI.getNBTCap(world).getCompound(MODID);
         if (light == 0) MCTools.removeSubNBTAndClean(compound, "current", "" + chunk.x, "" + chunk.z, "" + pos.getY(), "" + pos.getX(), "" + pos.getZ());
         else
@@ -150,8 +144,6 @@ public class LightDataHandler
             compound = MCTools.getOrGenerateSubCompound(compound, "current", "" + chunk.x, "" + chunk.z, "" + pos.getY(), "" + pos.getX());
             compound.setInteger("" + pos.getZ(), light);
         }
-
-        world.profiler.endSection();
     }
 
 

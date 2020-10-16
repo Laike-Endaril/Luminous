@@ -1,6 +1,7 @@
 package com.fantasticsource.luminous;
 
 import com.fantasticsource.mctools.MCTools;
+import gnu.trove.list.array.TFloatArrayList;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.util.text.TextFormatting;
 
@@ -13,7 +14,7 @@ import static com.fantasticsource.luminous.Luminous.MODID;
 
 public class LuminousTransformer implements IClassTransformer
 {
-    private static final ArrayList<String> REPLACEMENTS = new ArrayList<>(Arrays.asList(
+    public static final ArrayList<String> REPLACEMENTS = new ArrayList<>(Arrays.asList(
             "net.minecraft.block.state.BlockStateContainer",
             "net.minecraft.world.chunk.Chunk",
             "net.minecraft.world.World"
@@ -24,7 +25,8 @@ public class LuminousTransformer implements IClassTransformer
     {
         if (REPLACEMENTS.contains(transformedName))
         {
-            String name2 = MODID + "/tweakedclasses/" + transformedName.replaceAll("[.]()", "/") + ".class";
+            System.out.println(TextFormatting.AQUA + "Replacing " + transformedName);
+            String name2 = "assets/" + MODID + "/tweakedclasses/" + transformedName.replaceAll("[.]()", "/") + ".class";
             InputStream stream = MCTools.getJarResourceStream(LuminousTransformer.class, name2);
             if (stream == null)
             {

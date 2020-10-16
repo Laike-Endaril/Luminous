@@ -1,3 +1,11 @@
+Figure out how to inject my code correctly, either by finding a way to inject sooner, or by post-injection
+Currently, 2 of the 3 classes are already loaded before even FLib gets referenced at all
+
 Improve efficiency
 Fix moving light objects (don't work as well as the raw moving light test in Luminous class)
 Improve mod compat (maybe ASM instead of full class replacement)
+
+
+
+BUILD NOTE:
+If any changes are made to replaced classes, build once, grab class files for them from jar, and put them in assets, then build again

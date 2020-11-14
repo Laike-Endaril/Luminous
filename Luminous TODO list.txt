@@ -1,5 +1,4 @@
-Figure out how to inject my code correctly, either by finding a way to inject sooner, or by post-injection
-Currently, 2 of the 3 classes are already loaded before even FLib gets referenced at all
+Try having the coremod directly add the classes to the classloader?
 
 Improve efficiency
 Fix moving light objects (don't work as well as the raw moving light test in Luminous class)

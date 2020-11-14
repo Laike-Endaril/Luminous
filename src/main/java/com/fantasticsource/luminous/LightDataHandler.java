@@ -17,13 +17,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.util.Map;
 import java.util.Set;
 
-import static com.fantasticsource.luminous.Luminous.MODID;
+import static com.fantasticsource.luminous.asm.LuminousCore.MODID;
+import static com.fantasticsource.luminous.asm.LuminousCore.NAME;
 
 public class LightDataHandler
 {
     public static int setModdedLight(WorldServer world, BlockPos pos, String modid, String id, int light)
     {
-        world.profiler.startSection(Luminous.NAME + ": setModdedLight");
+        world.profiler.startSection(NAME + ": setModdedLight");
 
         String fullID = modid + ":" + id;
 
@@ -84,7 +85,7 @@ public class LightDataHandler
 
     private static int setCurrentModdedLight(World world, BlockPos pos, int light)
     {
-        world.profiler.startSection(Luminous.NAME + ": setCurrentModdedLight");
+        world.profiler.startSection(NAME + ": setCurrentModdedLight");
 
         Chunk chunk = world.getChunkFromBlockCoords(pos);
 
@@ -158,7 +159,7 @@ public class LightDataHandler
         if (compound == null) return;
 
 
-        world.profiler.startSection(Luminous.NAME + ": loadChunk");
+        world.profiler.startSection(NAME + ": loadChunk");
 
         for (String yString : compound.getKeySet())
         {
@@ -188,7 +189,7 @@ public class LightDataHandler
         EntityPlayerMP player = event.getPlayer();
         World world = player.world;
 
-        world.profiler.startSection(Luminous.NAME + ": loadChunk");
+        world.profiler.startSection(NAME + ": loadChunk");
 
         Chunk chunk = event.getChunkInstance();
 

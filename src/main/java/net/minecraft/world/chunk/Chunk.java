@@ -38,6 +38,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import static com.fantasticsource.luminous.asm.LuminousCore.NAME;
+
 public class Chunk implements net.minecraftforge.common.capabilities.ICapabilityProvider
 {
     public HashMap<BlockPos, Integer> moddedBlockLights = new HashMap<>(); //Luminous
@@ -1395,7 +1397,7 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
         net.minecraftforge.fml.common.ModContainer activeModContainer = net.minecraftforge.fml.common.Loader.instance().activeModContainer();
         String format = "{} loaded a new chunk {} in dimension {} ({}) while populating chunk {}, causing cascading worldgen lag.";
 
-        if (activeModContainer == null || activeModContainer.getName().equals(Luminous.NAME))
+        if (activeModContainer == null || activeModContainer.getName().equals(NAME))
         {
             net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", getPos(), world.provider.getDimension(), world.provider.getDimensionType().getName(), populating);
             net.minecraftforge.fml.common.FMLLog.log.debug("Consider setting 'fixVanillaCascading' to 'true' in the Forge config to fix many cases where this occurs in the base game.");

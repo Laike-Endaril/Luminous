@@ -15,7 +15,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.LinkedHashMap;
 
-import static com.fantasticsource.luminous.Luminous.MODID;
+import static com.fantasticsource.luminous.asm.LuminousCore.MODID;
+import static com.fantasticsource.luminous.asm.LuminousCore.NAME;
 
 public class LightHandler
 {
@@ -49,7 +50,7 @@ public class LightHandler
         if (event.phase != TickEvent.Phase.START) return;
 
         Profiler profiler = FMLCommonHandler.instance().getMinecraftServerInstance().profiler;
-        profiler.startSection(Luminous.NAME + ": tickLights");
+        profiler.startSection(NAME + ": tickLights");
         for (Light light : LIGHTS.values()) light.tick();
         profiler.endSection();
     }

@@ -3,13 +3,10 @@ package com.fantasticsource.luminous;
 import com.fantasticsource.fantasticlib.api.FLibAPI;
 import com.fantasticsource.luminous.lights.LightHandler;
 import com.fantasticsource.luminous.lights.type.Light;
-import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntitySnowball;
-import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
@@ -17,44 +14,17 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 
-@Mod(modid = Luminous.MODID, name = Luminous.NAME, version = Luminous.VERSION, dependencies = "required-after:fantasticlib@[1.12.2.036y,)")
+import static com.fantasticsource.luminous.asm.LuminousCore.*;
+
+@Mod(modid = MODID, name = NAME, version = VERSION, dependencies = "required-after:fantasticlib@[1.12.2.036y,);required-after:" + MODID + "core@[" + VERSION + ",)")
 public class Luminous
 {
-    public static final String MODID = "luminous";
-    public static final String NAME = "Luminous";
-    public static final String VERSION = "1.12.2.000";
-
-    static
-    {
-//        if (!MCTools.devEnv())
-        {
-            Method m = ReflectionTool.getMethod(ClassLoader.class, "findLoadedClass");
-            LaunchClassLoader classLoader = (LaunchClassLoader) Luminous.class.getClassLoader();
-            boolean failed = false;
-            for (String transformedName : LuminousTransformer.REPLACEMENTS)
-            {
-                Class cls = (Class) ReflectionTool.invoke(m, classLoader, transformedName);
-                if (cls != null)
-                {
-                    failed = true;
-                    System.err.println(TextFormatting.RED + transformedName + " was already loaded");
-                }
-                else System.out.println(TextFormatting.GREEN + transformedName + " not yet loaded");
-            }
-            if (failed) FMLCommonHandler.instance().exitJava(1, false);
-
-            classLoader.registerTransformer("com.fantasticsource.luminous.LuminousTransformer");
-        }
-    }
-
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event)
     {
@@ -81,7 +51,7 @@ public class Luminous
 
         WorldServer world = (WorldServer) entity.world;
 
-        world.profiler.startSection(Luminous.NAME + ": staticLightTest");
+        world.profiler.startSection(NAME + ": staticLightTest");
 
         BlockPos pos = entity.getPosition().down();
         if (LightDataHandler.setModdedLight(world, pos, MODID, "snow", 7) != 0)
@@ -105,7 +75,7 @@ public class Luminous
 
         WorldServer world = (WorldServer) livingBase.world, litWorld = LIT_WORLDS.get(livingBase);
 
-        world.profiler.startSection(Luminous.NAME + ": movingLightTest");
+        world.profiler.startSection(NAME + ": movingLightTest");
 
         BlockPos eyePos = new BlockPos(livingBase.getPositionEyes(0)), litPosition = LIT_POSITIONS.get(livingBase);
 

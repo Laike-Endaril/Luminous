@@ -1,7 +1,5 @@
-package com.fantasticsource.luminous;
+package com.fantasticsource.luminous.asm;
 
-import com.fantasticsource.mctools.MCTools;
-import gnu.trove.list.array.TFloatArrayList;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.util.text.TextFormatting;
 
@@ -10,7 +8,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static com.fantasticsource.luminous.Luminous.MODID;
+import static com.fantasticsource.luminous.asm.LuminousCore.MODID;
 
 public class LuminousTransformer implements IClassTransformer
 {
@@ -26,13 +24,13 @@ public class LuminousTransformer implements IClassTransformer
         if (REPLACEMENTS.contains(transformedName))
         {
             System.out.println(TextFormatting.AQUA + "Replacing " + transformedName);
-            String name2 = "assets/" + MODID + "/tweakedclasses/" + transformedName.replaceAll("[.]()", "/") + ".class";
-            InputStream stream = MCTools.getJarResourceStream(LuminousTransformer.class, name2);
+            String name2 = "assets/" + MODID + "/tweakedclasses/" + transformedName.replaceAll("[.]", "/") + ".class";
+            InputStream stream = LuminousTransformer.class.getClassLoader().getResourceAsStream(name2);
             if (stream == null)
             {
                 throw new IllegalStateException(TextFormatting.RED + "Resource not found: " + name2);
             }
-            byte[] buf = new byte[10000];
+            byte[] buf = new byte[1024 * 1024];
             try
             {
                 bytes = new byte[stream.read(buf)];

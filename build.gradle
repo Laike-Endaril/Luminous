@@ -20,9 +20,37 @@ compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 }
 
+task coreJar(type: Jar) {
+    from(sourceSets.main.output) {
+        include "com/fantasticsource/luminous/asm/**"
+    }
+    from(sourceSets.main.resources) {
+        include "assets/luminous/tweakedclasses/**"
+    }
+    setBaseName archivesBaseName + "Core"
+    manifest {
+        attributes([
+                "FMLCorePlugin" : "com.fantasticsource.luminous.asm.LuminousCore",
+                "Maven-Artifact": "${project.group}:${archivesBaseName}Core:${project.version}"
+        ])
+    }
+}
+
+jar {
+    from(coreJar.archivePath.absolutePath) {}
+    manifest {
+        attributes([
+                "ContainedDeps" : "${archivesBaseName}Core-${project.version}.jar",
+                "Maven-Artifact": "${project.group}:${archivesBaseName}:${project.version}"
+        ])
+    }
+    dependsOn coreJar
+}
+
 minecraft {
     version = "1.12.2-14.23.5.2768"
     mappings = "snapshot_20171003"
+    runDir = "run"
 }
 
 processResources {
@@ -32,11 +60,11 @@ processResources {
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
+
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
-        
+
     // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'

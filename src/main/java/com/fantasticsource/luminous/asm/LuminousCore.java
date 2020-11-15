@@ -21,15 +21,12 @@ public class LuminousCore implements IFMLLoadingPlugin
     public LuminousCore()
     {
         System.out.println("Luminous Coremod initialized");
-        ClassVisitorRegistry.register("net.minecraft.world.World", WorldClassVisitor.class);
-        ClassVisitorRegistry.register("net.minecraft.world.chunk.Chunk", ChunkClassVisitor.class);
-        ClassVisitorRegistry.register("net.minecraft.block.state.BlockStateContainer", BlockStateContainerClassVisitor.class);
     }
 
     @Override
     public String[] getASMTransformerClass()
     {
-        return new String[]{"com.fantasticsource.luminous.asm.ClassVisitorRegistry"};
+        return new String[]{"com.fantasticsource.luminous.asm.LuminousTransformer"};
     }
 
     @Override

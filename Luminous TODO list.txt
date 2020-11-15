@@ -1,4 +1,7 @@
-Write class visitors OR see if an obfuscated bytestream works
+Need to get obfuscated edited classes into the transformer somehow...
+* Auto-generate asm code to create obfuscated class? (attempting)
+* Write class visitors?
+* See if an obfuscated bytestream works?
 
 
 

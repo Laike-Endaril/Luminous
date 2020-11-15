@@ -1,4 +1,6 @@
-Try having the coremod directly add the classes to the classloader?
+Write class visitors OR see if an obfuscated bytestream works
+
+
 
 Improve efficiency
 Fix moving light objects (don't work as well as the raw moving light test in Luminous class)

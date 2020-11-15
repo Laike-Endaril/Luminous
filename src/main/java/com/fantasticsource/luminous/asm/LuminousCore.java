@@ -18,22 +18,18 @@ public class LuminousCore implements IFMLLoadingPlugin
     public static final String NAME = "Luminous";
     public static final String VERSION = "1.12.2.000";
 
-    private static boolean deobfEnvironment;
-
-    static boolean isDeobf()
-    {
-        return !deobfEnvironment;
-    }
-
     public LuminousCore()
     {
         System.out.println("Luminous Coremod initialized");
+        ClassVisitorRegistry.register("net.minecraft.world.World", WorldClassVisitor.class);
+        ClassVisitorRegistry.register("net.minecraft.world.chunk.Chunk", ChunkClassVisitor.class);
+        ClassVisitorRegistry.register("net.minecraft.block.state.BlockStateContainer", BlockStateContainerClassVisitor.class);
     }
 
     @Override
     public String[] getASMTransformerClass()
     {
-        return new String[]{"com.fantasticsource.luminous.asm.LuminousTransformer"};
+        return new String[]{"com.fantasticsource.luminous.asm.ClassVisitorRegistry"};
     }
 
     @Override
@@ -51,7 +47,6 @@ public class LuminousCore implements IFMLLoadingPlugin
     @Override
     public void injectData(Map<String, Object> data)
     {
-        deobfEnvironment = (boolean) data.get("runtimeDeobfuscationEnabled");
     }
 
     @Override

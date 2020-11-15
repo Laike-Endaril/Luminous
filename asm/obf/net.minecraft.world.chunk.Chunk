@@ -81,11 +81,11 @@ fv = cw.visitField(ACC_PRIVATE, "field_76650_s", "Z", null, null);
 fv.visitEnd();
 }
 {
-ERROR
+fv = cw.visitField(ACC_PRIVATE + ACC_FINAL, "field_150816_i", "Ljava/util/Map;", "Ljava/util/Map<Let;Lavj;>;", null);
 fv.visitEnd();
 }
 {
-ERROR
+fv = cw.visitField(ACC_PRIVATE + ACC_FINAL, "field_76645_j", "[Lqx;", "[Lqx<Lvg;>;", null);
 fv.visitEnd();
 }
 {
@@ -179,10 +179,10 @@ mv.visitVarInsn(ALOAD, 0);
 mv.visitIntInsn(BIPUSH, 16);
 mv.visitTypeInsn(ANEWARRAY, "qx");
 mv.visitTypeInsn(CHECKCAST, "[Lqx;");
-ERROR
+mv.visitFieldInsn(PUTFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitFieldInsn(PUTFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ILOAD, 2);
 mv.visitFieldInsn(PUTFIELD, "axw", "field_76635_g", "I");
@@ -197,15 +197,15 @@ mv.visitInsn(ICONST_0);
 mv.visitVarInsn(ISTORE, 4);
 Label l0 = new Label();
 mv.visitLabel(l0);
-ERROR
+mv.visitFrame(Opcodes.F_FULL, 5, new Object[] {"axw", "amu", Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER}, 0, new Object[] {});
 mv.visitVarInsn(ILOAD, 4);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitInsn(ARRAYLENGTH);
 Label l1 = new Label();
 mv.visitJumpInsn(IF_ICMPGE, l1);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitVarInsn(ILOAD, 4);
 mv.visitTypeInsn(NEW, "qx");
 mv.visitInsn(DUP);
@@ -239,7 +239,7 @@ mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 1);
 mv.visitVarInsn(ILOAD, 3);
 mv.visitVarInsn(ILOAD, 4);
-ERROR
+mv.visitMethodInsn(INVOKESPECIAL, "axw", "<init>", "(Lamu;II)V", false);
 mv.visitVarInsn(ALOAD, 1);
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "hasSkyLight", "()Z", false);
@@ -248,7 +248,7 @@ mv.visitInsn(ICONST_0);
 mv.visitVarInsn(ISTORE, 6);
 Label l0 = new Label();
 mv.visitLabel(l0);
-ERROR
+mv.visitFrame(Opcodes.F_FULL, 7, new Object[] {"axw", "amu", "ayw", Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER}, 0, new Object[] {});
 mv.visitVarInsn(ILOAD, 6);
 mv.visitIntInsn(BIPUSH, 16);
 Label l1 = new Label();
@@ -315,7 +315,7 @@ mv.visitIntInsn(BIPUSH, 15);
 mv.visitInsn(IAND);
 mv.visitVarInsn(ILOAD, 7);
 mv.visitVarInsn(ALOAD, 9);
-mv.visitMethodInsn(INVOKEVIRTUAL, "axx", "set", "(IIILnet/minecraft/block/state/IBlockState;)V", false);
+mv.visitMethodInsn(INVOKEVIRTUAL, "axx", "set", "(IIILawt;)V", false);
 mv.visitLabel(l6);
 mv.visitFrame(Opcodes.F_CHOP,2, null, 0, null);
 mv.visitIincInsn(8, 1);
@@ -639,7 +639,7 @@ mv.visitJumpInsn(GOTO, l4);
 mv.visitLabel(l5);
 mv.visitFrame(Opcodes.F_CHOP,1, null, 0, null);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "hasSkyLight", "()Z", false);
 Label l7 = new Label();
@@ -696,7 +696,7 @@ mv.visitVarInsn(ILOAD, 3);
 mv.visitVarInsn(ILOAD, 4);
 mv.visitMethodInsn(INVOKEVIRTUAL, "axx", "setSkyLight", "(IIII)V", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitTypeInsn(NEW, "et");
 mv.visitInsn(DUP);
 mv.visitVarInsn(ALOAD, 0);
@@ -713,7 +713,7 @@ mv.visitInsn(ISHL);
 mv.visitVarInsn(ILOAD, 3);
 mv.visitInsn(IADD);
 mv.visitMethodInsn(INVOKESPECIAL, "et", "<init>", "(III)V", false);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "notifyLightSet", "(Let;)V", false);
 mv.visitLabel(l10);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 mv.visitIincInsn(5, -1);
@@ -761,12 +761,12 @@ mv.visitEnd();
 mv = cw.visitMethod(ACC_PRIVATE, "recheckGaps", "(Z)V", null, null);
 mv.visitCode();
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "profiler", "Lrl;");
 mv.visitLdcInsn("recheckGaps");
 mv.visitMethodInsn(INVOKEVIRTUAL, "rl", "startSection", "(Ljava/lang/String;)V", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitTypeInsn(NEW, "et");
 mv.visitInsn(DUP);
 mv.visitVarInsn(ALOAD, 0);
@@ -784,7 +784,7 @@ mv.visitIntInsn(BIPUSH, 8);
 mv.visitInsn(IADD);
 mv.visitMethodInsn(INVOKESPECIAL, "et", "<init>", "(III)V", false);
 mv.visitIntInsn(BIPUSH, 16);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "isAreaLoaded", "(Let;I)Z", false);
 Label l0 = new Label();
 mv.visitJumpInsn(IFEQ, l0);
 mv.visitInsn(ICONST_0);
@@ -861,7 +861,7 @@ mv.visitTypeInsn(CHECKCAST, "fa");
 mv.visitVarInsn(ASTORE, 9);
 mv.visitVarInsn(ILOAD, 7);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ILOAD, 5);
 mv.visitVarInsn(ALOAD, 9);
 mv.visitMethodInsn(INVOKEVIRTUAL, "fa", "getFrontOffsetX", "()I", false);
@@ -912,7 +912,7 @@ mv.visitFrame(Opcodes.F_CHOP,1, null, 0, null);
 mv.visitVarInsn(ILOAD, 1);
 mv.visitJumpInsn(IFEQ, l5);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "profiler", "Lrl;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "rl", "endSection", "()V", false);
 mv.visitInsn(RETURN);
@@ -932,7 +932,7 @@ mv.visitFieldInsn(PUTFIELD, "axw", "field_76650_s", "Z");
 mv.visitLabel(l0);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "profiler", "Lrl;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "rl", "endSection", "()V", false);
 mv.visitInsn(RETURN);
@@ -943,14 +943,14 @@ mv.visitEnd();
 mv = cw.visitMethod(ACC_PRIVATE, "checkSkylightNeighborHeight", "(III)V", null, null);
 mv.visitCode();
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitTypeInsn(NEW, "et");
 mv.visitInsn(DUP);
 mv.visitVarInsn(ILOAD, 1);
 mv.visitInsn(ICONST_0);
 mv.visitVarInsn(ILOAD, 2);
 mv.visitMethodInsn(INVOKESPECIAL, "et", "<init>", "(III)V", false);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "getHeight", "(Let;)Let;", false);
 mv.visitMethodInsn(INVOKEVIRTUAL, "et", "getY", "()I", false);
 mv.visitVarInsn(ISTORE, 4);
 mv.visitVarInsn(ILOAD, 4);
@@ -994,7 +994,7 @@ mv.visitVarInsn(ILOAD, 3);
 Label l0 = new Label();
 mv.visitJumpInsn(IF_ICMPLE, l0);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitTypeInsn(NEW, "et");
 mv.visitInsn(DUP);
 mv.visitVarInsn(ILOAD, 1);
@@ -1002,7 +1002,7 @@ mv.visitInsn(ICONST_0);
 mv.visitVarInsn(ILOAD, 2);
 mv.visitMethodInsn(INVOKESPECIAL, "et", "<init>", "(III)V", false);
 mv.visitIntInsn(BIPUSH, 16);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "isAreaLoaded", "(Let;I)Z", false);
 mv.visitJumpInsn(IFEQ, l0);
 mv.visitVarInsn(ILOAD, 3);
 mv.visitVarInsn(ISTORE, 5);
@@ -1014,7 +1014,7 @@ mv.visitVarInsn(ILOAD, 4);
 Label l2 = new Label();
 mv.visitJumpInsn(IF_ICMPGE, l2);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETSTATIC, "ana", "SKY", "Lana;");
 mv.visitTypeInsn(NEW, "et");
 mv.visitInsn(DUP);
@@ -1022,7 +1022,7 @@ mv.visitVarInsn(ILOAD, 1);
 mv.visitVarInsn(ILOAD, 5);
 mv.visitVarInsn(ILOAD, 2);
 mv.visitMethodInsn(INVOKESPECIAL, "et", "<init>", "(III)V", false);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "checkLightFor", "(Lana;Let;)Z", false);
 mv.visitInsn(POP);
 mv.visitIincInsn(5, 1);
 mv.visitJumpInsn(GOTO, l1);
@@ -1081,7 +1081,7 @@ mv.visitVarInsn(ILOAD, 4);
 Label l2 = new Label();
 mv.visitJumpInsn(IF_ICMPEQ, l2);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ILOAD, 1);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitFieldInsn(GETFIELD, "axw", "field_76635_g", "I");
@@ -1121,7 +1121,7 @@ mv.visitVarInsn(ILOAD, 3);
 mv.visitInsn(IADD);
 mv.visitVarInsn(ISTORE, 7);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "hasSkyLight", "()Z", false);
 Label l3 = new Label();
@@ -1158,7 +1158,7 @@ mv.visitVarInsn(ILOAD, 3);
 mv.visitIntInsn(BIPUSH, 15);
 mv.visitMethodInsn(INVOKEVIRTUAL, "axx", "setSkyLight", "(IIII)V", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitTypeInsn(NEW, "et");
 mv.visitInsn(DUP);
 mv.visitVarInsn(ALOAD, 0);
@@ -1175,7 +1175,7 @@ mv.visitInsn(ISHL);
 mv.visitVarInsn(ILOAD, 3);
 mv.visitInsn(IADD);
 mv.visitMethodInsn(INVOKESPECIAL, "et", "<init>", "(III)V", false);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "notifyLightSet", "(Let;)V", false);
 mv.visitLabel(l7);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 mv.visitIincInsn(8, 1);
@@ -1213,7 +1213,7 @@ mv.visitVarInsn(ILOAD, 3);
 mv.visitInsn(ICONST_0);
 mv.visitMethodInsn(INVOKEVIRTUAL, "axx", "setSkyLight", "(IIII)V", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitTypeInsn(NEW, "et");
 mv.visitInsn(DUP);
 mv.visitVarInsn(ALOAD, 0);
@@ -1230,7 +1230,7 @@ mv.visitInsn(ISHL);
 mv.visitVarInsn(ILOAD, 3);
 mv.visitInsn(IADD);
 mv.visitMethodInsn(INVOKESPECIAL, "et", "<init>", "(III)V", false);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "notifyLightSet", "(Let;)V", false);
 mv.visitLabel(l10);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 mv.visitIincInsn(8, 1);
@@ -1328,7 +1328,7 @@ mv.visitFieldInsn(PUTFIELD, "axw", "field_82912_p", "I");
 mv.visitLabel(l16);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "hasSkyLight", "()Z", false);
 Label l17 = new Label();
@@ -1384,9 +1384,9 @@ mv = cw.visitMethod(ACC_PUBLIC, "getBlockLightOpacity", "(Let;)I", null, null);
 mv.visitCode();
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getBlockState", "(Let;)Lawt;", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
 mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getLightOpacity", "(Lamy;Let;)I", true);
 mv.visitInsn(IRETURN);
@@ -1414,7 +1414,7 @@ mv.visitLabel(l0);
 mv.visitFrame(Opcodes.F_APPEND,1, new Object[] {"awt"}, 0, null);
 mv.visitVarInsn(ALOAD, 4);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitTypeInsn(NEW, "et");
 mv.visitInsn(DUP);
 mv.visitVarInsn(ALOAD, 0);
@@ -1468,7 +1468,7 @@ Label l3 = new Label();
 Label l4 = new Label();
 mv.visitTryCatchBlock(l3, l4, l2, "java/lang/Throwable");
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "getWorldType", "()Lamz;", false);
 mv.visitFieldInsn(GETSTATIC, "amz", "DEBUG_ALL_BLOCK_STATES", "Lamz;");
 mv.visitJumpInsn(IF_ACMPNE, l0);
@@ -1554,7 +1554,7 @@ mv.visitMethodInsn(INVOKESTATIC, "b", "makeCrashReport", "(Ljava/lang/Throwable;
 mv.visitVarInsn(ASTORE, 5);
 mv.visitVarInsn(ALOAD, 5);
 mv.visitLdcInsn("Block being got");
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "b", "makeCategory", "(Ljava/lang/String;)Lc;", false);
 mv.visitVarInsn(ASTORE, 6);
 mv.visitVarInsn(ALOAD, 6);
 mv.visitLdcInsn("Location");
@@ -1612,7 +1612,7 @@ mv.visitVarInsn(ILOAD, 6);
 mv.visitIntInsn(SIPUSH, -999);
 mv.visitInsn(IASTORE);
 mv.visitLabel(l0);
-ERROR
+mv.visitFrame(Opcodes.F_FULL, 7, new Object[] {"axw", "et", "awt", Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER}, 0, new Object[] {});
 mv.visitVarInsn(ALOAD, 0);
 mv.visitFieldInsn(GETFIELD, "axw", "field_76634_f", "[I");
 mv.visitVarInsn(ILOAD, 6);
@@ -1620,7 +1620,7 @@ mv.visitInsn(IALOAD);
 mv.visitVarInsn(ISTORE, 7);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getBlockState", "(Let;)Lawt;", false);
 mv.visitVarInsn(ASTORE, 8);
 mv.visitVarInsn(ALOAD, 8);
 mv.visitVarInsn(ALOAD, 2);
@@ -1638,7 +1638,7 @@ mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getBlock", "()Laow;", true);
 mv.visitVarInsn(ASTORE, 10);
 mv.visitVarInsn(ALOAD, 8);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
 mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getLightOpacity", "(Lamy;Let;)I", true);
 mv.visitVarInsn(ISTORE, 11);
@@ -1661,7 +1661,7 @@ mv.visitJumpInsn(IF_ACMPNE, l3);
 mv.visitInsn(ACONST_NULL);
 mv.visitInsn(ARETURN);
 mv.visitLabel(l3);
-ERROR
+mv.visitFrame(Opcodes.F_FULL, 14, new Object[] {"axw", "et", "awt", Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, "awt", "aow", "aow", Opcodes.INTEGER, "axx", Opcodes.INTEGER}, 0, new Object[] {});
 mv.visitTypeInsn(NEW, "axx");
 mv.visitInsn(DUP);
 mv.visitVarInsn(ILOAD, 4);
@@ -1670,7 +1670,7 @@ mv.visitInsn(ISHR);
 mv.visitInsn(ICONST_4);
 mv.visitInsn(ISHL);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "hasSkyLight", "()Z", false);
 mv.visitMethodInsn(INVOKESPECIAL, "axx", "<init>", "(IZ)V", false);
@@ -1704,9 +1704,9 @@ mv.visitIntInsn(BIPUSH, 15);
 mv.visitInsn(IAND);
 mv.visitVarInsn(ILOAD, 5);
 mv.visitVarInsn(ALOAD, 2);
-mv.visitMethodInsn(INVOKEVIRTUAL, "axx", "set", "(IIILnet/minecraft/block/state/IBlockState;)V", false);
+mv.visitMethodInsn(INVOKEVIRTUAL, "axx", "set", "(IIILawt;)V", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "isRemote", "Z");
 Label l6 = new Label();
 mv.visitJumpInsn(IFNE, l6);
@@ -1716,32 +1716,32 @@ Label l7 = new Label();
 mv.visitJumpInsn(IF_ACMPEQ, l7);
 mv.visitVarInsn(ALOAD, 10);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
 mv.visitVarInsn(ALOAD, 8);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "aow", "breakBlock", "(Lamu;Let;Lawt;)V", false);
 mv.visitLabel(l7);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 1);
 mv.visitFieldInsn(GETSTATIC, "axw$a", "CHECK", "Laxw$a;");
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getTileEntity", "(Let;Laxw$a;)Lavj;", false);
 mv.visitVarInsn(ASTORE, 14);
 mv.visitVarInsn(ALOAD, 14);
 Label l8 = new Label();
 mv.visitJumpInsn(IFNULL, l8);
 mv.visitVarInsn(ALOAD, 14);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
 mv.visitVarInsn(ALOAD, 8);
 mv.visitVarInsn(ALOAD, 2);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "avj", "shouldRefresh", "(Lamu;Let;Lawt;Lawt;)Z", false);
 mv.visitJumpInsn(IFEQ, l8);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "removeTileEntity", "(Let;)V", false);
 mv.visitLabel(l8);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 Label l9 = new Label();
@@ -1755,22 +1755,22 @@ mv.visitJumpInsn(IFEQ, l9);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 1);
 mv.visitFieldInsn(GETSTATIC, "axw$a", "CHECK", "Laxw$a;");
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getTileEntity", "(Let;Laxw$a;)Lavj;", false);
 mv.visitVarInsn(ASTORE, 14);
 mv.visitVarInsn(ALOAD, 14);
 mv.visitJumpInsn(IFNULL, l9);
 mv.visitVarInsn(ALOAD, 14);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
 mv.visitVarInsn(ALOAD, 8);
 mv.visitVarInsn(ALOAD, 2);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "avj", "shouldRefresh", "(Lamu;Let;Lawt;Lawt;)Z", false);
 mv.visitJumpInsn(IFEQ, l9);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "removeTileEntity", "(Let;)V", false);
 mv.visitLabel(l9);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 mv.visitVarInsn(ALOAD, 12);
@@ -1799,7 +1799,7 @@ mv.visitLabel(l11);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 mv.visitVarInsn(ALOAD, 2);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
 mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getLightOpacity", "(Lamy;Let;)I", true);
 mv.visitVarInsn(ISTORE, 14);
@@ -1842,12 +1842,12 @@ mv.visitJumpInsn(IF_ICMPLT, l15);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitFieldInsn(GETSTATIC, "ana", "SKY", "Lana;");
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getLightFor", "(Lana;Let;)I", false);
 mv.visitJumpInsn(IFGT, l15);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitFieldInsn(GETSTATIC, "ana", "BLOCK", "Lana;");
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getLightFor", "(Lana;Let;)I", false);
 mv.visitJumpInsn(IFLE, l12);
 mv.visitLabel(l15);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
@@ -1858,7 +1858,7 @@ mv.visitMethodInsn(INVOKESPECIAL, "axw", "propagateSkylightOcclusion", "(II)V", 
 mv.visitLabel(l12);
 mv.visitFrame(Opcodes.F_CHOP,1, null, 0, null);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "isRemote", "Z");
 Label l16 = new Label();
 mv.visitJumpInsn(IFNE, l16);
@@ -1866,7 +1866,7 @@ mv.visitVarInsn(ALOAD, 10);
 mv.visitVarInsn(ALOAD, 9);
 mv.visitJumpInsn(IF_ACMPEQ, l16);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "captureBlockSnapshots", "Z");
 Label l17 = new Label();
 mv.visitJumpInsn(IFEQ, l17);
@@ -1878,10 +1878,10 @@ mv.visitLabel(l17);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 mv.visitVarInsn(ALOAD, 9);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
 mv.visitVarInsn(ALOAD, 2);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "aow", "onBlockAdded", "(Lamu;Let;Lawt;)V", false);
 mv.visitLabel(l16);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 mv.visitVarInsn(ALOAD, 9);
@@ -1892,22 +1892,22 @@ mv.visitJumpInsn(IFEQ, l18);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 1);
 mv.visitFieldInsn(GETSTATIC, "axw$a", "CHECK", "Laxw$a;");
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getTileEntity", "(Let;Laxw$a;)Lavj;", false);
 mv.visitVarInsn(ASTORE, 14);
 mv.visitVarInsn(ALOAD, 14);
 Label l19 = new Label();
 mv.visitJumpInsn(IFNONNULL, l19);
 mv.visitVarInsn(ALOAD, 9);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 2);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "aow", "createTileEntity", "(Lamu;Lawt;)Lavj;", false);
 mv.visitVarInsn(ASTORE, 14);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
 mv.visitVarInsn(ALOAD, 14);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "setTileEntity", "(Let;Lavj;)V", false);
 mv.visitLabel(l19);
 mv.visitFrame(Opcodes.F_APPEND,1, new Object[] {"avj"}, 0, null);
 mv.visitVarInsn(ALOAD, 14);
@@ -1997,9 +1997,9 @@ mv.visitLabel(l4);
 mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[] {Opcodes.INTEGER});
 mv.visitInsn(IRETURN);
 mv.visitLabel(l0);
-ERROR
+mv.visitFrame(Opcodes.F_FULL, 3, new Object[] {"axw", "ana", "et"}, 0, new Object[] {});
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "hasSkyLight", "()Z", false);
 Label l5 = new Label();
@@ -2087,7 +2087,7 @@ mv.visitInsn(ISHR);
 mv.visitInsn(ICONST_4);
 mv.visitInsn(ISHL);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "hasSkyLight", "()Z", false);
 mv.visitMethodInsn(INVOKESPECIAL, "axx", "<init>", "(IZ)V", false);
@@ -2102,7 +2102,7 @@ mv.visitInsn(AASTORE);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "generateSkylightMap", "()V", false);
 mv.visitLabel(l0);
-ERROR
+mv.visitFrame(Opcodes.F_FULL, 8, new Object[] {"axw", "ana", "et", Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, "axx"}, 0, new Object[] {});
 mv.visitVarInsn(ALOAD, 0);
 mv.visitInsn(ICONST_1);
 mv.visitFieldInsn(PUTFIELD, "axw", "field_76643_l", "Z");
@@ -2111,7 +2111,7 @@ mv.visitFieldInsn(GETSTATIC, "ana", "SKY", "Lana;");
 Label l1 = new Label();
 mv.visitJumpInsn(IF_ACMPNE, l1);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "hasSkyLight", "()Z", false);
 Label l2 = new Label();
@@ -2171,7 +2171,7 @@ mv.visitVarInsn(ALOAD, 6);
 Label l0 = new Label();
 mv.visitJumpInsn(IFNONNULL, l0);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "hasSkyLight", "()Z", false);
 Label l1 = new Label();
@@ -2187,7 +2187,7 @@ mv.visitInsn(ISUB);
 Label l2 = new Label();
 mv.visitJumpInsn(GOTO, l2);
 mv.visitLabel(l1);
-ERROR
+mv.visitFrame(Opcodes.F_FULL, 7, new Object[] {"axw", "et", Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, "axx"}, 0, new Object[] {});
 mv.visitInsn(ICONST_0);
 mv.visitLabel(l2);
 mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[] {Opcodes.INTEGER});
@@ -2241,7 +2241,7 @@ mv.visitLabel(l6);
 mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[] {Opcodes.INTEGER});
 mv.visitVarInsn(ISTORE, 9);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "hasSkyLight", "()Z", false);
 Label l7 = new Label();
@@ -2342,12 +2342,12 @@ mv.visitLabel(l2);
 mv.visitFrame(Opcodes.F_APPEND,1, new Object[] {Opcodes.INTEGER}, 0, null);
 mv.visitVarInsn(ILOAD, 4);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitInsn(ARRAYLENGTH);
 Label l3 = new Label();
 mv.visitJumpInsn(IF_ICMPLT, l3);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitInsn(ARRAYLENGTH);
 mv.visitInsn(ICONST_1);
 mv.visitInsn(ISUB);
@@ -2384,7 +2384,7 @@ mv.visitVarInsn(ALOAD, 0);
 mv.visitFieldInsn(GETFIELD, "axw", "field_76647_h", "I");
 mv.visitFieldInsn(PUTFIELD, "vg", "chunkCoordZ", "I");
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitVarInsn(ILOAD, 4);
 mv.visitInsn(AALOAD);
 mv.visitVarInsn(ALOAD, 1);
@@ -2403,7 +2403,7 @@ mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 1);
 mv.visitVarInsn(ALOAD, 1);
 mv.visitFieldInsn(GETFIELD, "vg", "chunkCoordY", "I");
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "removeEntityAtIndex", "(Lvg;I)V", false);
 mv.visitInsn(RETURN);
 mv.visitMaxs(3, 2);
 mv.visitEnd();
@@ -2420,12 +2420,12 @@ mv.visitLabel(l0);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 mv.visitVarInsn(ILOAD, 2);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitInsn(ARRAYLENGTH);
 Label l1 = new Label();
 mv.visitJumpInsn(IF_ICMPLT, l1);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitInsn(ARRAYLENGTH);
 mv.visitInsn(ICONST_1);
 mv.visitInsn(ISUB);
@@ -2433,7 +2433,7 @@ mv.visitVarInsn(ISTORE, 2);
 mv.visitLabel(l1);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitVarInsn(ILOAD, 2);
 mv.visitInsn(AALOAD);
 mv.visitVarInsn(ALOAD, 1);
@@ -2485,7 +2485,7 @@ mv.visitMaxs(4, 5);
 mv.visitEnd();
 }
 {
-ERROR
+mv = cw.visitMethod(ACC_PRIVATE, "createNewTileEntity", "(Let;)Lavj;", null, null);
 {
 av0 = mv.visitAnnotation("Ljavax/annotation/Nullable;", true);
 av0.visitEnd();
@@ -2493,7 +2493,7 @@ av0.visitEnd();
 mv.visitCode();
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getBlockState", "(Let;)Lawt;", false);
 mv.visitVarInsn(ASTORE, 2);
 mv.visitVarInsn(ALOAD, 2);
 mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getBlock", "()Laow;", true);
@@ -2510,9 +2510,9 @@ mv.visitLabel(l0);
 mv.visitFrame(Opcodes.F_APPEND,2, new Object[] {"awt", "aow"}, 0, null);
 mv.visitVarInsn(ALOAD, 3);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 2);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "aow", "createTileEntity", "(Lamu;Lawt;)Lavj;", false);
 mv.visitLabel(l1);
 mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[] {"avj"});
 mv.visitInsn(ARETURN);
@@ -2520,7 +2520,7 @@ mv.visitMaxs(3, 4);
 mv.visitEnd();
 }
 {
-ERROR
+mv = cw.visitMethod(ACC_PUBLIC, "getTileEntity", "(Let;Laxw$a;)Lavj;", null, null);
 {
 av0 = mv.visitAnnotation("Ljavax/annotation/Nullable;", true);
 av0.visitEnd();
@@ -2556,13 +2556,13 @@ Label l2 = new Label();
 mv.visitJumpInsn(IF_ACMPNE, l2);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitMethodInsn(INVOKESPECIAL, "axw", "createNewTileEntity", "(Let;)Lavj;", false);
 mv.visitVarInsn(ASTORE, 3);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
 mv.visitVarInsn(ALOAD, 3);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "setTileEntity", "(Let;Lavj;)V", false);
 mv.visitJumpInsn(GOTO, l1);
 mv.visitLabel(l2);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
@@ -2587,17 +2587,17 @@ mv = cw.visitMethod(ACC_PUBLIC, "addTileEntity", "(Lavj;)V", null, null);
 mv.visitCode();
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "avj", "getPos", "()Let;", false);
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "addTileEntity", "(Let;Lavj;)V", false);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitFieldInsn(GETFIELD, "axw", "field_76636_d", "Z");
 Label l0 = new Label();
 mv.visitJumpInsn(IFEQ, l0);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "addTileEntity", "(Lavj;)Z", false);
 mv.visitInsn(POP);
 mv.visitLabel(l0);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
@@ -2606,30 +2606,30 @@ mv.visitMaxs(3, 2);
 mv.visitEnd();
 }
 {
-ERROR
+mv = cw.visitMethod(ACC_PUBLIC, "addTileEntity", "(Let;Lavj;)V", null, null);
 mv.visitCode();
 mv.visitVarInsn(ALOAD, 2);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "avj", "getWorld", "()Lamu;", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 Label l0 = new Label();
 mv.visitJumpInsn(IF_ACMPEQ, l0);
 mv.visitVarInsn(ALOAD, 2);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
+mv.visitMethodInsn(INVOKEVIRTUAL, "avj", "setWorld", "(Lamu;)V", false);
 mv.visitLabel(l0);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 mv.visitVarInsn(ALOAD, 2);
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "avj", "setPos", "(Let;)V", false);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getBlockState", "(Let;)Lawt;", false);
 mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getBlock", "()Laow;", true);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 1);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getBlockState", "(Let;)Lawt;", false);
 mv.visitMethodInsn(INVOKEVIRTUAL, "aow", "hasTileEntity", "(Lawt;)Z", false);
 Label l1 = new Label();
 mv.visitJumpInsn(IFEQ, l1);
@@ -2691,13 +2691,13 @@ mv.visitVarInsn(ALOAD, 0);
 mv.visitInsn(ICONST_1);
 mv.visitFieldInsn(PUTFIELD, "axw", "field_76636_d", "Z");
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 0);
 mv.visitFieldInsn(GETFIELD, "axw", "field_150816_i", "Ljava/util/Map;");
 mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "values", "()Ljava/util/Collection;", true);
 mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "addTileEntities", "(Ljava/util/Collection;)V", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitVarInsn(ASTORE, 1);
 mv.visitVarInsn(ALOAD, 1);
 mv.visitInsn(ARRAYLENGTH);
@@ -2716,7 +2716,7 @@ mv.visitVarInsn(ILOAD, 3);
 mv.visitInsn(AALOAD);
 mv.visitVarInsn(ASTORE, 4);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 4);
 mv.visitMethodInsn(INVOKESTATIC, "com/google/common/collect/ImmutableList", "copyOf", "(Ljava/util/Collection;)Lcom/google/common/collect/ImmutableList;", false);
 mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "loadEntities", "(Ljava/util/Collection;)V", false);
@@ -2739,10 +2739,10 @@ mv.visitEnd();
 mv = cw.visitMethod(ACC_PUBLIC, "onUnload", "()V", null, null);
 mv.visitCode();
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitMethodInsn(INVOKESTATIC, "java/util/Arrays", "stream", "([Ljava/lang/Object;)Ljava/util/stream/Stream;", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitInvokeDynamicInsn("accept", "(Laxw;)Ljava/util/function/Consumer;", new Handle(Opcodes.H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;"), new Object[]{Type.getType("(Ljava/lang/Object;)V"), new Handle(Opcodes.H_INVOKESPECIAL, "axw", "lambda$onUnload$2", "(Lqx;)V"), Type.getType("(Lqx;)V")});
 mv.visitMethodInsn(INVOKEINTERFACE, "java/util/stream/Stream", "forEach", "(Ljava/util/function/Consumer;)V", true);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitInsn(ICONST_0);
@@ -2764,14 +2764,14 @@ mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/
 mv.visitTypeInsn(CHECKCAST, "avj");
 mv.visitVarInsn(ASTORE, 2);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 2);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "markTileEntityForRemoval", "(Lavj;)V", false);
 mv.visitJumpInsn(GOTO, l0);
 mv.visitLabel(l1);
 mv.visitFrame(Opcodes.F_CHOP,1, null, 0, null);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitVarInsn(ASTORE, 1);
 mv.visitVarInsn(ALOAD, 1);
 mv.visitInsn(ARRAYLENGTH);
@@ -2790,7 +2790,7 @@ mv.visitVarInsn(ILOAD, 3);
 mv.visitInsn(AALOAD);
 mv.visitVarInsn(ASTORE, 4);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 4);
 mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "unloadEntities", "(Ljava/util/Collection;)V", false);
 mv.visitIincInsn(3, 1);
@@ -2844,7 +2844,7 @@ mv.visitVarInsn(ISTORE, 6);
 mv.visitVarInsn(ILOAD, 5);
 mv.visitInsn(ICONST_0);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitInsn(ARRAYLENGTH);
 mv.visitInsn(ICONST_1);
 mv.visitInsn(ISUB);
@@ -2853,7 +2853,7 @@ mv.visitVarInsn(ISTORE, 5);
 mv.visitVarInsn(ILOAD, 6);
 mv.visitInsn(ICONST_0);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitInsn(ARRAYLENGTH);
 mv.visitInsn(ICONST_1);
 mv.visitInsn(ISUB);
@@ -2869,14 +2869,14 @@ mv.visitVarInsn(ILOAD, 6);
 Label l1 = new Label();
 mv.visitJumpInsn(IF_ICMPGT, l1);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitVarInsn(ILOAD, 7);
 mv.visitInsn(AALOAD);
 mv.visitMethodInsn(INVOKEVIRTUAL, "qx", "isEmpty", "()Z", false);
 Label l2 = new Label();
 mv.visitJumpInsn(IFNE, l2);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitVarInsn(ILOAD, 7);
 mv.visitInsn(AALOAD);
 mv.visitMethodInsn(INVOKEVIRTUAL, "qx", "iterator", "()Ljava/util/Iterator;", false);
@@ -2930,7 +2930,7 @@ mv.visitInsn(ICONST_0);
 mv.visitVarInsn(ISTORE, 13);
 Label l7 = new Label();
 mv.visitLabel(l7);
-ERROR
+mv.visitFrame(Opcodes.F_FULL, 14, new Object[] {"axw", "vg", "bhb", "java/util/List", "com/google/common/base/Predicate", Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, "java/util/Iterator", "vg", "[Lvg;", "[Lvg;", Opcodes.INTEGER, Opcodes.INTEGER}, 0, new Object[] {});
 mv.visitVarInsn(ILOAD, 13);
 mv.visitVarInsn(ILOAD, 12);
 mv.visitJumpInsn(IF_ICMPGE, l4);
@@ -2965,7 +2965,7 @@ mv.visitFrame(Opcodes.F_CHOP,1, null, 0, null);
 mv.visitIincInsn(13, 1);
 mv.visitJumpInsn(GOTO, l7);
 mv.visitLabel(l4);
-ERROR
+mv.visitFrame(Opcodes.F_FULL, 9, new Object[] {"axw", "vg", "bhb", "java/util/List", "com/google/common/base/Predicate", Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, "java/util/Iterator"}, 0, new Object[] {});
 mv.visitJumpInsn(GOTO, l3);
 mv.visitLabel(l2);
 mv.visitFrame(Opcodes.F_CHOP,1, null, 0, null);
@@ -2999,7 +2999,7 @@ mv.visitVarInsn(ISTORE, 6);
 mv.visitVarInsn(ILOAD, 5);
 mv.visitInsn(ICONST_0);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitInsn(ARRAYLENGTH);
 mv.visitInsn(ICONST_1);
 mv.visitInsn(ISUB);
@@ -3008,7 +3008,7 @@ mv.visitVarInsn(ISTORE, 5);
 mv.visitVarInsn(ILOAD, 6);
 mv.visitInsn(ICONST_0);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitInsn(ARRAYLENGTH);
 mv.visitInsn(ICONST_1);
 mv.visitInsn(ISUB);
@@ -3024,7 +3024,7 @@ mv.visitVarInsn(ILOAD, 6);
 Label l1 = new Label();
 mv.visitJumpInsn(IF_ICMPGT, l1);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitVarInsn(ILOAD, 7);
 mv.visitInsn(AALOAD);
 mv.visitVarInsn(ALOAD, 1);
@@ -3085,7 +3085,7 @@ mv.visitFieldInsn(GETFIELD, "axw", "field_76644_m", "Z");
 Label l1 = new Label();
 mv.visitJumpInsn(IFEQ, l1);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "getTotalWorldTime", "()J", false);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitFieldInsn(GETFIELD, "axw", "field_76641_n", "J");
@@ -3108,7 +3108,7 @@ mv.visitVarInsn(ALOAD, 0);
 mv.visitFieldInsn(GETFIELD, "axw", "field_76644_m", "Z");
 mv.visitJumpInsn(IFEQ, l3);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "getTotalWorldTime", "()J", false);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitFieldInsn(GETFIELD, "axw", "field_76641_n", "J");
@@ -3132,7 +3132,7 @@ mv.visitCode();
 mv.visitTypeInsn(NEW, "java/util/Random");
 mv.visitInsn(DUP);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "getSeed", "()J", false);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitFieldInsn(GETFIELD, "axw", "field_76635_g", "I");
@@ -3356,12 +3356,12 @@ mv.visitFieldInsn(GETFIELD, "axw", "field_76635_g", "I");
 mv.visitVarInsn(ALOAD, 0);
 mv.visitFieldInsn(GETFIELD, "axw", "field_76647_h", "I");
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "getChunkProvider", "()Laxr;", false);
-mv.visitMethodInsn(INVOKESTATIC, "net/minecraftforge/fml/common/registry/GameRegistry", "generateWorld", "(IILnet/minecraft/world/World;Laxq;Laxr;)V", false);
+mv.visitMethodInsn(INVOKESTATIC, "net/minecraftforge/fml/common/registry/GameRegistry", "generateWorld", "(IILamu;Laxq;Laxr;)V", false);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "markDirty", "()V", false);
 mv.visitLabel(l2);
@@ -3426,7 +3426,7 @@ mv.visitInsn(ICONST_M1);
 mv.visitVarInsn(ISTORE, 7);
 Label l1 = new Label();
 mv.visitLabel(l1);
-ERROR
+mv.visitFrame(Opcodes.F_FULL, 8, new Object[] {"axw", "et", Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, "et", Opcodes.INTEGER, Opcodes.INTEGER}, 0, new Object[] {});
 mv.visitVarInsn(ALOAD, 5);
 mv.visitMethodInsn(INVOKEVIRTUAL, "et", "getY", "()I", false);
 Label l2 = new Label();
@@ -3436,7 +3436,7 @@ mv.visitInsn(ICONST_M1);
 mv.visitJumpInsn(IF_ICMPNE, l2);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 5);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getBlockState", "(Let;)Lawt;", false);
 mv.visitVarInsn(ASTORE, 8);
 mv.visitVarInsn(ALOAD, 8);
 mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getMaterial", "()Lbcz;", true);
@@ -3495,7 +3495,7 @@ mv.visitFieldInsn(GETFIELD, "axw", "field_76650_s", "Z");
 Label l0 = new Label();
 mv.visitJumpInsn(IFEQ, l0);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "hasSkyLight", "()Z", false);
 mv.visitJumpInsn(IFEQ, l0);
@@ -3503,7 +3503,7 @@ mv.visitVarInsn(ILOAD, 1);
 mv.visitJumpInsn(IFNE, l0);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "isRemote", "Z");
 mv.visitMethodInsn(INVOKESPECIAL, "axw", "recheckGaps", "(Z)V", false);
 mv.visitLabel(l0);
@@ -3535,32 +3535,32 @@ mv.visitVarInsn(ASTORE, 2);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 2);
 mv.visitFieldInsn(GETSTATIC, "axw$a", "CHECK", "Laxw$a;");
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getTileEntity", "(Let;Laxw$a;)Lavj;", false);
 Label l3 = new Label();
 mv.visitJumpInsn(IFNONNULL, l3);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 2);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getBlockState", "(Let;)Lawt;", false);
 mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getBlock", "()Laow;", true);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 2);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getBlockState", "(Let;)Lawt;", false);
 mv.visitMethodInsn(INVOKEVIRTUAL, "aow", "hasTileEntity", "(Lawt;)Z", false);
 mv.visitJumpInsn(IFEQ, l3);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 2);
-ERROR
+mv.visitMethodInsn(INVOKESPECIAL, "axw", "createNewTileEntity", "(Let;)Lavj;", false);
 mv.visitVarInsn(ASTORE, 3);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 2);
 mv.visitVarInsn(ALOAD, 3);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "setTileEntity", "(Let;Lavj;)V", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 2);
 mv.visitVarInsn(ALOAD, 2);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "markBlockRangeForRenderUpdate", "(Let;Let;)V", false);
 mv.visitLabel(l3);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
 mv.visitJumpInsn(GOTO, l1);
@@ -3740,13 +3740,13 @@ mv.visitVarInsn(ALOAD, 5);
 mv.visitMethodInsn(INVOKEVIRTUAL, "avj", "getBlockMetadata", "()I", false);
 mv.visitInsn(POP);
 mv.visitVarInsn(ALOAD, 5);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "avj", "getBlockType", "()Laow;", false);
 mv.visitInsn(POP);
 mv.visitJumpInsn(GOTO, l0);
 mv.visitLabel(l1);
 mv.visitFrame(Opcodes.F_CHOP,1, null, 0, null);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "hasSkyLight", "()Z", false);
 mv.visitVarInsn(ISTORE, 4);
@@ -3902,19 +3902,19 @@ mv.visitTypeInsn(CHECKCAST, "avj");
 mv.visitVarInsn(ASTORE, 7);
 mv.visitVarInsn(ALOAD, 7);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 7);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "avj", "getPos", "()Let;", false);
 mv.visitVarInsn(ALOAD, 7);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "avj", "getBlockType", "()Laow;", false);
 mv.visitVarInsn(ALOAD, 7);
 mv.visitMethodInsn(INVOKEVIRTUAL, "avj", "getBlockMetadata", "()I", false);
 mv.visitMethodInsn(INVOKEVIRTUAL, "aow", "getStateFromMeta", "(I)Lawt;", false);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 7);
-ERROR
-ERROR
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "avj", "getPos", "()Let;", false);
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getBlockState", "(Let;)Lawt;", false);
+mv.visitMethodInsn(INVOKEVIRTUAL, "avj", "shouldRefresh", "(Lamu;Let;Lawt;Lawt;)Z", false);
 Label l13 = new Label();
 mv.visitJumpInsn(IFEQ, l13);
 mv.visitVarInsn(ALOAD, 5);
@@ -3952,7 +3952,7 @@ mv.visitMaxs(6, 8);
 mv.visitEnd();
 }
 {
-ERROR
+mv = cw.visitMethod(ACC_PUBLIC, "getBiome", "(Let;Lanl;)Lanh;", null, null);
 mv.visitCode();
 mv.visitVarInsn(ALOAD, 1);
 mv.visitMethodInsn(INVOKEVIRTUAL, "et", "getX", "()I", false);
@@ -3982,7 +3982,7 @@ mv.visitJumpInsn(IF_ICMPNE, l0);
 mv.visitVarInsn(ALOAD, 2);
 mv.visitVarInsn(ALOAD, 1);
 mv.visitFieldInsn(GETSTATIC, "anm", "PLAINS", "Lanh;");
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "anl", "getBiome", "(Let;Lanh;)Lanh;", false);
 mv.visitVarInsn(ASTORE, 6);
 mv.visitVarInsn(ALOAD, 6);
 mv.visitMethodInsn(INVOKESTATIC, "anh", "getIdForBiome", "(Lanh;)I", false);
@@ -4141,7 +4141,7 @@ mv.visitInsn(ICONST_0);
 mv.visitVarInsn(ISTORE, 6);
 Label l3 = new Label();
 mv.visitLabel(l3);
-ERROR
+mv.visitFrame(Opcodes.F_FULL, 7, new Object[] {"axw", "et", Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER}, 0, new Object[] {});
 mv.visitVarInsn(ILOAD, 6);
 mv.visitIntInsn(BIPUSH, 16);
 Label l4 = new Label();
@@ -4219,9 +4219,9 @@ mv.visitVarInsn(ILOAD, 6);
 mv.visitVarInsn(ILOAD, 5);
 mv.visitMethodInsn(INVOKEVIRTUAL, "axx", "get", "(III)Lawt;", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 7);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "aow", "isAir", "(Lawt;Lamy;Let;)Z", false);
 mv.visitJumpInsn(IFEQ, l10);
 mv.visitLabel(l9);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
@@ -4245,22 +4245,22 @@ mv.visitInsn(AALOAD);
 mv.visitVarInsn(ASTORE, 12);
 mv.visitVarInsn(ALOAD, 7);
 mv.visitVarInsn(ALOAD, 12);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "et", "offset", "(Lfa;)Let;", false);
 mv.visitVarInsn(ASTORE, 13);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 13);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "getBlockState", "(Let;)Lawt;", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 13);
 mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getLightValue", "(Lamy;Let;)I", true);
 Label l13 = new Label();
 mv.visitJumpInsn(IFLE, l13);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 13);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "checkLight", "(Let;)Z", false);
 mv.visitInsn(POP);
 mv.visitLabel(l13);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
@@ -4269,16 +4269,16 @@ mv.visitJumpInsn(GOTO, l11);
 mv.visitLabel(l12);
 mv.visitFrame(Opcodes.F_CHOP,3, null, 0, null);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 7);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "checkLight", "(Let;)Z", false);
 mv.visitInsn(POP);
 mv.visitLabel(l10);
 mv.visitFrame(Opcodes.F_CHOP,2, null, 0, null);
 mv.visitIincInsn(6, 1);
 mv.visitJumpInsn(GOTO, l3);
 mv.visitLabel(l4);
-ERROR
+mv.visitFrame(Opcodes.F_FULL, 3, new Object[] {"axw", "et", Opcodes.INTEGER}, 0, new Object[] {});
 mv.visitIincInsn(2, 1);
 mv.visitJumpInsn(GOTO, l1);
 mv.visitLabel(l0);
@@ -4310,13 +4310,13 @@ mv.visitInsn(ISHL);
 mv.visitMethodInsn(INVOKESPECIAL, "et", "<init>", "(III)V", false);
 mv.visitVarInsn(ASTORE, 1);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "hasSkyLight", "()Z", false);
 Label l0 = new Label();
 mv.visitJumpInsn(IFEQ, l0);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
 mv.visitInsn(ICONST_M1);
 mv.visitInsn(ICONST_0);
@@ -4325,11 +4325,11 @@ mv.visitMethodInsn(INVOKEVIRTUAL, "et", "add", "(III)Let;", false);
 mv.visitVarInsn(ALOAD, 1);
 mv.visitIntInsn(BIPUSH, 16);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "getSeaLevel", "()I", false);
 mv.visitIntInsn(BIPUSH, 16);
 mv.visitMethodInsn(INVOKEVIRTUAL, "et", "add", "(III)Let;", false);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "isAreaLoaded", "(Let;Let;)Z", false);
 Label l1 = new Label();
 mv.visitJumpInsn(IFEQ, l1);
 mv.visitInsn(ICONST_0);
@@ -4402,15 +4402,15 @@ mv.visitLabel(l10);
 mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[] {Opcodes.INTEGER});
 mv.visitVarInsn(ISTORE, 4);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
 mv.visitVarInsn(ALOAD, 3);
 mv.visitVarInsn(ILOAD, 4);
-ERROR
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "et", "offset", "(Lfa;I)Let;", false);
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "getChunkFromBlockCoords", "(Let;)Laxw;", false);
 mv.visitVarInsn(ALOAD, 3);
 mv.visitMethodInsn(INVOKEVIRTUAL, "fa", "getOpposite", "()Lfa;", false);
-ERROR
+mv.visitMethodInsn(INVOKESPECIAL, "axw", "checkLightSide", "(Lfa;)V", false);
 mv.visitJumpInsn(GOTO, l7);
 mv.visitLabel(l8);
 mv.visitFrame(Opcodes.F_CHOP,2, null, 0, null);
@@ -4602,7 +4602,7 @@ mv.visitLabel(l0);
 mv.visitFrame(Opcodes.F_FULL, 8, new Object[] {"axw", Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, Opcodes.INTEGER, "et$a", Opcodes.INTEGER}, 0, new Object[] {});
 mv.visitVarInsn(ILOAD, 7);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "getSeaLevel", "()I", false);
 Label l1 = new Label();
 mv.visitJumpInsn(IF_ICMPGT, l1);
@@ -4623,7 +4623,7 @@ mv.visitMethodInsn(INVOKEVIRTUAL, "et$a", "setPos", "(III)Let$a;", false);
 mv.visitInsn(POP);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 6);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getBlockLightOpacity", "(Let;)I", false);
 mv.visitVarInsn(ISTORE, 8);
 mv.visitVarInsn(ILOAD, 8);
 mv.visitIntInsn(SIPUSH, 255);
@@ -4632,7 +4632,7 @@ mv.visitJumpInsn(IF_ICMPNE, l3);
 mv.visitVarInsn(ALOAD, 6);
 mv.visitMethodInsn(INVOKEVIRTUAL, "et$a", "getY", "()I", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "getSeaLevel", "()I", false);
 mv.visitJumpInsn(IF_ICMPGE, l3);
 mv.visitInsn(ICONST_1);
@@ -4655,9 +4655,9 @@ mv.visitJumpInsn(IFEQ, l5);
 mv.visitVarInsn(ILOAD, 8);
 mv.visitJumpInsn(IFNE, l5);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 6);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "checkLight", "(Let;)Z", false);
 mv.visitJumpInsn(IFNE, l5);
 mv.visitInsn(ICONST_0);
 mv.visitInsn(IRETURN);
@@ -4686,17 +4686,17 @@ mv.visitMethodInsn(INVOKEVIRTUAL, "et$a", "setPos", "(III)Let$a;", false);
 mv.visitInsn(POP);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitVarInsn(ALOAD, 6);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getBlockState", "(Let;)Lawt;", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 6);
 mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getLightValue", "(Lamy;Let;)I", true);
 Label l8 = new Label();
 mv.visitJumpInsn(IFLE, l8);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 6);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "checkLight", "(Let;)Z", false);
 mv.visitInsn(POP);
 mv.visitLabel(l8);
 mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
@@ -4737,7 +4737,7 @@ mv.visitEnd();
 mv = cw.visitMethod(ACC_PUBLIC, "getWorld", "()Lamu;", null, null);
 mv.visitCode();
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitInsn(ARETURN);
 mv.visitMaxs(1, 1);
 mv.visitEnd();
@@ -4796,7 +4796,7 @@ mv.visitMaxs(5, 2);
 mv.visitEnd();
 }
 {
-ERROR
+mv = cw.visitMethod(ACC_PUBLIC, "getTileEntityMap", "()Ljava/util/Map;", "()Ljava/util/Map<Let;Lavj;>;", null);
 mv.visitCode();
 mv.visitVarInsn(ALOAD, 0);
 mv.visitFieldInsn(GETFIELD, "axw", "field_150816_i", "Ljava/util/Map;");
@@ -4805,10 +4805,10 @@ mv.visitMaxs(1, 1);
 mv.visitEnd();
 }
 {
-ERROR
+mv = cw.visitMethod(ACC_PUBLIC, "getEntityLists", "()[Lqx;", "()[Lqx<Lvg;>;", null);
 mv.visitCode();
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76645_j", "[Lqx;");
 mv.visitInsn(ARETURN);
 mv.visitMaxs(1, 1);
 mv.visitEnd();
@@ -4963,12 +4963,12 @@ mv.visitLdcInsn("Minecraft");
 mv.visitVarInsn(ALOAD, 0);
 mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getPos", "()Lamn;", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "getDimension", "()I", false);
 mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "getDimensionType", "()Layn;", false);
 mv.visitMethodInsn(INVOKEVIRTUAL, "ayn", "getName", "()Ljava/lang/String;", false);
@@ -4988,12 +4988,12 @@ mv.visitMethodInsn(INVOKEINTERFACE, "net/minecraftforge/fml/common/ModContainer"
 mv.visitVarInsn(ALOAD, 0);
 mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "getPos", "()Lamn;", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "getDimension", "()I", false);
 mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitFieldInsn(GETFIELD, "amu", "provider", "Laym;");
 mv.visitMethodInsn(INVOKEVIRTUAL, "aym", "getDimensionType", "()Layn;", false);
 mv.visitMethodInsn(INVOKEVIRTUAL, "ayn", "getName", "()Ljava/lang/String;", false);
@@ -5089,7 +5089,7 @@ mv.visitLdcInsn(Type.getType("Laed;"));
 mv.visitMethodInsn(INVOKEVIRTUAL, "qx", "getByClass", "(Ljava/lang/Class;)Ljava/lang/Iterable;", false);
 mv.visitMethodInsn(INVOKESTATIC, "com/google/common/collect/Lists", "newArrayList", "(Ljava/lang/Iterable;)Ljava/util/ArrayList;", false);
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitInvokeDynamicInsn("accept", "(Laxw;)Ljava/util/function/Consumer;", new Handle(Opcodes.H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;"), new Object[]{Type.getType("(Ljava/lang/Object;)V"), new Handle(Opcodes.H_INVOKESPECIAL, "axw", "lambda$null$1", "(Laed;)V"), Type.getType("(Laed;)V")});
 mv.visitMethodInsn(INVOKEVIRTUAL, "java/util/ArrayList", "forEach", "(Ljava/util/function/Consumer;)V", false);
 mv.visitInsn(RETURN);
 mv.visitMaxs(2, 2);
@@ -5099,10 +5099,10 @@ mv.visitEnd();
 mv = cw.visitMethod(ACC_PRIVATE + ACC_SYNTHETIC, "lambda$null$1", "(Laed;)V", null, null);
 mv.visitCode();
 mv.visitVarInsn(ALOAD, 0);
-ERROR
+mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
 mv.visitVarInsn(ALOAD, 1);
 mv.visitInsn(ICONST_0);
-ERROR
+mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "updateEntityWithOptionalForce", "(Lvg;Z)V", false);
 mv.visitInsn(RETURN);
 mv.visitMaxs(3, 2);
 mv.visitEnd();

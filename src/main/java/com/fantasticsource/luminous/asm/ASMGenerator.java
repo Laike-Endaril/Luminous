@@ -54,8 +54,6 @@ public class ASMGenerator
         int nextCode = 0;
         while (line != null)
         {
-            while (line.contains("<init>")) line = line.replace("<init>", INIT_CODE);
-
             String[] tokens = line.split(",");
             if (tokens.length < 2)
             {
@@ -125,8 +123,10 @@ public class ASMGenerator
         line = reader.readLine();
         while (line != null)
         {
+            while (line.contains("<init>")) line = line.replace("<init>", INIT_CODE);
+
             if (++i % 100 == 0) System.out.println(i);
-            line = obfuscate(line, className.replaceAll("[.]", "/"));
+            line = obfuscate(line, className.replaceAll("[.]", "/"), i == 278); //Can debug a specific line here by setting "debug" param to i == <linenumber>
             if (line == null)
             {
                 writer.write("ERROR\r\n");
@@ -151,8 +151,9 @@ public class ASMGenerator
     }
 
 
-    public static String obfuscate(String line, String deobfMainClass)
+    public static String obfuscate(String line, String deobfMainClass, boolean debug)
     {
+        if (debug) System.out.println(line);
         String original = line;
 
         HashSet<String> classesFound = new HashSet<>();
@@ -173,7 +174,7 @@ public class ASMGenerator
             }
         }
 
-        classesFound.add(deobfMainClass);
+        if (!line.contains("visitMethodInsn")) classesFound.add(deobfMainClass);
 
 
         HashMap<String, String> fieldPool = new HashMap<>(), methodPool = new HashMap<>(), shortInnerClassPool = new HashMap<>();

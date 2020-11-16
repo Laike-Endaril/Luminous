@@ -98,9 +98,9 @@ public class ASMGenerator
                     String deobfMember = tokens[1].trim().replace(currentDeobfClass + "/", "");
                     String cipher = cipher(nextCode++);
 
-                    if (deobfMember.contains("()"))
+                    if (deobfMember.matches(".*[(].*[)].*"))
                     {
-                        METHOD_TO_CODE.computeIfAbsent(currentDeobfClass, o -> new TreeMap<>(Collections.reverseOrder())).put(deobfMember.replace("()", ""), cipher);
+                        METHOD_TO_CODE.computeIfAbsent(currentDeobfClass, o -> new TreeMap<>(Collections.reverseOrder())).put(deobfMember.replaceFirst("[(].*[)]", ""), cipher);
                         CODE_TO_OBF.put(cipher, tokens[0]);
                     }
                     else
@@ -126,7 +126,7 @@ public class ASMGenerator
             while (line.contains("<init>")) line = line.replace("<init>", INIT_CODE);
 
             if (++i % 100 == 0) System.out.println(i);
-            line = obfuscate(line, className.replaceAll("[.]", "/"), i == 278); //Can debug a specific line here by setting "debug" param to i == <linenumber>
+            line = obfuscate(line, className.replaceAll("[.]", "/"), false); //Can debug a specific line here by setting "debug" param to i == <linenumber>
             if (line == null)
             {
                 writer.write("ERROR\r\n");
@@ -156,7 +156,7 @@ public class ASMGenerator
         if (debug) System.out.println(line);
         String original = line;
 
-        HashSet<String> classesFound = new HashSet<>();
+        HashSet<String> memberClassesFound = new HashSet<>();
         HashSet<String> unobfClassesFound = new HashSet<>();
 
         boolean[] flag = new boolean[1];
@@ -165,26 +165,29 @@ public class ASMGenerator
             for (Map.Entry<String, String> entry : map.entrySet())
             {
                 String deobf = entry.getKey();
-                line = replaceAllClassesAndMembers(line, deobf, entry.getValue(), flag);
+                String code = entry.getValue();
+                line = replaceAllClassesAndMembers(line, deobf, code, flag);
                 if (flag[0])
                 {
-                    classesFound.add(deobf);
+                    if (!line.contains("visitMethod(") && (!line.contains("visitMethodInsn") || line.contains('"' + code))) memberClassesFound.add(deobf);
                     if (map == UNOBF_CLASS_TO_CODE) unobfClassesFound.add(deobf);
                 }
             }
         }
 
-        if (!line.contains("visitMethodInsn")) classesFound.add(deobfMainClass);
+        if (!line.contains("visitMethodInsn")) memberClassesFound.add(deobfMainClass);
 
 
         HashMap<String, String> fieldPool = new HashMap<>(), methodPool = new HashMap<>(), shortInnerClassPool = new HashMap<>();
         HashSet<String> classesIncluded = new HashSet<>();
-        for (String classFound : classesFound)
+        for (String classFound : memberClassesFound)
         {
+            if (debug) System.out.println("Class: " + classFound);
             classesIncluded.add(classFound);
             for (Map.Entry<String, String> entry : FIELD_TO_CODE.getOrDefault(classFound, new TreeMap<>(Collections.reverseOrder())).entrySet())
             {
                 String deobf = entry.getKey();
+//                if (debug) System.out.println("Field: " + deobf);
                 if (!line.contains(deobf)) continue;
 
                 if (fieldPool.containsKey(deobf))
@@ -211,6 +214,7 @@ public class ASMGenerator
             for (Map.Entry<String, String> entry : METHOD_TO_CODE.getOrDefault(classFound, new TreeMap<>(Collections.reverseOrder())).entrySet())
             {
                 String deobf = entry.getKey();
+//                if (debug) System.out.println("Method: " + deobf);
                 if (!line.contains(deobf)) continue;
 
                 if (methodPool.containsKey(deobf))

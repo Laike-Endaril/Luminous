@@ -11,11 +11,17 @@ public class ASMGenerator
 {
     public static final String VALID_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/$_";
     public static final char[] ENCODED_DIGITS = "!@#$%^&*()".toCharArray();
+    public static final String INIT_CODE = "{{{^}}}";
 
     public static final HashMap<String, String> CODE_TO_OBF = new HashMap<>();
 
+    static
+    {
+        CODE_TO_OBF.put(INIT_CODE, "<init>");
+    }
+
     public static final TreeMap<String, String> UNOBF_CLASS_TO_CODE = new TreeMap<>(Collections.reverseOrder()), INNER_CLASS_TO_CODE = new TreeMap<>(Collections.reverseOrder()), OUTER_CLASS_TO_CODE = new TreeMap<>(Collections.reverseOrder());
-    public static final TreeMap<String, TreeMap<String, String>> CLASS_MEMBER_TO_CODE = new TreeMap<>(Collections.reverseOrder());
+    public static final TreeMap<String, TreeMap<String, String>> FIELD_TO_CODE = new TreeMap<>(Collections.reverseOrder()), METHOD_TO_CODE = new TreeMap<>(Collections.reverseOrder()), SHORT_INNER_CLASS_TO_CODE = new TreeMap<>(Collections.reverseOrder());
 
     public static void main(final String[] args) throws Exception
     {
@@ -48,6 +54,8 @@ public class ASMGenerator
         int nextCode = 0;
         while (line != null)
         {
+            while (line.contains("<init>")) line = line.replace("<init>", INIT_CODE);
+
             String[] tokens = line.split(",");
             if (tokens.length < 2)
             {
@@ -55,44 +63,53 @@ public class ASMGenerator
             }
             else
             {
-                if (tokens[1].contains("???")) tokens[1] = tokens[0];
+                tokens[0] = tokens[0].replaceAll("[.]", "/");
+                tokens[1] = tokens[1].trim().replaceAll("[.]", "/");
+
                 if (isClassNext)
                 {
-                    currentDeobfClass = tokens[1].trim();
+                    currentDeobfClass = tokens[1];
                     if (currentDeobfClass.equals(tokens[0]))
                     {
-                        String unobf = currentDeobfClass.replaceAll("[.]", "/");
                         String cipher = cipher(nextCode++);
-                        UNOBF_CLASS_TO_CODE.put(unobf, cipher);
-                        CODE_TO_OBF.put(cipher, unobf);
+                        UNOBF_CLASS_TO_CODE.put(currentDeobfClass, cipher);
+                        CODE_TO_OBF.put(cipher, currentDeobfClass);
                     }
                     else
                     {
                         if (currentDeobfClass.contains("$"))
                         {
-                            String deobf = currentDeobfClass.replaceAll("[.]", "/");
                             String obf = tokens[0];
                             String cipher = cipher(nextCode++);
-                            INNER_CLASS_TO_CODE.put(deobf, cipher);
+                            INNER_CLASS_TO_CODE.put(currentDeobfClass, cipher);
                             CODE_TO_OBF.put(cipher, obf);
                             cipher = cipher(nextCode++);
-                            CLASS_MEMBER_TO_CODE.computeIfAbsent(deobf.substring(0, deobf.indexOf('$')), o -> new TreeMap<>(Collections.reverseOrder())).put(deobf.substring(deobf.indexOf('$') + 1), cipher);
+                            SHORT_INNER_CLASS_TO_CODE.computeIfAbsent(currentDeobfClass.substring(0, currentDeobfClass.indexOf('$')), o -> new TreeMap<>(Collections.reverseOrder())).put(currentDeobfClass.substring(currentDeobfClass.indexOf('$') + 1), cipher);
                             CODE_TO_OBF.put(cipher, obf.substring(obf.indexOf('$') + 1));
                         }
                         else
                         {
                             String cipher = cipher(nextCode++);
-                            OUTER_CLASS_TO_CODE.put(currentDeobfClass.replaceAll("[.]", "/"), cipher);
+                            OUTER_CLASS_TO_CODE.put(currentDeobfClass, cipher);
                             CODE_TO_OBF.put(cipher, tokens[0]);
                         }
                     }
                 }
                 else
                 {
-                    String deobfMember = tokens[1].trim().replace(currentDeobfClass + ".", "").replaceAll("[.]", "/");
+                    String deobfMember = tokens[1].trim().replace(currentDeobfClass + "/", "");
                     String cipher = cipher(nextCode++);
-                    CLASS_MEMBER_TO_CODE.computeIfAbsent(currentDeobfClass, o -> new TreeMap<>(Collections.reverseOrder())).put(deobfMember, cipher);
-                    CODE_TO_OBF.put(cipher, tokens[0]);
+
+                    if (deobfMember.contains("()"))
+                    {
+                        METHOD_TO_CODE.computeIfAbsent(currentDeobfClass, o -> new TreeMap<>(Collections.reverseOrder())).put(deobfMember.replace("()", ""), cipher);
+                        CODE_TO_OBF.put(cipher, tokens[0]);
+                    }
+                    else
+                    {
+                        FIELD_TO_CODE.computeIfAbsent(currentDeobfClass, o -> new TreeMap<>(Collections.reverseOrder())).put(deobfMember, cipher);
+                        CODE_TO_OBF.put(cipher, tokens[0]);
+                    }
                 }
                 isClassNext = false;
             }
@@ -108,8 +125,8 @@ public class ASMGenerator
         line = reader.readLine();
         while (line != null)
         {
-            if (i++ % 100 == 99) System.out.println(i);
-            line = obfuscate(line, className);
+            if (++i % 100 == 0) System.out.println(i);
+            line = obfuscate(line, className.replaceAll("[.]", "/"));
             if (line == null)
             {
                 writer.write("ERROR\r\n");
@@ -127,15 +144,17 @@ public class ASMGenerator
     public static String cipher(int code)
     {
         String s = "" + code;
-        StringBuilder cipher = new StringBuilder("<?!?>");
+        StringBuilder cipher = new StringBuilder("{?!?}");
         for (char c : s.toCharArray()) cipher.append(ENCODED_DIGITS[Integer.parseInt("" + c)]);
-        cipher.append("<!?!>");
+        cipher.append("{!?!}");
         return cipher.toString();
     }
 
 
     public static String obfuscate(String line, String deobfMainClass)
     {
+        String original = line;
+
         HashSet<String> classesFound = new HashSet<>();
         HashSet<String> unobfClassesFound = new HashSet<>();
 
@@ -157,23 +176,26 @@ public class ASMGenerator
         classesFound.add(deobfMainClass);
 
 
-        HashMap<String, String> memberPool = new HashMap<>();
+        HashMap<String, String> fieldPool = new HashMap<>(), methodPool = new HashMap<>(), shortInnerClassPool = new HashMap<>();
         HashSet<String> classesIncluded = new HashSet<>();
         for (String classFound : classesFound)
         {
             classesIncluded.add(classFound);
-            for (Map.Entry<String, String> entry : CLASS_MEMBER_TO_CODE.getOrDefault(classFound, new TreeMap<>(Collections.reverseOrder())).entrySet())
+            for (Map.Entry<String, String> entry : FIELD_TO_CODE.getOrDefault(classFound, new TreeMap<>(Collections.reverseOrder())).entrySet())
             {
                 String deobf = entry.getKey();
-                if (memberPool.containsKey(deobf))
+                if (!line.contains(deobf)) continue;
+
+                if (fieldPool.containsKey(deobf))
                 {
-                    if (!CODE_TO_OBF.get(memberPool.get(deobf)).equals(CODE_TO_OBF.get(entry.getValue())))
+                    if (!CODE_TO_OBF.get(fieldPool.get(deobf)).equals(CODE_TO_OBF.get(entry.getValue())))
                     {
                         System.err.println();
-                        System.err.println("Member conflict: " + deobf);
+                        System.err.println("Field conflict: " + deobf);
+                        System.err.println(original);
                         for (String cls : classesIncluded)
                         {
-                            TreeMap<String, String> map = CLASS_MEMBER_TO_CODE.getOrDefault(cls, new TreeMap<>(Collections.reverseOrder()));
+                            TreeMap<String, String> map = FIELD_TO_CODE.getOrDefault(cls, new TreeMap<>(Collections.reverseOrder()));
                             if (map.containsKey(deobf)) System.err.println(cls + ": " + deobf + ", " + map.get(deobf) + ", " + CODE_TO_OBF.get(map.get(deobf)));
                         }
                         return null;
@@ -181,16 +203,86 @@ public class ASMGenerator
                 }
                 else
                 {
-                    memberPool.put(deobf, entry.getValue());
+                    fieldPool.put(deobf, entry.getValue());
+                }
+            }
+
+            for (Map.Entry<String, String> entry : METHOD_TO_CODE.getOrDefault(classFound, new TreeMap<>(Collections.reverseOrder())).entrySet())
+            {
+                String deobf = entry.getKey();
+                if (!line.contains(deobf)) continue;
+
+                if (methodPool.containsKey(deobf))
+                {
+                    if (!CODE_TO_OBF.get(methodPool.get(deobf)).equals(CODE_TO_OBF.get(entry.getValue())))
+                    {
+                        System.err.println();
+                        System.err.println("Method conflict: " + deobf);
+                        System.err.println(original);
+                        for (String cls : classesIncluded)
+                        {
+                            TreeMap<String, String> map = METHOD_TO_CODE.getOrDefault(cls, new TreeMap<>(Collections.reverseOrder()));
+                            if (map.containsKey(deobf)) System.err.println(cls + ": " + deobf + ", " + map.get(deobf) + ", " + CODE_TO_OBF.get(map.get(deobf)));
+                        }
+                        return null;
+                    }
+                }
+                else
+                {
+                    methodPool.put(deobf, entry.getValue());
+                }
+            }
+
+            for (Map.Entry<String, String> entry : SHORT_INNER_CLASS_TO_CODE.getOrDefault(classFound, new TreeMap<>(Collections.reverseOrder())).entrySet())
+            {
+                String deobf = entry.getKey();
+                if (!line.contains(deobf)) continue;
+
+                if (shortInnerClassPool.containsKey(deobf))
+                {
+                    if (!CODE_TO_OBF.get(shortInnerClassPool.get(deobf)).equals(CODE_TO_OBF.get(entry.getValue())))
+                    {
+                        System.err.println();
+                        System.err.println("Inner class conflict: " + deobf);
+                        System.err.println(original);
+                        for (String cls : classesIncluded)
+                        {
+                            TreeMap<String, String> map = SHORT_INNER_CLASS_TO_CODE.getOrDefault(cls, new TreeMap<>(Collections.reverseOrder()));
+                            if (map.containsKey(deobf)) System.err.println(cls + ": " + deobf + ", " + map.get(deobf) + ", " + CODE_TO_OBF.get(map.get(deobf)));
+                        }
+                        return null;
+                    }
+                }
+                else
+                {
+                    shortInnerClassPool.put(deobf, entry.getValue());
                 }
             }
         }
 
-        for (Map.Entry<String, String> entry : memberPool.entrySet())
+        if (line.contains("visitMethod"))
+        {
+            for (Map.Entry<String, String> entry : methodPool.entrySet())
+            {
+                String deobf = entry.getKey();
+                line = replaceAllClassesAndMembers(line, deobf, entry.getValue(), flag);
+            }
+        }
+        else
+        {
+            for (Map.Entry<String, String> entry : fieldPool.entrySet())
+            {
+                String deobf = entry.getKey();
+                line = replaceAllClassesAndMembers(line, deobf, entry.getValue(), flag);
+            }
+        }
+
+        for (Map.Entry<String, String> entry : shortInnerClassPool.entrySet())
         {
             String deobf = entry.getKey();
             line = replaceAllClassesAndMembers(line, deobf, entry.getValue(), flag);
         }
+
 
         for (String className : unobfClassesFound)
         {
@@ -250,7 +342,7 @@ public class ASMGenerator
     {
         if (word.contains("L" + toFind))
         {
-            if (!word.equals("L" + toFind))System.out.println(word + ", " + toFind);
+            if (!word.equals("L" + toFind)) System.out.println(word + ", " + toFind);
             flag[0] = true;
             return word.replace("L" + toFind, "L" + replacement);
         }

@@ -21,8 +21,9 @@ public class ASMGenerator
     }
 
     public static final TreeMap<String, String> UNOBF_CLASS_TO_CODE = new TreeMap<>(Collections.reverseOrder()), INNER_CLASS_TO_CODE = new TreeMap<>(Collections.reverseOrder()), OUTER_CLASS_TO_CODE = new TreeMap<>(Collections.reverseOrder());
-    public static final TreeMap<String, TreeMap<String, String>> FIELD_TO_CODE = new TreeMap<>(Collections.reverseOrder()), METHOD_TO_CODE = new TreeMap<>(Collections.reverseOrder()), SHORT_INNER_CLASS_TO_CODE = new TreeMap<>(Collections.reverseOrder());
+    public static final TreeMap<String, TreeMap<String, String>> FIELD_TO_CODE = new TreeMap<>(Collections.reverseOrder()), SHORT_INNER_CLASS_TO_CODE = new TreeMap<>(Collections.reverseOrder());
     public static final HashMap<String, String> DEOBF_SUPERCLASSES = new HashMap<>();
+    public static final TreeMap<String, TreeMap<String, HashMap<String, String>>> METHOD_TO_CODE = new TreeMap<>(Collections.reverseOrder());
 
     public static void main(final String[] args) throws Exception
     {
@@ -109,7 +110,8 @@ public class ASMGenerator
 
                     if (deobfMember.matches(".*[(].*[)].*"))
                     {
-                        METHOD_TO_CODE.computeIfAbsent(currentDeobfClass, o -> new TreeMap<>(Collections.reverseOrder())).put(deobfMember.replaceFirst("[(].*[)]", ""), cipher);
+                        String methodName = deobfMember.replaceFirst("[(].*[)]", ""), methodArgs = tokens[3].trim();
+                        METHOD_TO_CODE.computeIfAbsent(currentDeobfClass, o -> new TreeMap<>(Collections.reverseOrder())).computeIfAbsent(methodName, o -> new HashMap<>()).put(methodArgs, cipher);
                         CODE_TO_OBF.put(cipher, tokens[0]);
                     }
                     else
@@ -164,7 +166,7 @@ public class ASMGenerator
     public static String obfuscate(String line, String deobfMainClass, boolean debug)
     {
         if (debug) System.out.println(line);
-        String original = line;
+        String originalLine = line;
 
         HashSet<String> memberClassesFound = new HashSet<>();
         HashSet<String> unobfClassesFound = new HashSet<>();
@@ -206,7 +208,8 @@ public class ASMGenerator
         }
 
 
-        HashMap<String, String> fieldPool = new HashMap<>(), methodPool = new HashMap<>(), shortInnerClassPool = new HashMap<>();
+        HashMap<String, String> fieldPool = new HashMap<>(), shortInnerClassPool = new HashMap<>();
+        HashMap<String, HashMap<String, String>> methodPool = new HashMap<>();
         HashSet<String> classesIncluded = new HashSet<>();
         for (String classFound : memberClassesFound)
         {
@@ -224,7 +227,7 @@ public class ASMGenerator
                     {
                         System.err.println();
                         System.err.println("Field conflict: " + deobf);
-                        System.err.println(original);
+                        System.err.println(originalLine);
                         for (String cls : classesIncluded)
                         {
                             TreeMap<String, String> map = FIELD_TO_CODE.getOrDefault(cls, new TreeMap<>(Collections.reverseOrder()));
@@ -239,30 +242,36 @@ public class ASMGenerator
                 }
             }
 
-            for (Map.Entry<String, String> entry : METHOD_TO_CODE.getOrDefault(classFound, new TreeMap<>(Collections.reverseOrder())).entrySet())
+            for (Map.Entry<String, HashMap<String, String>> entry : METHOD_TO_CODE.getOrDefault(classFound, new TreeMap<>(Collections.reverseOrder())).entrySet())
             {
-                String deobf = entry.getKey();
-//                if (debug) System.out.println("Method: " + deobf);
-                if (!lineContainsWord(line, deobf)) continue;
+                String deobfName = entry.getKey();
+//                if (debug) System.out.println("Method: " + deobfName);
 
-                if (methodPool.containsKey(deobf))
+                for (Map.Entry<String, String> entry2 : entry.getValue().entrySet())
                 {
-                    if (!CODE_TO_OBF.get(methodPool.get(deobf)).equals(CODE_TO_OBF.get(entry.getValue())))
+                    String methodArgs = entry2.getKey();
+                    if (!lineContainsWord(line, deobfName)) continue;
+                    if (!originalLine.contains(methodArgs)) continue; //Check for method argument match, in case of overloaded methods
+
+                    if (methodPool.containsKey(deobfName) && methodPool.get(deobfName).containsKey(methodArgs))
                     {
-                        System.err.println();
-                        System.err.println("Method conflict: " + deobf);
-                        System.err.println(original);
-                        for (String cls : classesIncluded)
+                        if (!CODE_TO_OBF.get(methodPool.get(deobfName).get(methodArgs)).equals(CODE_TO_OBF.get(entry2.getValue())))
                         {
-                            TreeMap<String, String> map = METHOD_TO_CODE.getOrDefault(cls, new TreeMap<>(Collections.reverseOrder()));
-                            if (map.containsKey(deobf)) System.err.println(cls + ": " + deobf + ", " + map.get(deobf) + ", " + CODE_TO_OBF.get(map.get(deobf)));
+                            System.err.println();
+                            System.err.println("Method conflict: " + deobfName + methodArgs);
+                            System.err.println(originalLine);
+                            for (String cls : classesIncluded)
+                            {
+                                TreeMap<String, HashMap<String, String>> map = METHOD_TO_CODE.getOrDefault(cls, new TreeMap<>(Collections.reverseOrder()));
+                                if (map.containsKey(deobfName) && map.get(deobfName).containsKey(methodArgs)) System.err.println(cls + ": " + deobfName + methodArgs + ", " + map.get(deobfName).get(methodArgs) + ", " + CODE_TO_OBF.get(map.get(deobfName).get(methodArgs)));
+                            }
+                            return null;
                         }
-                        return null;
                     }
-                }
-                else
-                {
-                    methodPool.put(deobf, entry.getValue());
+                    else
+                    {
+                        methodPool.put(deobfName, entry.getValue());
+                    }
                 }
             }
 
@@ -277,7 +286,7 @@ public class ASMGenerator
                     {
                         System.err.println();
                         System.err.println("Inner class conflict: " + deobf);
-                        System.err.println(original);
+                        System.err.println(originalLine);
                         for (String cls : classesIncluded)
                         {
                             TreeMap<String, String> map = SHORT_INNER_CLASS_TO_CODE.getOrDefault(cls, new TreeMap<>(Collections.reverseOrder()));
@@ -295,10 +304,14 @@ public class ASMGenerator
 
         if (line.contains("visitMethod"))
         {
-            for (Map.Entry<String, String> entry : methodPool.entrySet())
+            for (Map.Entry<String, HashMap<String, String>> entry : methodPool.entrySet())
             {
                 String deobf = entry.getKey();
-                line = replaceWordsInLine(line, deobf, entry.getValue(), flag);
+                for (Map.Entry<String, String> entry2 : entry.getValue().entrySet())
+                {
+                    //Don't believe this needs a check for the original line containing args, since that should've been done earlier
+                    line = replaceWordsInLine(line, deobf, entry2.getValue(), flag);
+                }
             }
         }
         else
@@ -322,6 +335,8 @@ public class ASMGenerator
             line = replaceWordsInLine(line, className, UNOBF_CLASS_TO_CODE.get(className), flag);
         }
 
+
+        //Change from middleman codes to obfuscated
         for (Map.Entry<String, String> entry : CODE_TO_OBF.entrySet())
         {
             String code = entry.getKey();

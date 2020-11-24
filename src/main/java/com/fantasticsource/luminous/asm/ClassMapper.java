@@ -55,7 +55,7 @@ public class ClassMapper
             file.mkdirs();
             file.delete();
             BufferedWriter allMappingsWriter = new BufferedWriter(new FileWriter(file));
-            String deobfClassname, translatedMember, translatedType, translatedArgTypes;
+            String deobfClassname, translatedMember, translatedType, untranslatedArgTypes, translatedArgTypes;
             for (Map.Entry<String, ClassMemberMapper> entry : CLASS_MEMBER_MAPPERS.entrySet())
             {
                 String obfClassname = entry.getKey();
@@ -80,8 +80,9 @@ public class ClassMapper
                 {
                     translatedMember = METHOD_MAPPINGS.getOrDefault(data.name, data.name);
                     translatedType = translateTypes(data.desc).replaceFirst("([(].*[)])", "");
-                    translatedArgTypes = translateTypes(data.desc).replaceFirst("([(].*[)]).*", "$1");
-                    allMappingsWriter.write(data.name + ", " + deobfClassname + "." + translatedMember + translatedArgTypes + ", " + translatedType + "\r\n");
+                    untranslatedArgTypes = data.desc.replaceFirst("([(].*[)]).*", "$1");
+                    translatedArgTypes = translateTypes(untranslatedArgTypes);
+                    allMappingsWriter.write(data.name + ", " + deobfClassname + "." + translatedMember + translatedArgTypes + ", " + translatedType + ", " + untranslatedArgTypes + "\r\n");
                 }
 
                 allMappingsWriter.write("\r\n");

@@ -1,5 +1,3 @@
-Fix current field conflict...probably shouldn't be happening, so look at code triggering field conflicts
-
 Not yet sure, but probably have issues with overloaded methods, may need to check desc...
 
 

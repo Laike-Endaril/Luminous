@@ -136,7 +136,7 @@ public class ASMGenerator
             while (line.contains("<init>")) line = line.replace("<init>", INIT_CODE);
 
             if (++i % 100 == 0) System.out.println(i);
-            line = obfuscate(line, className.replaceAll("[.]", "/"), i == 366); //Can debug a specific line here by setting "debug" param to i == <linenumber>
+            line = obfuscate(line, className.replaceAll("[.]", "/"), false); //Can debug a specific line here by setting "debug" param to i == <linenumber>
             if (line == null)
             {
                 writer.write("ERROR\r\n");
@@ -176,7 +176,7 @@ public class ASMGenerator
             {
                 String deobf = entry.getKey();
                 String code = entry.getValue();
-                line = encodeLine(line, deobf, code, flag);
+                line = replaceWordsInLine(line, deobf, code, flag);
                 if (flag[0])
                 {
                     if (!line.contains("visitMethod(") && (!line.contains("visitMethodInsn") || line.contains('"' + code)))
@@ -216,7 +216,7 @@ public class ASMGenerator
             {
                 String deobf = entry.getKey();
 //                if (debug) System.out.println("Field: " + deobf);
-                if (!line.contains(deobf)) continue;
+                if (!lineContainsWord(line, deobf)) continue;
 
                 if (fieldPool.containsKey(deobf))
                 {
@@ -243,7 +243,7 @@ public class ASMGenerator
             {
                 String deobf = entry.getKey();
 //                if (debug) System.out.println("Method: " + deobf);
-                if (!line.contains(deobf)) continue;
+                if (!lineContainsWord(line, deobf)) continue;
 
                 if (methodPool.containsKey(deobf))
                 {
@@ -269,7 +269,7 @@ public class ASMGenerator
             for (Map.Entry<String, String> entry : SHORT_INNER_CLASS_TO_CODE.getOrDefault(classFound, new TreeMap<>(Collections.reverseOrder())).entrySet())
             {
                 String deobf = entry.getKey();
-                if (!line.contains(deobf)) continue;
+                if (!lineContainsWord(line, deobf)) continue;
 
                 if (shortInnerClassPool.containsKey(deobf))
                 {
@@ -298,7 +298,7 @@ public class ASMGenerator
             for (Map.Entry<String, String> entry : methodPool.entrySet())
             {
                 String deobf = entry.getKey();
-                line = encodeLine(line, deobf, entry.getValue(), flag);
+                line = replaceWordsInLine(line, deobf, entry.getValue(), flag);
             }
         }
         else
@@ -306,20 +306,20 @@ public class ASMGenerator
             for (Map.Entry<String, String> entry : fieldPool.entrySet())
             {
                 String deobf = entry.getKey();
-                line = encodeLine(line, deobf, entry.getValue(), flag);
+                line = replaceWordsInLine(line, deobf, entry.getValue(), flag);
             }
         }
 
         for (Map.Entry<String, String> entry : shortInnerClassPool.entrySet())
         {
             String deobf = entry.getKey();
-            line = encodeLine(line, deobf, entry.getValue(), flag);
+            line = replaceWordsInLine(line, deobf, entry.getValue(), flag);
         }
 
 
         for (String className : unobfClassesFound)
         {
-            line = encodeLine(line, className, UNOBF_CLASS_TO_CODE.get(className), flag);
+            line = replaceWordsInLine(line, className, UNOBF_CLASS_TO_CODE.get(className), flag);
         }
 
         for (Map.Entry<String, String> entry : CODE_TO_OBF.entrySet())
@@ -332,9 +332,16 @@ public class ASMGenerator
     }
 
 
-    public static String encodeLine(String line, String toFind, String replacement, boolean[] flag)
+    public static boolean lineContainsWord(String line, String word)
     {
-        flag[0] = false;
+        boolean[] result = new boolean[]{false};
+        replaceWordsInLine(line, word, word + "*", result);
+        return result[0];
+    }
+
+    public static String replaceWordsInLine(String line, String toFind, String replacement, boolean[] didChange)
+    {
+        didChange[0] = false;
         if (line.length() == 0) return line;
 
 
@@ -358,31 +365,31 @@ public class ASMGenerator
                 notword.append(c);
                 if (!word.toString().equals(""))
                 {
-                    newLine.append(replaceWord(word.toString(), toFind, replacement, flag));
+                    newLine.append(replaceWord(word.toString(), toFind, replacement, didChange));
                     word = new StringBuilder();
                 }
             }
         }
 
-        if (!word.toString().equals("")) newLine.append(replaceWord(word.toString(), toFind, replacement, flag));
+        if (!word.toString().equals("")) newLine.append(replaceWord(word.toString(), toFind, replacement, didChange));
         else if (!notword.toString().equals("")) newLine.append(notword);
 
 
         return newLine.toString();
     }
 
-    public static String replaceWord(String word, String toFind, String replacement, boolean[] flag)
+    public static String replaceWord(String word, String toFind, String replacement, boolean[] didChange)
     {
         if (word.contains("L" + toFind))
         {
             if (!word.equals("L" + toFind)) System.out.println(word + ", " + toFind);
-            flag[0] = true;
+            didChange[0] = true;
             return word.replace("L" + toFind, "L" + replacement);
         }
 
         if (word.equals(toFind))
         {
-            flag[0] = true;
+            didChange[0] = true;
             return replacement;
         }
 

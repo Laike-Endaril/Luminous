@@ -4574,7 +4574,7 @@ mv.visitInsn(ICONST_0);
 mv.visitVarInsn(ISTORE, 4);
 mv.visitInsn(ICONST_0);
 mv.visitVarInsn(ISTORE, 5);
-ERROR
+mv.visitTypeInsn(NEW, "et$a");
 mv.visitInsn(DUP);
 mv.visitVarInsn(ALOAD, 0);
 mv.visitFieldInsn(GETFIELD, "axw", "field_76635_g", "I");

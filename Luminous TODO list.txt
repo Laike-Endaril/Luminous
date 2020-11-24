@@ -1,7 +1,10 @@
-Get ASMGenerator to find inherited methods and fields
+Fix current field conflict...probably shouldn't be happening, so look at code triggering field conflicts
+
 Only when an override does not exist?
 Probably currently have issues with overloaded methods, may need to check desc...
 Line 366
+
+
 
 
 

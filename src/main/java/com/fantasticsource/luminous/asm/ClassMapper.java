@@ -9,10 +9,10 @@ public class ClassMapper
     public static final HashMap<String, String> CLASS_MAPPINGS = new HashMap<>(), FIELD_MAPPINGS = new HashMap<>(), METHOD_MAPPINGS = new HashMap<>();
     public static final HashMap<String, ClassMemberMapper> CLASS_MEMBER_MAPPERS = new HashMap<>();
 
-    public static void put(String name, String transformedName, ClassMemberMapper classMemberMapper)
+    public static void put(String obfName, String deobfName, ClassMemberMapper classMemberMapper)
     {
-        CLASS_MAPPINGS.put(name, transformedName);
-        CLASS_MEMBER_MAPPERS.put(name, classMemberMapper);
+        CLASS_MAPPINGS.put(obfName, deobfName);
+        CLASS_MEMBER_MAPPERS.put(obfName, classMemberMapper);
     }
 
     public static void save()
@@ -54,43 +54,39 @@ public class ClassMapper
             file = new File("E:\\Minecraft Modding\\~Mappings\\all.csv");
             file.mkdirs();
             file.delete();
-            BufferedWriter fullWriter = new BufferedWriter(new FileWriter(file));
-            String translatedClass, translatedMember, translatedType, translatedArgTypes;
+            BufferedWriter allMappingsWriter = new BufferedWriter(new FileWriter(file));
+            String deobfClassname, translatedMember, translatedType, translatedArgTypes;
             for (Map.Entry<String, ClassMemberMapper> entry : CLASS_MEMBER_MAPPERS.entrySet())
             {
-                translatedClass = CLASS_MAPPINGS.get(entry.getKey());
-                fullWriter.write(entry.getKey() + ", " + translatedClass + "\r\n");
+                String obfClassname = entry.getKey();
+                ClassMemberMapper mapper = entry.getValue();
 
-                file = new File("E:\\Minecraft Modding\\~Mappings\\perclass\\" + entry.getKey() + " (" + CLASS_MAPPINGS.get(entry.getKey()) + ")\\fields.txt");
-                file.mkdirs();
-                file.delete();
-                writer = new BufferedWriter(new FileWriter(file));
-                for (ClassMemberMapper.FieldData data : entry.getValue().FIELDS.values())
+                deobfClassname = CLASS_MAPPINGS.get(obfClassname);
+                allMappingsWriter.write(obfClassname + ", " + deobfClassname + "\r\n");
+                if (mapper.superclass != null && !mapper.superclass.trim().equals("")) allMappingsWriter.write("extends, " + mapper.superclass + "\r\n");
+                if (mapper.interfaces != null)
+                {
+                    for (String iface : mapper.interfaces) allMappingsWriter.write("implements, " + iface + "\r\n");
+                }
+
+                for (ClassMemberMapper.FieldData data : mapper.FIELDS.values())
                 {
                     translatedMember = FIELD_MAPPINGS.getOrDefault(data.name, data.name);
                     translatedType = translateTypes(data.desc);
-                    writer.write(data.name + ", " + data.accessors() + translatedType + " " + translatedMember + "\r\n");
-                    fullWriter.write(data.name + ", " + translatedClass + "." + translatedMember + ", " + translatedType + "\r\n");
+                    allMappingsWriter.write(data.name + ", " + deobfClassname + "." + translatedMember + ", " + translatedType + "\r\n");
                 }
-                writer.close();
 
-                file = new File("E:\\Minecraft Modding\\~Mappings\\perclass\\" + entry.getKey() + " (" + CLASS_MAPPINGS.get(entry.getKey()) + ")\\methods.txt");
-                file.mkdirs();
-                file.delete();
-                writer = new BufferedWriter(new FileWriter(file));
-                for (ClassMemberMapper.MethodData data : entry.getValue().METHODS.values())
+                for (ClassMemberMapper.MethodData data : mapper.METHODS.values())
                 {
                     translatedMember = METHOD_MAPPINGS.getOrDefault(data.name, data.name);
                     translatedType = translateTypes(data.desc).replaceFirst("([(].*[)])", "");
                     translatedArgTypes = translateTypes(data.desc).replaceFirst("([(].*[)]).*", "$1");
-                    writer.write(data.name + ", " + data.accessors() + translatedType + " " + translatedMember + translatedArgTypes + "\r\n");
-                    fullWriter.write(data.name + ", " + translatedClass + "." + translatedMember + translatedArgTypes + ", " + translatedType + "\r\n");
+                    allMappingsWriter.write(data.name + ", " + deobfClassname + "." + translatedMember + translatedArgTypes + ", " + translatedType + "\r\n");
                 }
-                writer.close();
 
-                fullWriter.write("\r\n");
+                allMappingsWriter.write("\r\n");
             }
-            fullWriter.close();
+            allMappingsWriter.close();
         }
         catch (IOException e)
         {

@@ -33,12 +33,22 @@ public class ClassMemberMapper extends ClassVisitor
     }
 
 
+    public String superclass, interfaces[];
     public final HashMap<String, FieldData> FIELDS = new HashMap<>();
     public final HashMap<String, MethodData> METHODS = new HashMap<>();
 
     public ClassMemberMapper(int api, ClassVisitor cv)
     {
         super(api, cv);
+    }
+
+    @Override
+    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces)
+    {
+        this.superclass = superName;
+        this.interfaces = interfaces;
+
+        super.visit(version, access, name, signature, superName, interfaces);
     }
 
     @Override

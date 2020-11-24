@@ -27,26 +27,22 @@ public class ASMGenerator
 
     public static void main(final String[] args) throws Exception
     {
-        if (!(args.length == 1 || (args.length == 2 && "-debug".equals(args[0]))))
+        HashMap<File, String> deobfFiles = new HashMap<>();
+        for (String className : args)
         {
-            System.err.println("Prints the ASM code to generate the given class.");
-            System.err.println("Usage: ASMifier [-debug] <fully qualified class name or class file name>");
-            return;
+            ClassReader cr;
+            if (className.endsWith(".class") || className.indexOf('\\') > -1 || className.indexOf('/') > -1)
+            {
+                cr = new ClassReader(new FileInputStream(className));
+            }
+            else cr = new ClassReader(className);
+
+            className = className.replaceAll("/", ".");
+
+            File deobfFile = new File("deobf/" + className);
+            cr.accept(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(deobfFile)), args.length == 2 ? 0 : ClassReader.SKIP_DEBUG);
+            deobfFiles.put(deobfFile, className);
         }
-
-
-        String className = args[args.length - 1];
-        ClassReader cr;
-        if (className.endsWith(".class") || className.indexOf('\\') > -1 || className.indexOf('/') > -1)
-        {
-            cr = new ClassReader(new FileInputStream(className));
-        }
-        else cr = new ClassReader(className);
-
-        className = className.replaceAll("/", ".");
-
-        File deobfFile = new File("deobf/" + className);
-        cr.accept(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(deobfFile)), args.length == 2 ? 0 : ClassReader.SKIP_DEBUG);
 
 
         BufferedReader reader = new BufferedReader(new FileReader(new File("E:\\Minecraft Modding\\~Mappings\\all.csv")));
@@ -129,27 +125,37 @@ public class ASMGenerator
         reader.close();
 
 
-        int i = 0;
-        reader = new BufferedReader(new FileReader(deobfFile));
-        BufferedWriter writer = new BufferedWriter(new FileWriter(new File("obf/" + className)));
-        line = reader.readLine();
-        while (line != null)
+        for (Map.Entry<File, String> entry : deobfFiles.entrySet())
         {
-            while (line.contains("<init>")) line = line.replace("<init>", INIT_CODE);
+            File deobfFile = entry.getKey();
+            String className = entry.getValue();
+            System.out.println(className);
 
-            if (++i % 100 == 0) System.out.println(i);
-            line = obfuscate(line, className.replaceAll("[.]", "/"), false); //Can debug a specific line here by setting "debug" param to i == <linenumber>
-            if (line == null)
-            {
-                writer.write("ERROR\r\n");
-                System.err.println(i);
-                System.err.println();
-            }
-            else writer.write(line + "\r\n");
+            int i = 0;
+            reader = new BufferedReader(new FileReader(deobfFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new File("obf/" + className)));
             line = reader.readLine();
+            while (line != null)
+            {
+                while (line.contains("<init>")) line = line.replace("<init>", INIT_CODE);
+
+                System.out.print("\r" + ++i + " lines obfuscated           ");
+//                if (++i % 100 == 0) System.out.println(i + " lines obfuscated");
+                line = obfuscate(line, className.replaceAll("[.]", "/"), false); //Can debug a specific line here by setting "debug" param to i == <linenumber>
+                if (line == null)
+                {
+                    writer.write("ERROR\r\n");
+                    System.err.println(i);
+                    System.err.println();
+                }
+                else writer.write(line + "\r\n");
+                line = reader.readLine();
+            }
+            reader.close();
+            writer.close();
+
+            System.out.println("\n");
         }
-        reader.close();
-        writer.close();
     }
 
 

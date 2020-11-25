@@ -1,7 +1,5 @@
 REMEMBER TO DELETE MEMORY REPO IN MODS FOLDER!!!
 
-Resolve field conflict in World, line 10238
-
 Get obfuscated ASM for all 3 classes and try applying it and testing
 
 

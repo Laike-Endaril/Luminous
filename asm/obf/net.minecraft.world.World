@@ -10235,7 +10235,7 @@ mv.visitMethodInsn(INVOKEINTERFACE, "java/util/List", "get", "(I)Ljava/lang/Obje
 mv.visitTypeInsn(CHECKCAST, "aed");
 mv.visitVarInsn(ASTORE, 17);
 mv.visitVarInsn(ALOAD, 17);
-ERROR
+mv.visitFieldInsn(GETFIELD, "aed", "field_71075_bZ", "Laeb;");
 mv.visitFieldInsn(GETFIELD, "aeb", "field_75102_a", "Z");
 Label l2 = new Label();
 mv.visitJumpInsn(IFNE, l2);

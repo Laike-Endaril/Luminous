@@ -4944,7 +4944,7 @@ mv.visitCode();
 mv.visitMethodInsn(INVOKESTATIC, "net/minecraftforge/fml/common/Loader", "instance", "()Lnet/minecraftforge/fml/common/Loader;", false);
 mv.visitMethodInsn(INVOKEVIRTUAL, "net/minecraftforge/fml/common/Loader", "activeModContainer", "()Lnet/minecraftforge/fml/common/ModContainer;", false);
 mv.visitVarInsn(ASTORE, 1);
-mv.visitLdcInsn("{} field_76636_d a new chunk {} in dimension {} ({}) while populating chunk {}, causing cascading worldgen lag.");
+mv.visitLdcInsn("{} loaded a new chunk {} in dimension {} ({}) while populating chunk {}, causing cascading worldgen lag.");
 mv.visitVarInsn(ASTORE, 2);
 mv.visitVarInsn(ALOAD, 1);
 Label l0 = new Label();

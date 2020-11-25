@@ -6,6 +6,7 @@ import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class ASMGenerator
 {
@@ -204,15 +205,15 @@ public class ASMGenerator
         HashSet<String> memberClassesFound = new HashSet<>();
         HashSet<String> unobfClassesFound = new HashSet<>();
 
-        boolean[] flag = new boolean[1];
+        boolean[] wasChanged = new boolean[1];
         for (TreeMap<String, String> map : new TreeMap[]{UNOBF_CLASS_TO_CODE, INNER_CLASS_TO_CODE, OUTER_CLASS_TO_CODE})
         {
             for (Map.Entry<String, String> entry : map.entrySet())
             {
                 String deobf = entry.getKey();
                 String code = entry.getValue();
-                line = replaceWordsInLine(line, deobf, code, flag);
-                if (flag[0])
+                line = replaceWordsInLine(line, deobf, code, wasChanged);
+                if (wasChanged[0])
                 {
                     if (!line.contains("visitMethod(") && (!line.contains("visitMethodInsn") || line.contains('"' + code)))
                     {
@@ -229,7 +230,7 @@ public class ASMGenerator
             }
         }
 
-        if (!line.contains("visitMethodInsn"))
+        if (!Pattern.matches(".*visit[^(]+Insn.*", line))
         {
             memberClassesFound.add(deobfMainClass);
             String superclass = DEOBF_SUPERCLASSES.get(deobfMainClass);
@@ -354,7 +355,7 @@ public class ASMGenerator
                 for (Map.Entry<String, String> entry2 : entry.getValue().entrySet())
                 {
                     //Don't believe this needs a check for the original line containing args, since that should've been done earlier
-                    line = replaceWordsInLine(line, deobf, entry2.getValue(), flag);
+                    line = replaceWordsInLine(line, deobf, entry2.getValue(), wasChanged);
                 }
             }
         }
@@ -363,19 +364,19 @@ public class ASMGenerator
             for (Map.Entry<String, String> entry : fieldPool.entrySet())
             {
                 String deobf = entry.getKey();
-                line = replaceWordsInLine(line, deobf, entry.getValue(), flag);
+                line = replaceWordsInLine(line, deobf, entry.getValue(), wasChanged);
             }
         }
 
         for (Map.Entry<String, String> entry : shortInnerClassPool.entrySet())
         {
             String deobf = entry.getKey();
-            line = replaceWordsInLine(line, deobf, entry.getValue(), flag);
+            line = replaceWordsInLine(line, deobf, entry.getValue(), wasChanged);
         }
 
         for (String className : unobfClassesFound)
         {
-            line = replaceWordsInLine(line, className, UNOBF_CLASS_TO_CODE.get(className), flag);
+            line = replaceWordsInLine(line, className, UNOBF_CLASS_TO_CODE.get(className), wasChanged);
         }
 
 

@@ -59,30 +59,36 @@ public class ClassMapper
             for (Map.Entry<String, ClassMemberMapper> entry : CLASS_MEMBER_MAPPERS.entrySet())
             {
                 String obfClassname = entry.getKey();
-                ClassMemberMapper mapper = entry.getValue();
+                ClassMemberMapper classMapper = entry.getValue();
 
                 deobfClassname = CLASS_MAPPINGS.get(obfClassname);
-                allMappingsWriter.write(obfClassname + ", " + deobfClassname + "\r\n");
-                if (mapper.superclass != null && !mapper.superclass.trim().equals("")) allMappingsWriter.write("extends, " + mapper.superclass + "\r\n");
-                if (mapper.interfaces != null)
+                allMappingsWriter.write(obfClassname + ", " + deobfClassname);
+                for (String accessor : classMapper.accessors) allMappingsWriter.write(", " + accessor);
+                allMappingsWriter.write("\r\n");
+                if (classMapper.superclass != null && !classMapper.superclass.trim().equals("")) allMappingsWriter.write("extends, " + classMapper.superclass + "\r\n");
+                if (classMapper.interfaces != null)
                 {
-                    for (String iface : mapper.interfaces) allMappingsWriter.write("implements, " + iface + "\r\n");
+                    for (String iface : classMapper.interfaces) allMappingsWriter.write("implements, " + iface + "\r\n");
                 }
 
-                for (ClassMemberMapper.FieldData data : mapper.FIELDS.values())
+                for (ClassMemberMapper.FieldData data : classMapper.fields.values())
                 {
                     translatedMember = FIELD_MAPPINGS.getOrDefault(data.name, data.name);
                     translatedType = translateTypes(data.desc);
-                    allMappingsWriter.write(data.name + ", " + deobfClassname + "." + translatedMember + ", " + translatedType + "\r\n");
+                    allMappingsWriter.write(data.name + ", " + deobfClassname + "." + translatedMember + ", " + translatedType);
+                    for (String accessor : data.accessors) allMappingsWriter.write(", " + accessor);
+                    allMappingsWriter.write("\r\n");
                 }
 
-                for (ClassMemberMapper.MethodData data : mapper.METHODS.values())
+                for (ClassMemberMapper.MethodData data : classMapper.methods.values())
                 {
                     translatedMember = METHOD_MAPPINGS.getOrDefault(data.name, data.name);
                     translatedType = translateTypes(data.desc).replaceFirst("([(].*[)])", "");
                     untranslatedArgTypes = data.desc.replaceFirst("([(].*[)]).*", "$1");
                     translatedArgTypes = translateTypes(untranslatedArgTypes);
-                    allMappingsWriter.write(data.name + ", " + deobfClassname + "." + translatedMember + translatedArgTypes + ", " + translatedType + ", " + untranslatedArgTypes + "\r\n");
+                    allMappingsWriter.write(data.name + ", " + deobfClassname + "." + translatedMember + translatedArgTypes + ", " + translatedType + ", " + untranslatedArgTypes);
+                    for (String accessor : data.accessors) allMappingsWriter.write(", " + accessor);
+                    allMappingsWriter.write("\r\n");
                 }
 
                 allMappingsWriter.write("\r\n");

@@ -38,7 +38,6 @@ public class LuminousTransformer implements IClassTransformer
 
             ClassMemberMapper classMemberMapper = new ClassMemberMapper(Opcodes.ASM5, cw);
             classReader.accept(classMemberMapper, 0);
-            if (transformedName.contains("BlockPos")) System.out.println(name + ", " + transformedName);
             ClassMapper.put(name, transformedName, classMemberMapper);
 
             return cw.toByteArray();

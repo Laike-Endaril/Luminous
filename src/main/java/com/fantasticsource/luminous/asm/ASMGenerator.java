@@ -1,6 +1,5 @@
 package com.fantasticsource.luminous.asm;
 
-import net.minecraft.util.text.TextFormatting;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.TraceClassVisitor;
@@ -23,8 +22,14 @@ public class ASMGenerator
 
     public static final TreeMap<String, String> UNOBF_CLASS_TO_CODE = new TreeMap<>(Collections.reverseOrder()), INNER_CLASS_TO_CODE = new TreeMap<>(Collections.reverseOrder()), OUTER_CLASS_TO_CODE = new TreeMap<>(Collections.reverseOrder());
     public static final TreeMap<String, TreeMap<String, String>> FIELD_TO_CODE = new TreeMap<>(Collections.reverseOrder()), SHORT_INNER_CLASS_TO_CODE = new TreeMap<>(Collections.reverseOrder());
-    public static final HashMap<String, String> DEOBF_SUPERCLASSES = new HashMap<>();
     public static final TreeMap<String, TreeMap<String, HashMap<String, String>>> METHOD_TO_CODE = new TreeMap<>(Collections.reverseOrder());
+
+    public static final HashMap<String, String> DEOBF_SUPERCLASSES = new HashMap<>();
+
+    //TODO populate these
+    public static final HashMap<String, HashMap<String, Boolean>> FIELD_IS_PRIVATE = new HashMap<>();
+    public static final HashMap<String, HashMap<String, HashMap<String, Boolean>>> METHOD_IS_PRIVATE = new HashMap<>();
+
 
     public static void main(final String[] args) throws Exception
     {
@@ -110,11 +115,33 @@ public class ASMGenerator
                         String methodName = deobfMember.replaceFirst("[(].*[)]", ""), methodArgs = tokens[3].trim();
                         METHOD_TO_CODE.computeIfAbsent(currentDeobfClass, o -> new TreeMap<>(Collections.reverseOrder())).computeIfAbsent(methodName, o -> new HashMap<>()).put(methodArgs, cipher);
                         CODE_TO_OBF.put(cipher, tokens[0]);
+
+                        boolean priv = false;
+                        for (int i = 4; i < tokens.length; i++)
+                        {
+                            if (tokens[i].contains("private"))
+                            {
+                                priv = true;
+                                break;
+                            }
+                        }
+                        METHOD_IS_PRIVATE.computeIfAbsent(currentDeobfClass, o -> new HashMap<>()).computeIfAbsent(methodName, o -> new HashMap<>()).put(methodArgs, priv);
                     }
                     else
                     {
                         FIELD_TO_CODE.computeIfAbsent(currentDeobfClass, o -> new TreeMap<>(Collections.reverseOrder())).put(deobfMember, cipher);
                         CODE_TO_OBF.put(cipher, tokens[0]);
+
+                        boolean priv = false;
+                        for (int i = 3; i < tokens.length; i++)
+                        {
+                            if (tokens[i].contains("private"))
+                            {
+                                priv = true;
+                                break;
+                            }
+                        }
+                        FIELD_IS_PRIVATE.computeIfAbsent(currentDeobfClass, o -> new HashMap<>()).put(deobfMember, priv);
                     }
                 }
 
@@ -130,7 +157,7 @@ public class ASMGenerator
         {
             File deobfFile = entry.getKey();
             String className = entry.getValue();
-            System.out.println(TextFormatting.AQUA + className + " ==========================================================================================");
+            System.out.println(className + " ==========================================================================================");
 
             int i = 1;
             reader = new BufferedReader(new FileReader(deobfFile));
@@ -144,7 +171,7 @@ public class ASMGenerator
                 if (line == null)
                 {
                     writer.write("ERROR\r\n");
-                    System.err.println(TextFormatting.RED + "Line " + i);
+                    System.err.println("Line " + i);
                 }
                 else writer.write(line + "\r\n");
 
@@ -223,90 +250,101 @@ public class ASMGenerator
             classesIncluded.add(classFound);
             for (Map.Entry<String, String> entry : FIELD_TO_CODE.getOrDefault(classFound, new TreeMap<>(Collections.reverseOrder())).entrySet())
             {
-                String deobf = entry.getKey();
-//                if (debug) System.out.println("Field: " + deobf);
-                if (!lineContainsWord(line, deobf)) continue;
+                String deobfMemberName = entry.getKey();
+//                if (debug) System.out.println("Field: " + deobfMemberName);
+                if (!classFound.equals(deobfMainClass) && FIELD_IS_PRIVATE.get(classFound).get(deobfMemberName)) continue; //Private access check
+                if (!lineContainsWord(line, deobfMemberName)) continue;
 
-                if (fieldPool.containsKey(deobf))
+                if (fieldPool.containsKey(deobfMemberName))
                 {
-                    if (!CODE_TO_OBF.get(fieldPool.get(deobf)).equals(CODE_TO_OBF.get(entry.getValue())))
+                    if (!CODE_TO_OBF.get(fieldPool.get(deobfMemberName)).equals(CODE_TO_OBF.get(entry.getValue())))
                     {
                         System.err.println();
-                        System.err.println("Field conflict: " + deobf);
+                        System.err.println("Field conflict: " + deobfMemberName);
                         System.err.println(originalLine);
                         for (String cls : classesIncluded)
                         {
                             TreeMap<String, String> map = FIELD_TO_CODE.getOrDefault(cls, new TreeMap<>(Collections.reverseOrder()));
-                            if (map.containsKey(deobf)) System.err.println(cls + ": " + deobf + ", " + CODE_TO_OBF.get(map.get(deobf)));
+                            if (map.containsKey(deobfMemberName))
+                            {
+                                if (!cls.equals(deobfMainClass) && FIELD_IS_PRIVATE.get(cls).get(deobfMemberName)) continue; //Private access check
+                                System.err.println(cls + ": " + deobfMemberName + ", " + CODE_TO_OBF.get(map.get(deobfMemberName)));
+                            }
                         }
                         return null;
                     }
                 }
                 else
                 {
-                    fieldPool.put(deobf, entry.getValue());
+                    fieldPool.put(deobfMemberName, entry.getValue());
                 }
             }
 
             for (Map.Entry<String, HashMap<String, String>> entry : METHOD_TO_CODE.getOrDefault(classFound, new TreeMap<>(Collections.reverseOrder())).entrySet())
             {
-                String deobfName = entry.getKey();
-//                if (debug) System.out.println("Method: " + deobfName);
+                String deobfMemberName = entry.getKey();
+//                if (debug) System.out.println("Method: " + deobfMemberName);
 
                 for (Map.Entry<String, String> entry2 : entry.getValue().entrySet())
                 {
                     String methodArgs = entry2.getKey();
-                    if (!lineContainsWord(line, deobfName)) continue;
+                    if (!classFound.equals(deobfMainClass) && METHOD_IS_PRIVATE.get(classFound).get(deobfMemberName).get(methodArgs)) continue; //Private access check
                     if (!originalLine.contains(methodArgs)) continue; //Check for method argument match, in case of overloaded methods
+                    if (!lineContainsWord(line, deobfMemberName)) continue;
 
-                    if (methodPool.containsKey(deobfName) && methodPool.get(deobfName).containsKey(methodArgs))
+                    if (methodPool.containsKey(deobfMemberName) && methodPool.get(deobfMemberName).containsKey(methodArgs))
                     {
-                        if (!CODE_TO_OBF.get(methodPool.get(deobfName).get(methodArgs)).equals(CODE_TO_OBF.get(entry2.getValue())))
+                        if (!CODE_TO_OBF.get(methodPool.get(deobfMemberName).get(methodArgs)).equals(CODE_TO_OBF.get(entry2.getValue())))
                         {
                             System.err.println();
-                            System.err.println("Method conflict: " + deobfName + methodArgs);
+                            System.err.println("Method conflict: " + deobfMemberName + methodArgs);
                             System.err.println(originalLine);
                             for (String cls : classesIncluded)
                             {
                                 TreeMap<String, HashMap<String, String>> map = METHOD_TO_CODE.getOrDefault(cls, new TreeMap<>(Collections.reverseOrder()));
-                                if (map.containsKey(deobfName) && map.get(deobfName).containsKey(methodArgs)) System.err.println(cls + ": " + deobfName + methodArgs + ", " + CODE_TO_OBF.get(map.get(deobfName).get(methodArgs)));
+                                if (map.containsKey(deobfMemberName) && map.get(deobfMemberName).containsKey(methodArgs))
+                                {
+                                    if (!cls.equals(deobfMainClass) && METHOD_IS_PRIVATE.get(cls).get(deobfMemberName).get(methodArgs)) continue; //Private access check
+                                    System.err.println(cls + ": " + deobfMemberName + methodArgs + ", " + CODE_TO_OBF.get(map.get(deobfMemberName).get(methodArgs)));
+                                }
                             }
                             return null;
                         }
                     }
                     else
                     {
-                        methodPool.put(deobfName, entry.getValue());
+                        methodPool.put(deobfMemberName, entry.getValue());
                     }
                 }
             }
 
             for (Map.Entry<String, String> entry : SHORT_INNER_CLASS_TO_CODE.getOrDefault(classFound, new TreeMap<>(Collections.reverseOrder())).entrySet())
             {
-                String deobf = entry.getKey();
-                if (!lineContainsWord(line, deobf)) continue;
+                String deobfMemberName = entry.getKey();
+                if (!lineContainsWord(line, deobfMemberName)) continue;
 
-                if (shortInnerClassPool.containsKey(deobf))
+                if (shortInnerClassPool.containsKey(deobfMemberName))
                 {
-                    if (!CODE_TO_OBF.get(shortInnerClassPool.get(deobf)).equals(CODE_TO_OBF.get(entry.getValue())))
+                    if (!CODE_TO_OBF.get(shortInnerClassPool.get(deobfMemberName)).equals(CODE_TO_OBF.get(entry.getValue())))
                     {
                         System.err.println();
-                        System.err.println("Inner class conflict: " + deobf);
+                        System.err.println("Inner class conflict: " + deobfMemberName);
                         System.err.println(originalLine);
                         for (String cls : classesIncluded)
                         {
                             TreeMap<String, String> map = SHORT_INNER_CLASS_TO_CODE.getOrDefault(cls, new TreeMap<>(Collections.reverseOrder()));
-                            if (map.containsKey(deobf)) System.err.println(cls + ": " + deobf + ", " + CODE_TO_OBF.get(map.get(deobf)));
+                            if (map.containsKey(deobfMemberName)) System.err.println(cls + ": " + deobfMemberName + ", " + CODE_TO_OBF.get(map.get(deobfMemberName)));
                         }
                         return null;
                     }
                 }
                 else
                 {
-                    shortInnerClassPool.put(deobf, entry.getValue());
+                    shortInnerClassPool.put(deobfMemberName, entry.getValue());
                 }
             }
         }
+
 
         if (line.contains("visitMethod"))
         {
@@ -334,7 +372,6 @@ public class ASMGenerator
             String deobf = entry.getKey();
             line = replaceWordsInLine(line, deobf, entry.getValue(), flag);
         }
-
 
         for (String className : unobfClassesFound)
         {
@@ -433,7 +470,7 @@ public class ASMGenerator
     {
         if (word.contains("L" + toFind))
         {
-            if (!word.equals("L" + toFind)) System.out.println(word + ", " + toFind);
+            if (!word.equals("L" + toFind)) System.out.println("\r\nCheck recognition (line, toFind) (does not matter for never-obf entries eg. forge stuff): " + word + ", " + toFind);
             didChange[0] = true;
             return word.replace("L" + toFind, "L" + replacement);
         }

@@ -1,5 +1,6 @@
 package com.fantasticsource.luminous.asm;
 
+import net.minecraft.util.text.TextFormatting;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.TraceClassVisitor;
@@ -129,7 +130,7 @@ public class ASMGenerator
         {
             File deobfFile = entry.getKey();
             String className = entry.getValue();
-            System.out.println(className);
+            System.out.println(TextFormatting.AQUA + className + " ==========================================================================================");
 
             int i = 0;
             reader = new BufferedReader(new FileReader(deobfFile));
@@ -139,8 +140,6 @@ public class ASMGenerator
             {
                 while (line.contains("<init>")) line = line.replace("<init>", INIT_CODE);
 
-                System.out.print("\r" + ++i + " lines obfuscated           ");
-//                if (++i % 100 == 0) System.out.println(i + " lines obfuscated");
                 line = obfuscate(line, className.replaceAll("[.]", "/"), false); //Can debug a specific line here by setting "debug" param to i == <linenumber>
                 if (line == null)
                 {
@@ -149,6 +148,8 @@ public class ASMGenerator
                     System.err.println();
                 }
                 else writer.write(line + "\r\n");
+
+                System.out.print("\r" + ++i + " lines obfuscated           ");
                 line = reader.readLine();
             }
             reader.close();

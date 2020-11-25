@@ -1,4 +1,4 @@
-package asm.net.minecraft.field_76637_e.chunk;
+package asm.net.minecraft.world.chunk;
 import java.util.*;
 import org.objectweb.asm.*;
 public class ChunkDump implements Opcodes {

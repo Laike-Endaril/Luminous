@@ -1,6 +1,6 @@
 REMEMBER TO DELETE MEMORY REPO IN MODS FOLDER!!!
 
-Limit obfuscation to quoted parts in lines only
+Don't use private parent members
 
 Get obfuscated ASM for all 3 classes and try applying it and testing
 

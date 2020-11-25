@@ -1,4 +1,4 @@
-package asm.net.minecraft.field_177627_c.state;
+package asm.net.minecraft.block.state;
 import java.util.*;
 import org.objectweb.asm.*;
 public class BlockStateContainerDump implements Opcodes {

@@ -132,7 +132,7 @@ public class ASMGenerator
             String className = entry.getValue();
             System.out.println(TextFormatting.AQUA + className + " ==========================================================================================");
 
-            int i = 0;
+            int i = 1;
             reader = new BufferedReader(new FileReader(deobfFile));
             BufferedWriter writer = new BufferedWriter(new FileWriter(new File("obf/" + className)));
             line = reader.readLine();
@@ -144,12 +144,11 @@ public class ASMGenerator
                 if (line == null)
                 {
                     writer.write("ERROR\r\n");
-                    System.err.println(i);
-                    System.err.println();
+                    System.err.println(TextFormatting.RED + "Line " + i);
                 }
                 else writer.write(line + "\r\n");
 
-                System.out.print("\r" + ++i + " lines obfuscated           ");
+                System.out.print("\r" + i++ + " lines obfuscated           ");
                 line = reader.readLine();
             }
             reader.close();
@@ -238,7 +237,7 @@ public class ASMGenerator
                         for (String cls : classesIncluded)
                         {
                             TreeMap<String, String> map = FIELD_TO_CODE.getOrDefault(cls, new TreeMap<>(Collections.reverseOrder()));
-                            if (map.containsKey(deobf)) System.err.println(cls + ": " + deobf + ", " + map.get(deobf) + ", " + CODE_TO_OBF.get(map.get(deobf)));
+                            if (map.containsKey(deobf)) System.err.println(cls + ": " + deobf + ", " + CODE_TO_OBF.get(map.get(deobf)));
                         }
                         return null;
                     }
@@ -270,7 +269,7 @@ public class ASMGenerator
                             for (String cls : classesIncluded)
                             {
                                 TreeMap<String, HashMap<String, String>> map = METHOD_TO_CODE.getOrDefault(cls, new TreeMap<>(Collections.reverseOrder()));
-                                if (map.containsKey(deobfName) && map.get(deobfName).containsKey(methodArgs)) System.err.println(cls + ": " + deobfName + methodArgs + ", " + map.get(deobfName).get(methodArgs) + ", " + CODE_TO_OBF.get(map.get(deobfName).get(methodArgs)));
+                                if (map.containsKey(deobfName) && map.get(deobfName).containsKey(methodArgs)) System.err.println(cls + ": " + deobfName + methodArgs + ", " + CODE_TO_OBF.get(map.get(deobfName).get(methodArgs)));
                             }
                             return null;
                         }
@@ -297,7 +296,7 @@ public class ASMGenerator
                         for (String cls : classesIncluded)
                         {
                             TreeMap<String, String> map = SHORT_INNER_CLASS_TO_CODE.getOrDefault(cls, new TreeMap<>(Collections.reverseOrder()));
-                            if (map.containsKey(deobf)) System.err.println(cls + ": " + deobf + ", " + map.get(deobf) + ", " + CODE_TO_OBF.get(map.get(deobf)));
+                            if (map.containsKey(deobf)) System.err.println(cls + ": " + deobf + ", " + CODE_TO_OBF.get(map.get(deobf)));
                         }
                         return null;
                     }
@@ -367,18 +366,48 @@ public class ASMGenerator
         if (line.length() == 0) return line;
 
 
-        StringBuilder newLine = new StringBuilder();
+        StringBuilder newLine = new StringBuilder(), section = new StringBuilder();
+        boolean isSection = false;
+        for (char c : line.toCharArray())
+        {
+            if (isSection)
+            {
+                if (c == '"')
+                {
+                    newLine.append(replaceWordsInSection(section.toString(), toFind, replacement, didChange)).append('"');
+                    section = new StringBuilder();
+                    isSection = false;
+                }
+                else section.append(c);
+            }
+            else
+            {
+                newLine.append(c);
+                if (c == '"') isSection = true;
+            }
+        }
+
+
+        return newLine.toString();
+    }
+
+    public static String replaceWordsInSection(String section, String toFind, String replacement, boolean[] didChange)
+    {
+        if (section.length() == 0) return section;
+
+
+        StringBuilder newSection = new StringBuilder();
 
         StringBuilder word = new StringBuilder();
         StringBuilder notword = new StringBuilder();
-        for (char c : line.toCharArray())
+        for (char c : section.toCharArray())
         {
             if (VALID_CHARS.contains("" + c))
             {
                 word.append(c);
                 if (!notword.toString().equals(""))
                 {
-                    newLine.append(notword);
+                    newSection.append(notword);
                     notword = new StringBuilder();
                 }
             }
@@ -387,17 +416,17 @@ public class ASMGenerator
                 notword.append(c);
                 if (!word.toString().equals(""))
                 {
-                    newLine.append(replaceWord(word.toString(), toFind, replacement, didChange));
+                    newSection.append(replaceWord(word.toString(), toFind, replacement, didChange));
                     word = new StringBuilder();
                 }
             }
         }
 
-        if (!word.toString().equals("")) newLine.append(replaceWord(word.toString(), toFind, replacement, didChange));
-        else if (!notword.toString().equals("")) newLine.append(notword);
+        if (!word.toString().equals("")) newSection.append(replaceWord(word.toString(), toFind, replacement, didChange));
+        else if (!notword.toString().equals("")) newSection.append(notword);
 
 
-        return newLine.toString();
+        return newSection.toString();
     }
 
     public static String replaceWord(String word, String toFind, String replacement, boolean[] didChange)

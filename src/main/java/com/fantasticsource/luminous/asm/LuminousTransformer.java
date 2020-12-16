@@ -1,51 +1,29 @@
 package com.fantasticsource.luminous.asm;
 
+import com.fantasticsource.luminous.asm.classtransformers.BlockStateContainerDump;
+import com.fantasticsource.luminous.asm.classtransformers.ChunkDump;
+import com.fantasticsource.luminous.asm.classtransformers.WorldDump;
 import net.minecraft.launchwrapper.IClassTransformer;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class LuminousTransformer implements IClassTransformer
 {
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes)
     {
+        if (name.equals(transformedName)) return bytes;
+
         switch (transformedName)
         {
             case "net.minecraft.world.World":
-                //TODO
-                break;
+                return WorldDump.dump();
 
             case "net.minecraft.world.chunk.Chunk":
-                //TODO
-                break;
+                return ChunkDump.dump();
 
             case "net.minecraft.block.state.BlockStateContainer":
-                //TODO
-                break;
+                return BlockStateContainerDump.dump();
         }
 
-
-        try
-        {
-            InputStream in = new ByteArrayInputStream(bytes);
-            ClassReader classReader = new ClassReader(in);
-            ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-
-            ClassTransformer classTransformer = new ClassTransformer(Opcodes.ASM5, cw);
-            classReader.accept(classTransformer, 0);
-
-            return cw.toByteArray();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            System.exit(7777);
-            return bytes;
-        }
+        return bytes;
     }
 }

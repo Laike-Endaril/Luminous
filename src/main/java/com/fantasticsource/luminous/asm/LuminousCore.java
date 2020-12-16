@@ -62,7 +62,7 @@ public class LuminousCore implements IFMLLoadingPlugin
             meta.modId = MODID + "core";
             meta.name = NAME + " Coremod";
             meta.version = VERSION;
-            meta.description = "Transforms vanilla classes: World, Chunk, BlockStateContainer";
+            meta.description = "Transforms classes: World, Chunk, BlockStateContainer";
             meta.authorList.add("Laike Endaril");
         }
 

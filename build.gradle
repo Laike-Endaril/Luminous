@@ -25,7 +25,7 @@ task coreJar(type: Jar) {
         include "com/fantasticsource/luminous/asm/**"
     }
     from(sourceSets.main.resources) {
-        include "assets/luminous/tweakedclasses/**"
+        include "assets/luminous/asm/**"
     }
     setBaseName archivesBaseName + "Core"
     manifest {

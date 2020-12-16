@@ -36,9 +36,8 @@ public class LuminousTransformer implements IClassTransformer
             ClassReader classReader = new ClassReader(in);
             ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
-            ClassMemberMapper classMemberMapper = new ClassMemberMapper(Opcodes.ASM5, cw);
-            classReader.accept(classMemberMapper, 0);
-            ClassMapper.put(name, transformedName, classMemberMapper);
+            ClassTransformer classTransformer = new ClassTransformer(Opcodes.ASM5, cw);
+            classReader.accept(classTransformer, 0);
 
             return cw.toByteArray();
         }

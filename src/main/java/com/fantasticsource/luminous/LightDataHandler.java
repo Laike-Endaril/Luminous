@@ -193,7 +193,7 @@ public class LightDataHandler
 
         Chunk chunk = event.getChunkInstance();
 
-        //TODO batch these
+        //TODO batch these?
         for (Map.Entry<BlockPos, Integer> entry : chunk.moddedBlockLights.entrySet())
         {
             Network.WRAPPER.sendTo(new Network.UpdateModdedLightPacket(entry.getKey(), entry.getValue()), player);

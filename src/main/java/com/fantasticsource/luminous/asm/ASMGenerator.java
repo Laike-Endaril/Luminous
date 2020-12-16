@@ -27,7 +27,6 @@ public class ASMGenerator
 
     public static final HashMap<String, String> DEOBF_SUPERCLASSES = new HashMap<>();
 
-    //TODO populate these
     public static final HashMap<String, HashMap<String, Boolean>> FIELD_IS_PRIVATE = new HashMap<>();
     public static final HashMap<String, HashMap<String, HashMap<String, Boolean>>> METHOD_IS_PRIVATE = new HashMap<>();
 

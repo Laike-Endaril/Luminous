@@ -948,7 +948,7 @@ public class WorldDump implements Opcodes
             mv.visitVarInsn(ALOAD, 6);
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getLightOpacity", "(Lamy;Let;)I", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185891_c", "(Lamy;Let;)I", true); //TODO was missing obf method name
             mv.visitVarInsn(ISTORE, 8);
             mv.visitVarInsn(ALOAD, 4);
             mv.visitVarInsn(ALOAD, 1);
@@ -975,7 +975,7 @@ public class WorldDump implements Opcodes
             mv.visitVarInsn(ALOAD, 2);
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getLightOpacity", "(Lamy;Let;)I", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185891_c", "(Lamy;Let;)I", true); //TODO was missing obf method name
             mv.visitVarInsn(ILOAD, 8);
             Label l5 = new Label();
             mv.visitJumpInsn(IF_ICMPNE, l5);

@@ -1389,7 +1389,7 @@ public class ChunkDump implements Opcodes
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
             mv.visitVarInsn(ALOAD, 1);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getLightOpacity", "(Lamy;Let;)I", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185891_c", "(Lamy;Let;)I", true); //TODO was missing obf method name
             mv.visitInsn(IRETURN);
             mv.visitMaxs(3, 2);
             mv.visitEnd();
@@ -1408,7 +1408,7 @@ public class ChunkDump implements Opcodes
             Label l0 = new Label();
             mv.visitJumpInsn(IFNE, l0);
             mv.visitVarInsn(ALOAD, 4);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getLightOpacity", "()I", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185891_c", "()I", true); //TODO was missing obf method name
             Label l1 = new Label();
             mv.visitJumpInsn(GOTO, l1);
             mv.visitLabel(l0);
@@ -1436,7 +1436,7 @@ public class ChunkDump implements Opcodes
             mv.visitInsn(IAND);
             mv.visitInsn(IOR);
             mv.visitMethodInsn(INVOKESPECIAL, "et", "<init>", "(III)V", false);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getLightOpacity", "(Lamy;Let;)I", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185891_c", "(Lamy;Let;)I", true); //TODO was missing obf method name
             mv.visitLabel(l1);
             mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{Opcodes.INTEGER});
             mv.visitInsn(IRETURN);
@@ -1641,7 +1641,7 @@ public class ChunkDump implements Opcodes
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
             mv.visitVarInsn(ALOAD, 1);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getLightOpacity", "(Lamy;Let;)I", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185891_c", "(Lamy;Let;)I", true); //TODO was missing obf method name
             mv.visitVarInsn(ISTORE, 11);
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, "axw", "field_76652_q", "[Laxx;");
@@ -1802,7 +1802,7 @@ public class ChunkDump implements Opcodes
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
             mv.visitVarInsn(ALOAD, 1);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getLightOpacity", "(Lamy;Let;)I", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185891_c", "(Lamy;Let;)I", true); //TODO was missing obf method name
             mv.visitVarInsn(ISTORE, 14);
             mv.visitVarInsn(ILOAD, 14);
             Label l13 = new Label();

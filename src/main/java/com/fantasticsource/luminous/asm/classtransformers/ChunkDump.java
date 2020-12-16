@@ -279,7 +279,7 @@ public class ChunkDump implements Opcodes
             mv.visitMethodInsn(INVOKEVIRTUAL, "ayw", "func_177856_a", "(III)Lawt;", false);
             mv.visitVarInsn(ASTORE, 9);
             mv.visitVarInsn(ALOAD, 9);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getMaterial", "()Lbcz;", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185904_a", "()Lbcz;", true); //TODO Was missing obf method name
             mv.visitFieldInsn(GETSTATIC, "bcz", "field_151579_a", "Lbcz;");
             Label l6 = new Label();
             mv.visitJumpInsn(IF_ACMPEQ, l6);
@@ -3440,7 +3440,7 @@ public class ChunkDump implements Opcodes
             mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "func_177435_g", "(Let;)Lawt;", false);
             mv.visitVarInsn(ASTORE, 8);
             mv.visitVarInsn(ALOAD, 8);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getMaterial", "()Lbcz;", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185904_a", "()Lbcz;", true); //TODO Was missing obf method name
             mv.visitVarInsn(ASTORE, 9);
             mv.visitVarInsn(ALOAD, 9);
             mv.visitMethodInsn(INVOKEVIRTUAL, "bcz", "func_76230_c", "()Z", false);

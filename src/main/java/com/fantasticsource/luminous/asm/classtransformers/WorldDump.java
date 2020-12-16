@@ -1743,7 +1743,7 @@ public class WorldDump implements Opcodes
             Label l4 = new Label();
             mv.visitJumpInsn(IFLE, l4);
             mv.visitVarInsn(ALOAD, 4);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getMaterial", "()Lbcz;", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185904_a", "()Lbcz;", true); //TODO Was missing obf method name
             mv.visitMethodInsn(INVOKEVIRTUAL, "bcz", "func_76224_d", "()Z", false);
             mv.visitJumpInsn(IFNE, l4);
             mv.visitInsn(ICONST_0);
@@ -2961,7 +2961,7 @@ public class WorldDump implements Opcodes
             Label l41 = new Label();
             mv.visitJumpInsn(IFEQ, l41);
             mv.visitVarInsn(ALOAD, 39);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getMaterial", "()Lbcz;", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185904_a", "()Lbcz;", true); //TODO Was missing obf method name
             mv.visitFieldInsn(GETSTATIC, "bcz", "field_151567_E", "Lbcz;");
             mv.visitJumpInsn(IF_ACMPEQ, l41);
             mv.visitVarInsn(ALOAD, 39);
@@ -4216,7 +4216,7 @@ public class WorldDump implements Opcodes
             mv.visitVarInsn(FLOAD, 3);
             mv.visitInsn(FCONST_0);
             mv.visitInsn(FCONST_1);
-            mv.visitMethodInsn(INVOKESTATIC, "rk", "func_76125_a", "(FFF)F", false);
+            mv.visitMethodInsn(INVOKESTATIC, "rk", "func_76131_a", "(FFF)F", false); //TODO This incorrectly had func_76125_a; another override of MathHelper.clamp()
             mv.visitVarInsn(FSTORE, 3);
             mv.visitInsn(FCONST_1);
             mv.visitVarInsn(FLOAD, 3);
@@ -4299,7 +4299,7 @@ public class WorldDump implements Opcodes
             mv.visitVarInsn(FLOAD, 3);
             mv.visitInsn(FCONST_0);
             mv.visitInsn(FCONST_1);
-            mv.visitMethodInsn(INVOKESTATIC, "rk", "func_76125_a", "(FFF)F", false);
+            mv.visitMethodInsn(INVOKESTATIC, "rk", "func_76131_a", "(FFF)F", false); //TODO This incorrectly had func_76125_a; another override of MathHelper.clamp()
             mv.visitVarInsn(FSTORE, 3);
             mv.visitInsn(FCONST_1);
             mv.visitVarInsn(FLOAD, 3);
@@ -4385,7 +4385,7 @@ public class WorldDump implements Opcodes
             mv.visitVarInsn(FLOAD, 4);
             mv.visitInsn(FCONST_0);
             mv.visitInsn(FCONST_1);
-            mv.visitMethodInsn(INVOKESTATIC, "rk", "func_76125_a", "(FFF)F", false);
+            mv.visitMethodInsn(INVOKESTATIC, "rk", "func_76131_a", "(FFF)F", false); //TODO This incorrectly had func_76125_a; another override of MathHelper.clamp()
             mv.visitVarInsn(FSTORE, 4);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitFieldInsn(GETFIELD, "vg", "field_70165_t", "D");
@@ -4745,7 +4745,7 @@ public class WorldDump implements Opcodes
             mv.visitVarInsn(FLOAD, 3);
             mv.visitInsn(FCONST_0);
             mv.visitInsn(FCONST_1);
-            mv.visitMethodInsn(INVOKESTATIC, "rk", "func_76125_a", "(FFF)F", false);
+            mv.visitMethodInsn(INVOKESTATIC, "rk", "func_76131_a", "(FFF)F", false); //TODO This incorrectly had func_76125_a; another override of MathHelper.clamp()
             mv.visitVarInsn(FSTORE, 3);
             mv.visitInsn(FCONST_1);
             mv.visitVarInsn(FSTORE, 4);
@@ -4979,7 +4979,7 @@ public class WorldDump implements Opcodes
             mv.visitMethodInsn(INVOKEVIRTUAL, "axw", "func_177435_g", "(Let;)Lawt;", false);
             mv.visitVarInsn(ASTORE, 5);
             mv.visitVarInsn(ALOAD, 5);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getMaterial", "()Lbcz;", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185904_a", "()Lbcz;", true); //TODO Was missing obf method name
             mv.visitMethodInsn(INVOKEVIRTUAL, "bcz", "func_76230_c", "()Z", false);
             Label l2 = new Label();
             mv.visitJumpInsn(IFEQ, l2);
@@ -5051,7 +5051,7 @@ public class WorldDump implements Opcodes
             mv.visitVarInsn(FLOAD, 3);
             mv.visitInsn(FCONST_0);
             mv.visitInsn(FCONST_1);
-            mv.visitMethodInsn(INVOKESTATIC, "rk", "func_76125_a", "(FFF)F", false);
+            mv.visitMethodInsn(INVOKESTATIC, "rk", "func_76131_a", "(FFF)F", false); //TODO This incorrectly had func_76125_a; another override of MathHelper.clamp()
             mv.visitVarInsn(FSTORE, 3);
             mv.visitVarInsn(FLOAD, 3);
             mv.visitVarInsn(FLOAD, 3);
@@ -6404,7 +6404,7 @@ public class WorldDump implements Opcodes
             mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "func_180495_p", "(Let;)Lawt;", false);
             mv.visitVarInsn(ASTORE, 12);
             mv.visitVarInsn(ALOAD, 12);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getMaterial", "()Lbcz;", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185904_a", "()Lbcz;", true); //TODO Was missing obf method name
             mv.visitFieldInsn(GETSTATIC, "bcz", "field_151579_a", "Lbcz;");
             Label l6 = new Label();
             mv.visitJumpInsn(IF_ACMPEQ, l6);
@@ -6522,7 +6522,7 @@ public class WorldDump implements Opcodes
             mv.visitLabel(l6);
             mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
             mv.visitVarInsn(ALOAD, 12);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getMaterial", "()Lbcz;", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185904_a", "()Lbcz;", true); //TODO Was missing obf method name
             mv.visitMethodInsn(INVOKEVIRTUAL, "bcz", "func_76224_d", "()Z", false);
             mv.visitJumpInsn(IFEQ, l8);
             mv.visitVarInsn(ALOAD, 8);
@@ -6812,7 +6812,7 @@ public class WorldDump implements Opcodes
             mv.visitLabel(l9);
             mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
             mv.visitVarInsn(ALOAD, 16);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getMaterial", "()Lbcz;", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185904_a", "()Lbcz;", true); //TODO Was missing obf method name
             mv.visitVarInsn(ALOAD, 2);
             mv.visitJumpInsn(IF_ACMPNE, l8);
             mv.visitVarInsn(ILOAD, 14);
@@ -6996,7 +6996,7 @@ public class WorldDump implements Opcodes
             mv.visitLabel(l6);
             mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
             mv.visitVarInsn(ALOAD, 13);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getMaterial", "()Lbcz;", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185904_a", "()Lbcz;", true); //TODO Was missing obf method name
             mv.visitVarInsn(ALOAD, 2);
             mv.visitJumpInsn(IF_ACMPNE, l8);
             mv.visitVarInsn(ALOAD, 9);
@@ -8034,7 +8034,7 @@ public class WorldDump implements Opcodes
             mv.visitFieldInsn(GETFIELD, "amu", "field_73017_q", "F");
             mv.visitInsn(FCONST_0);
             mv.visitInsn(FCONST_1);
-            mv.visitMethodInsn(INVOKESTATIC, "rk", "func_76125_a", "(FFF)F", false);
+            mv.visitMethodInsn(INVOKESTATIC, "rk", "func_76131_a", "(FFF)F", false); //TODO This incorrectly had func_76125_a; another override of MathHelper.clamp()
             mv.visitFieldInsn(PUTFIELD, "amu", "field_73017_q", "F");
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 0);
@@ -8072,7 +8072,7 @@ public class WorldDump implements Opcodes
             mv.visitFieldInsn(GETFIELD, "amu", "field_73004_o", "F");
             mv.visitInsn(FCONST_0);
             mv.visitInsn(FCONST_1);
-            mv.visitMethodInsn(INVOKESTATIC, "rk", "func_76125_a", "(FFF)F", false);
+            mv.visitMethodInsn(INVOKESTATIC, "rk", "func_76131_a", "(FFF)F", false); //TODO This incorrectly had func_76125_a; another override of MathHelper.clamp()
             mv.visitFieldInsn(PUTFIELD, "amu", "field_73004_o", "F");
             mv.visitLabel(l0);
             mv.visitFrame(Opcodes.F_CHOP, 1, null, 0, null);
@@ -8265,7 +8265,7 @@ public class WorldDump implements Opcodes
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "func_180495_p", "(Let;)Lawt;", false);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getMaterial", "()Lbcz;", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185904_a", "()Lbcz;", true); //TODO Was missing obf method name
             mv.visitFieldInsn(GETSTATIC, "bcz", "field_151586_h", "Lbcz;");
             Label l0 = new Label();
             mv.visitJumpInsn(IF_ACMPNE, l0);
@@ -9568,7 +9568,7 @@ public class WorldDump implements Opcodes
             mv.visitLabel(l2);
             mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{"bhb"}, 0, null);
             mv.visitVarInsn(ALOAD, 6);
-            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "getMaterial", "()Lbcz;", true);
+            mv.visitMethodInsn(INVOKEINTERFACE, "awt", "func_185904_a", "()Lbcz;", true); //TODO Was missing obf method name
             mv.visitFieldInsn(GETSTATIC, "bcz", "field_151594_q", "Lbcz;");
             Label l3 = new Label();
             mv.visitJumpInsn(IF_ACMPNE, l3);

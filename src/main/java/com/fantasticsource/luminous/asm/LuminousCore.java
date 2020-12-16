@@ -11,7 +11,6 @@ import java.util.Map;
 @IFMLLoadingPlugin.Name(LuminousCore.NAME)
 @IFMLLoadingPlugin.MCVersion(Loader.MC_VERSION)
 @IFMLLoadingPlugin.TransformerExclusions("com.fantasticsource.luminous.asm")
-@IFMLLoadingPlugin.SortingIndex(1001)
 public class LuminousCore implements IFMLLoadingPlugin
 {
     public static final String MODID = "luminous";

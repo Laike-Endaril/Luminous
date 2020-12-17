@@ -11,7 +11,6 @@ import java.util.Map;
 @IFMLLoadingPlugin.Name(LuminousCore.NAME)
 @IFMLLoadingPlugin.MCVersion(Loader.MC_VERSION)
 @IFMLLoadingPlugin.TransformerExclusions("com.fantasticsource.luminous.asm")
-@IFMLLoadingPlugin.SortingIndex(1001)
 public class LuminousCore implements IFMLLoadingPlugin
 {
     public static final String MODID = "luminous";
@@ -62,7 +61,7 @@ public class LuminousCore implements IFMLLoadingPlugin
             meta.modId = MODID + "core";
             meta.name = NAME + " Coremod";
             meta.version = VERSION;
-            meta.description = "Transforms vanilla classes: World, Chunk, BlockStateContainer";
+            meta.description = "Outputs ASM code dumps to use for ASM editing";
             meta.authorList.add("Laike Endaril");
         }
 

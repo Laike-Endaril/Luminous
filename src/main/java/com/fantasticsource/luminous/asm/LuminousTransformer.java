@@ -3,11 +3,10 @@ package com.fantasticsource.luminous.asm;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.util.ASMifier;
+import org.objectweb.asm.util.TraceClassVisitor;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 public class LuminousTransformer implements IClassTransformer
 {
@@ -17,36 +16,32 @@ public class LuminousTransformer implements IClassTransformer
         switch (transformedName)
         {
             case "net.minecraft.world.World":
-                //TODO
-                break;
-
             case "net.minecraft.world.chunk.Chunk":
-                //TODO
-                break;
-
             case "net.minecraft.block.state.BlockStateContainer":
-                //TODO
+                try
+                {
+                    InputStream in = new ByteArrayInputStream(bytes);
+                    ClassReader classReader = new ClassReader(in);
+                    ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+
+                    File file = new File("ASM Dumps" + File.separator + transformedName + "Dump.java");
+                    file.mkdirs();
+                    while(file.exists()) file.delete();
+
+                    System.out.println("====================================================================================");
+                    System.out.println("Outputting ASM dump: " + file.getAbsolutePath());
+                    System.out.println("====================================================================================");
+                    TraceClassVisitor traceClassVisitor = new TraceClassVisitor(cw, new ASMifier(), new PrintWriter(file));
+                    classReader.accept(traceClassVisitor, 0);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
                 break;
         }
 
 
-        try
-        {
-            InputStream in = new ByteArrayInputStream(bytes);
-            ClassReader classReader = new ClassReader(in);
-            ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-
-            ClassMemberMapper classMemberMapper = new ClassMemberMapper(Opcodes.ASM5, cw);
-            classReader.accept(classMemberMapper, 0);
-            ClassMapper.put(name, transformedName, classMemberMapper);
-
-            return cw.toByteArray();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            System.exit(7777);
-            return bytes;
-        }
+        return bytes;
     }
 }

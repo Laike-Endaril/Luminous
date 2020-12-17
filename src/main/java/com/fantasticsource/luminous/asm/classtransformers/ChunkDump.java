@@ -4155,7 +4155,7 @@ public class ChunkDump implements Opcodes
             mv.visitVarInsn(ILOAD, 6);
             mv.visitInsn(IADD);
             mv.visitVarInsn(ILOAD, 5);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "et", "func_177971_a", "(III)Let;", false);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "et", "func_177982_a", "(III)Let;", false); //TODO Had wrong override (func_177971_a)
             mv.visitVarInsn(ASTORE, 7);
             mv.visitVarInsn(ILOAD, 6);
             Label l5 = new Label();
@@ -4322,14 +4322,14 @@ public class ChunkDump implements Opcodes
             mv.visitInsn(ICONST_M1);
             mv.visitInsn(ICONST_0);
             mv.visitInsn(ICONST_M1);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "et", "func_177971_a", "(III)Let;", false);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "et", "func_177982_a", "(III)Let;", false); //TODO Had wrong override (func_177971_a)
             mv.visitVarInsn(ALOAD, 1);
             mv.visitIntInsn(BIPUSH, 16);
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, "axw", "field_76637_e", "Lamu;");
             mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "func_181545_F", "()I", false);
             mv.visitIntInsn(BIPUSH, 16);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "et", "func_177971_a", "(III)Let;", false);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "et", "func_177982_a", "(III)Let;", false); //TODO Had wrong override (func_177971_a)
             mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "func_175663_a", "(Let;Let;)Z", false);
             Label l1 = new Label();
             mv.visitJumpInsn(IFEQ, l1);

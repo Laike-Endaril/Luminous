@@ -3874,7 +3874,7 @@ public class WorldDump implements Opcodes
             mv.visitJumpInsn(IFNE, l30);
             mv.visitVarInsn(ALOAD, 11);
             mv.visitVarInsn(ALOAD, 15);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "axn", "func_177743_a", "(Let;)Z", false);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "axn", "func_177746_a", "(Let;)Z", false); //TODO Had wrong override (func_177743_a)
             mv.visitJumpInsn(IFNE, l30);
             mv.visitVarInsn(ILOAD, 13);
             mv.visitJumpInsn(IFEQ, l30);
@@ -5545,7 +5545,7 @@ public class WorldDump implements Opcodes
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, "amu", "field_175728_M", "Laxn;");
             mv.visitVarInsn(ALOAD, 3);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "axn", "func_177743_a", "(Let;)Z", false);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "axn", "func_177746_a", "(Let;)Z", false); //TODO Had wrong override (func_177743_a)
             mv.visitJumpInsn(IFEQ, l37);
             mv.visitLabel(l8);
             mv.visitVarInsn(ALOAD, 0);
@@ -10564,7 +10564,7 @@ public class WorldDump implements Opcodes
             mv.visitVarInsn(ALOAD, 0);
             mv.visitMethodInsn(INVOKEVIRTUAL, "amu", "func_175723_af", "()Laxn;", false);
             mv.visitVarInsn(ALOAD, 1);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "axn", "func_177743_a", "(Let;)Z", false);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "axn", "func_177746_a", "(Let;)Z", false); //TODO Had wrong override (func_177743_a)
             Label l0 = new Label();
             mv.visitJumpInsn(IFNE, l0);
             mv.visitVarInsn(ALOAD, 0);

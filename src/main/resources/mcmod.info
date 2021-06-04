@@ -1,16 +1,10 @@
 [
 {
-  "modid": "luminous",
-  "name": "Luminous",
-  "description": "Efficient, server-side dynamic lights",
+  "modid": "asmifier",
+  "name": "ASMifier",
+  "description": "Outputs ASM code dumps to use for ASM editing",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": ["Laike_Endaril"],
-  "credits": "",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
+  "authorList": ["Laike_Endaril"]
 }
 ]

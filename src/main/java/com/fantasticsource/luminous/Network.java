@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import static com.fantasticsource.luminous.Luminous.MODID;
+import static com.fantasticsource.luminous.asm.LuminousCore.MODID;
 
 public class Network
 {

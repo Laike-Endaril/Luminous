@@ -1,6 +1,21 @@
-Fix sky lighting bugs...
-Dark areas during the day which don't exist on same world in vanilla
-They seem to be below overhangs (tree leaves) and seem to be columns that aren't getting any sky light from neighbors
+REMEMBER TO DELETE MEMORY REPO IN MODS FOLDER!!!
+
+Get obfuscated ASM for all 3 classes and try applying it and testing
+
+
+
+Need to get obfuscated edited classes into the transformer somehow...
+* Auto-generate asm code to create obfuscated class? (attempting)
+* Write class visitors?
+* See if an obfuscated bytestream works?
+
+
 
 Improve efficiency
 Fix moving light objects (don't work as well as the raw moving light test in Luminous class)
+Improve mod compat (maybe ASM instead of full class replacement)
+
+
+
+BUILD NOTE:
+If any changes are made to replaced classes, build once, grab class files for them from jar, and put them in assets, then build again

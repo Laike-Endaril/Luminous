@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static com.fantasticsource.luminous.asm.LuminousCore.NAME;
+import static com.fantasticsource.luminous.Luminous.NAME;
 
 public class Chunk implements net.minecraftforge.common.capabilities.ICapabilityProvider
 {

@@ -24,11 +24,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.LinkedHashMap;
 
-import static com.fantasticsource.luminous.asm.LuminousCore.*;
 
-@Mod(modid = MODID, name = NAME, version = VERSION, dependencies = "required-after:fantasticlib@[1.12.2.036y,);required-after:" + MODID + "core@[" + VERSION + ",)")
+@Mod(modid = Luminous.MODID, name = Luminous.NAME, version = Luminous.VERSION)
 public class Luminous
 {
+    public static final String MODID = "luminous";
+    public static final String NAME = "Luminous";
+    public static final String VERSION = "1.12.2.000";
+
+
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event)
     {

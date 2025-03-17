@@ -17,8 +17,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.util.Map;
 import java.util.Set;
 
-import static com.fantasticsource.luminous.asm.LuminousCore.MODID;
-import static com.fantasticsource.luminous.asm.LuminousCore.NAME;
+import static com.fantasticsource.luminous.Luminous.MODID;
+import static com.fantasticsource.luminous.Luminous.NAME;
 
 public class LightDataHandler
 {

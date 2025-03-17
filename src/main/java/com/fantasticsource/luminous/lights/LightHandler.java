@@ -1,6 +1,5 @@
 package com.fantasticsource.luminous.lights;
 
-import com.fantasticsource.luminous.Luminous;
 import com.fantasticsource.luminous.lights.intensity.LightIntensityStatic;
 import com.fantasticsource.luminous.lights.lifeline.LightActivatorEntityActive;
 import com.fantasticsource.luminous.lights.type.Light;
@@ -15,8 +14,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.LinkedHashMap;
 
-import static com.fantasticsource.luminous.asm.LuminousCore.MODID;
-import static com.fantasticsource.luminous.asm.LuminousCore.NAME;
+import static com.fantasticsource.luminous.Luminous.MODID;
+import static com.fantasticsource.luminous.Luminous.NAME;
 
 public class LightHandler
 {

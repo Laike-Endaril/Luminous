@@ -61,7 +61,7 @@ public class LuminousCore implements IFMLLoadingPlugin
             meta.modId = MODID + "core";
             meta.name = NAME + " Coremod";
             meta.version = VERSION;
-            meta.description = "Transforms classes: World, Chunk, BlockStateContainer";
+            meta.description = "Transforms World.checkLightFor()";
             meta.authorList.add("Laike Endaril");
         }
 

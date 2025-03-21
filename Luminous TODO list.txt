@@ -1,9 +1,6 @@
 REMEMBER TO DELETE MEMORY REPO IN MODS FOLDER!!!
 
-Basically all moving light lag is from World.checkLightFor() at the low level
-
-There's also a lot of unnecessary computation happening due to entities getting spawned, getting lights added, then immediately getting despawned
-(seems to calm down after a while, not sure if some spawned mobs end up staying and the cap is hit, or if the spawners give up / slow down after a point)
+There's a lot of unnecessary computation happening due to entities getting spawned, getting lights added, then immediately getting despawned
 This would be better to solve in a different mod
 
 

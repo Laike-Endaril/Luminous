@@ -835,11 +835,13 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
 
     public int getLightFor(EnumSkyBlock type, BlockPos pos)
     {
-        //Luminous start
-        int yy = pos.getY();
-        if (yy < 0 || yy >= 256 || !isBlockLoaded(pos)) return type.defaultLightValue;
-        return getChunkFromBlockCoords(pos).getLightFor(type, pos);
-        //Luminous end
+        if (pos.getY() < 0) pos = new BlockPos(pos.getX(), 0, pos.getZ());
+
+        if (!isValid(pos)) return type.defaultLightValue;
+
+        if (!isBlockLoaded(pos)) return type.defaultLightValue;
+
+        else return getChunkFromBlockCoords(pos).getLightFor(type, pos);
     }
 
     public void setLightFor(EnumSkyBlock type, BlockPos pos, int lightValue)
@@ -2949,8 +2951,8 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
 
     public boolean checkLightFor(EnumSkyBlock lightType, BlockPos centerPos)
     {
-        profiler.startSection("checkLightFor");
         //Luminous start
+        profiler.startSection("checkLightFor");
         if (!isAreaLoaded(centerPos, 16, false)) return false;
 
 

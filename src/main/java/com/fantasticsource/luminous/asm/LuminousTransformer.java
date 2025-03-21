@@ -55,7 +55,7 @@ public class LuminousTransformer implements IClassTransformer
                                 //When in obfuscated mode (normal run conditions), one class can have a ton of methods named "a", so use desc instead
                                 if (methodInstruction.desc.equals("(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/EnumSkyBlock;)I") || methodInstruction.desc.equals("(Let;Lana;)I")) //getRawLight
                                 {
-                                    methodNode.instructions.set(instructionNode, new MethodInsnNode(INVOKESTATIC, "com/fantasticsource/luminous/LightHandler", "worldGetRawLightRedirect", "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/EnumSkyBlock;)I", false));
+                                    methodNode.instructions.set(instructionNode, new MethodInsnNode(INVOKESTATIC, "com/fantasticsource/luminous/Test1", "worldGetRawLightRedirect", "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/EnumSkyBlock;)I", false));
                                 }
                             }
                         }

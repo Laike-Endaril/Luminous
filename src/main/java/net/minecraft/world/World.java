@@ -2964,7 +2964,7 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
         int centerY = centerPos.getY();
         int centerZ = centerPos.getZ();
 
-        int data, dataX, dataY, dataZ;
+        int dataX, dataY, dataZ;
         int xDist, yDist, zDist;
         int xx, yy, zz;
         BlockPos.MutableBlockPos dataPos = new BlockPos.MutableBlockPos(), pos = new BlockPos.MutableBlockPos();

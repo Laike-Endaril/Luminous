@@ -1,5 +1,7 @@
 REMEMBER TO DELETE MEMORY REPO IN MODS FOLDER!!!
 
+See what Phosphor is doing, and specifically check if it does the optimization I did (removing data compression / decompression in World.checkLightFor())
+
 There's a lot of unnecessary computation happening due to entities getting spawned, getting lights added, then immediately getting despawned
 This would be better to solve in a different mod
 

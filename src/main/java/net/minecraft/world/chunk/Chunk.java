@@ -581,8 +581,8 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
     public int getLightFor(EnumSkyBlock type, BlockPos pos)
     {
         //Luminous start
-        //Returns light of bottom valid block instead of default type value when pos.y < 0
-        //Doesn't automatically return 0 if the world "doesn't have sky light", just because that might allow for more creative freedom in the future
+        //CHANGE: Returns light of bottom valid block instead of default type value when pos.y < 0
+        //CHANGE: Doesn't automatically return 0 if the world "doesn't have sky light", just because that might allow for more creative freedom in the future
         //TODO I don't THINK these changes will cause any bugs (and it might fix some), but I'm leaving this note because if there are bugs, this should be checked
         int yy = pos.getY();
         if (yy > 255) return type == EnumSkyBlock.SKY && !world.provider.hasSkyLight() ? 0 : type.defaultLightValue;
@@ -642,27 +642,29 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
     public int getLightSubtracted(BlockPos pos, int amount)
     {
         //Luminous start
-        int i = pos.getX() & 15;
-        int j = pos.getY();
-        int k = pos.getZ() & 15;
-        ExtendedBlockStorage extendedblockstorage = storageArrays[j >> 4];
+        //CHANGE: Returns light of bottom valid block instead of default type value when pos.y < 0
+        //CHANGE: Doesn't automatically return 0 if the world "doesn't have sky light", just because that might allow for more creative freedom in the future
+        //TODO I don't THINK these changes will cause any bugs (and it might fix some), but I'm leaving this note because if there are bugs, this should be checked
+        //In vanilla, this method returns either (sky light - amount argument) or (block light), whichever is greater
+        int xx = pos.getX() & 15;
+        int yy = pos.getY();
+        if (yy < 0) yy = 0;
+        int zz = pos.getZ() & 15;
 
-        if (extendedblockstorage == null)
-        {
-            return world.provider.hasSkyLight() && amount < EnumSkyBlock.SKY.defaultLightValue ? EnumSkyBlock.SKY.defaultLightValue - amount : 0;
-        }
+        ExtendedBlockStorage extendedblockstorage = storageArrays[yy >> 4];
+        if (extendedblockstorage == null) return world.provider.hasSkyLight() && amount < EnumSkyBlock.SKY.defaultLightValue ? EnumSkyBlock.SKY.defaultLightValue - amount : 0;
 
 
         int moddedBlock = moddedBlockLights.getOrDefault(pos, 0);
         if (moddedBlock == 15) return 15;
 
 
-        int vanillaBlock = extendedblockstorage.getBlockLight(i, j & 15, k);
+        int vanillaBlock = extendedblockstorage.getBlockLight(xx, yy & 15, zz);
         if (vanillaBlock == 15) return 15;
 
 
         int blockLight = moddedBlock < vanillaBlock ? vanillaBlock : moddedBlock;
-        int skyLight = !world.provider.hasSkyLight() ? 0 : extendedblockstorage.getSkyLight(i, j & 15, k) - amount;
+        int skyLight = extendedblockstorage.getSkyLight(xx, yy & 15, zz) - amount;
 
         return blockLight > skyLight ? blockLight : skyLight;
         //Luminous end

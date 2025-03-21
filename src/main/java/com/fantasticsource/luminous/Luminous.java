@@ -1,21 +1,14 @@
 package com.fantasticsource.luminous;
 
 import com.fantasticsource.fantasticlib.api.FLibAPI;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.projectile.EntitySnowball;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -47,28 +40,32 @@ public class Luminous
     }
 
 
-    @SubscribeEvent
-    public static void staticLightTest(EntityJoinWorldEvent event)
-    {
-        Entity entity = event.getEntity();
-        if (entity.world.isRemote || !(entity instanceof EntitySnowball)) return;
-
-        WorldServer world = (WorldServer) entity.world;
-
-        world.profiler.startSection(NAME + ": staticLightTest");
-
-        BlockPos pos = entity.getPosition().down();
-        if (LightDataHandler.setModdedLight(world, pos, MODID, "snow", 7) != 0)
-        {
-            LightDataHandler.setModdedLight(world, pos, MODID, "snow", 0);
-        }
-
-        world.profiler.endSection();
-    }
+//    @SubscribeEvent
+//    public static void staticLightTest(EntityJoinWorldEvent event)
+//    {
+//        Entity entity = event.getEntity();
+//        if (entity.world.isRemote || !(entity instanceof EntitySnowball)) return;
+//
+//        WorldServer world = (WorldServer) entity.world;
+//
+//        world.profiler.startSection(NAME + ": staticLightTest");
+//
+//        BlockPos pos = entity.getPosition().down();
+//        if (LightDataHandler.setModdedLight(world, pos, MODID, "snow", 7) != 0)
+//        {
+//            LightDataHandler.setModdedLight(world, pos, MODID, "snow", 0);
+//        }
+//
+//        world.profiler.endSection();
+//    }
 
 
     protected static final LinkedHashMap<EntityLivingBase, WorldServer> LIT_WORLDS = new LinkedHashMap<>();
     protected static final LinkedHashMap<EntityLivingBase, BlockPos> LIT_POSITIONS = new LinkedHashMap<>();
+
+    public static EntityLivingBase tracked = null;
+    public static long trackTime = 0;
+    public static int badSpawns = 0;
 
     @SubscribeEvent
     public static void movingLightTest(LivingEvent.LivingUpdateEvent event)
@@ -78,6 +75,15 @@ public class Luminous
 
 
         WorldServer world = (WorldServer) livingBase.world, litWorld = LIT_WORLDS.get(livingBase);
+        if (tracked == livingBase)
+        {
+            if (System.currentTimeMillis() - trackTime > 1000) tracked = null;
+        }
+        else if (tracked == null && litWorld == null)
+        {
+            tracked = livingBase;
+            trackTime = System.currentTimeMillis();
+        }
 
         world.profiler.startSection(NAME + ": movingLightTest");
 
@@ -114,20 +120,25 @@ public class Luminous
                 if (litWorld != null) LightDataHandler.setModdedLight(litWorld, LIT_POSITIONS.get(livingBase), MODID, "" + livingBase.getUniqueID(), 0);
                 LIT_WORLDS.remove(livingBase);
                 LIT_POSITIONS.remove(livingBase);
+                if (tracked == livingBase)
+                {
+                    tracked = null;
+                    if (++badSpawns % 10 == 0) System.out.println("BAD + (" + (badSpawns) + ")");
+                }
             }
         }
     }
 
 
-    @SubscribeEvent
-    public static void lightsTest(PlayerInteractEvent.EntityInteractSpecific event)
-    {
-        EntityPlayer player = event.getEntityPlayer();
-        if (!(player instanceof EntityPlayerMP) || event.getHand() != EnumHand.MAIN_HAND) return;
-
-        if (!LightHandler.addMovingLightToEntity(MODID, player, 15))
-        {
-            LightHandler.removeMovingLightFromEntity(MODID, player);
-        }
-    }
+//    @SubscribeEvent
+//    public static void lightsTest(PlayerInteractEvent.EntityInteractSpecific event)
+//    {
+//        EntityPlayer player = event.getEntityPlayer();
+//        if (!(player instanceof EntityPlayerMP) || event.getHand() != EnumHand.MAIN_HAND) return;
+//
+//        if (!LightHandler.addMovingLightToEntity(MODID, player, 15))
+//        {
+//            LightHandler.removeMovingLightFromEntity(MODID, player);
+//        }
+//    }
 }

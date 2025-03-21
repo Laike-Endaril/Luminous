@@ -92,17 +92,21 @@ public class LightDataHandler
         //Remove
         if (light == 0)
         {
+            world.profiler.startSection("Remove");
             Integer oldVal = chunk.moddedBlockLights.remove(pos);
             if (oldVal != null) updateModdedLight(world, chunk, pos, 0);
 
+            world.profiler.endSection();
             world.profiler.endSection();
             return oldVal == null ? 0 : oldVal;
         }
 
         //Set / change
+        world.profiler.startSection("Set / change");
         Integer oldVal = chunk.moddedBlockLights.put(pos, light);
         if (oldVal == null || oldVal != light) updateModdedLight(world, chunk, pos, light);
 
+        world.profiler.endSection();
         world.profiler.endSection();
         return oldVal == null ? 0 : oldVal;
     }
@@ -110,6 +114,8 @@ public class LightDataHandler
 
     protected static void updateModdedLight(World world, Chunk chunk, BlockPos pos, int light)
     {
+        world.profiler.startSection("updateModdedLight");
+
         //Force local light update
         for (BlockPos involved : new BlockPos[]{pos, pos.up(), pos.down(), pos.north(), pos.south(), pos.west(), pos.east()})
         {
@@ -133,6 +139,8 @@ public class LightDataHandler
                 }
             }
         }
+
+        world.profiler.endSection();
     }
 
 

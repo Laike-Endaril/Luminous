@@ -27,7 +27,6 @@ public class Luminous
     {
         Network.init();
         MinecraftForge.EVENT_BUS.register(Luminous.class);
-        MinecraftForge.EVENT_BUS.register(Light.class);
         FLibAPI.attachNBTCapToWorldIf(MODID, o -> o instanceof WorldServer);
         MinecraftForge.EVENT_BUS.register(LightDataHandler.class);
         MinecraftForge.EVENT_BUS.register(Test1.class);
@@ -38,26 +37,6 @@ public class Luminous
     {
         if (event.getModID().equals(MODID)) ConfigManager.sync(MODID, Config.Type.INSTANCE);
     }
-
-
-//    @SubscribeEvent
-//    public static void staticLightTest(EntityJoinWorldEvent event)
-//    {
-//        Entity entity = event.getEntity();
-//        if (entity.world.isRemote || !(entity instanceof EntitySnowball)) return;
-//
-//        WorldServer world = (WorldServer) entity.world;
-//
-//        world.profiler.startSection(NAME + ": staticLightTest");
-//
-//        BlockPos pos = entity.getPosition().down();
-//        if (LightDataHandler.setModdedLight(world, pos, MODID, "snow", 7) != 0)
-//        {
-//            LightDataHandler.setModdedLight(world, pos, MODID, "snow", 0);
-//        }
-//
-//        world.profiler.endSection();
-//    }
 
 
     protected static final LinkedHashMap<EntityLivingBase, WorldServer> LIT_WORLDS = new LinkedHashMap<>();
@@ -87,7 +66,7 @@ public class Luminous
 
         world.profiler.startSection(NAME + ": movingLightTest");
 
-        BlockPos eyePos = new BlockPos(livingBase.getPositionEyes(0)), litPosition = LIT_POSITIONS.get(livingBase);
+        BlockPos eyePos = new BlockPos(livingBase.getPositionEyes(1)), litPosition = LIT_POSITIONS.get(livingBase);
 
         if (!livingBase.isEntityAlive())
         {
@@ -128,17 +107,4 @@ public class Luminous
             }
         }
     }
-
-
-//    @SubscribeEvent
-//    public static void lightsTest(PlayerInteractEvent.EntityInteractSpecific event)
-//    {
-//        EntityPlayer player = event.getEntityPlayer();
-//        if (!(player instanceof EntityPlayerMP) || event.getHand() != EnumHand.MAIN_HAND) return;
-//
-//        if (!LightHandler.addMovingLightToEntity(MODID, player, 15))
-//        {
-//            LightHandler.removeMovingLightFromEntity(MODID, player);
-//        }
-//    }
 }

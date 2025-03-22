@@ -48,8 +48,6 @@ import java.util.*;
 
 public abstract class World implements IBlockAccess, net.minecraftforge.common.capabilities.ICapabilityProvider
 {
-    private int[] lightUpdateBlockListX = new int[32768], lightUpdateBlockListY = new int[32768], lightUpdateBlockListZ = new int[32768];
-
     public static double MAX_ENTITY_RADIUS = 2.0D;
 
     private int seaLevel = 63;
@@ -2951,9 +2949,8 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
 
     public boolean checkLightFor(EnumSkyBlock lightType, BlockPos centerPos)
     {
-        //Luminous start
-        //150x as fast as vanilla, with exact same behavior (other than additional profiling calls)
         profiler.startSection("checkLightFor");
+        //Luminous start
         if (!isAreaLoaded(centerPos, 16, false)) return false;
 
 
@@ -2965,34 +2962,26 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
         int centerY = centerPos.getY();
         int centerZ = centerPos.getZ();
 
-        int dataX, dataY, dataZ;
+        int data, dataX, dataY, dataZ;
         int xDist, yDist, zDist;
         int xx, yy, zz;
         BlockPos.MutableBlockPos dataPos = new BlockPos.MutableBlockPos(), pos = new BlockPos.MutableBlockPos();
 
         profiler.startSection("Queue influence area");
-        if (rawLightCenter > lightForCenter)
-        {
-            lightUpdateBlockListX[writeIndex] = 0;
-            lightUpdateBlockListY[writeIndex] = 0;
-            lightUpdateBlockListZ[writeIndex] = 0;
-            lightUpdateBlockList[writeIndex++] = 0;
-        }
+        if (rawLightCenter > lightForCenter) lightUpdateBlockList[writeIndex++] = 133152; //light = 0, xOff = 0, yOff = 0, zOff = 0
         else if (rawLightCenter < lightForCenter)
         {
-            lightUpdateBlockListX[writeIndex] = 0;
-            lightUpdateBlockListY[writeIndex] = 0;
-            lightUpdateBlockListZ[writeIndex] = 0;
-            lightUpdateBlockList[writeIndex++] = lightForCenter;
+            lightUpdateBlockList[writeIndex++] = 133152 | lightForCenter << 18; //light = lightForCenter, xOff = 0, yOff = 0, zOff = 0
 
             int dataLight, lightFor;
             int opacity;
             while (readIndex < writeIndex)
             {
-                dataX = lightUpdateBlockListX[readIndex] + centerX;
-                dataY = lightUpdateBlockListY[readIndex] + centerY;
-                dataZ = lightUpdateBlockListZ[readIndex] + centerZ;
-                dataLight = lightUpdateBlockList[readIndex++];
+                data = lightUpdateBlockList[readIndex++];
+                dataX = (data & 0b111111) - 32 + centerX;
+                dataY = (data >> 6 & 0b111111) - 32 + centerY;
+                dataZ = (data >> 12 & 0b111111) - 32 + centerZ;
+                dataLight = data >> 18 & 0b1111;
 
                 dataPos.setPos(dataX, dataY, dataZ);
                 lightFor = getLightFor(lightType, dataPos);
@@ -3023,10 +3012,7 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
 
                                 if (lightFor == dataLight - opacity && writeIndex < lightUpdateBlockList.length)
                                 {
-                                    lightUpdateBlockListX[writeIndex] = xx - centerX;
-                                    lightUpdateBlockListY[writeIndex] = yy - centerY;
-                                    lightUpdateBlockListZ[writeIndex] = zz - centerZ;
-                                    lightUpdateBlockList[writeIndex++] = dataLight - opacity;
+                                    lightUpdateBlockList[writeIndex++] = xx - centerX + 32 | yy - centerY + 32 << 6 | zz - centerZ + 32 << 12 | dataLight - opacity << 18; //light = dataLight - opacity, xOff = xx, yOff = yy, zOff = zz
                                 }
                             }
                         }
@@ -3043,9 +3029,10 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
         profiler.endStartSection("Recalc influence area");
         while (readIndex < writeIndex)
         {
-            dataX = lightUpdateBlockListX[readIndex] + centerX;
-            dataY = lightUpdateBlockListY[readIndex] + centerY;
-            dataZ = lightUpdateBlockListZ[readIndex++] + centerZ;
+            data = lightUpdateBlockList[readIndex++];
+            dataX = (data & 63) - 32 + centerX;
+            dataY = (data >> 6 & 63) - 32 + centerY;
+            dataZ = (data >> 12 & 63) - 32 + centerZ;
             dataPos.setPos(dataX, dataY, dataZ);
 
             lightForDataPos = getLightFor(lightType, dataPos);
@@ -3072,9 +3059,7 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
 
                             if (getLightFor(lightType, pos) < rawLightDataPos)
                             {
-                                lightUpdateBlockListX[writeIndex] = xx - centerX;
-                                lightUpdateBlockListY[writeIndex] = yy - centerY;
-                                lightUpdateBlockListZ[writeIndex++] = zz - centerZ;
+                                lightUpdateBlockList[writeIndex++] = xx - centerX + 32 | yy - centerY + 32 << 6 | zz - centerZ + 32 << 12; //light = 0, xOff = xx, yOff = yy, zOff = zz
                             }
                         }
                     }

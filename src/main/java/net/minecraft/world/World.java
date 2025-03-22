@@ -2989,9 +2989,9 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
             int opacity;
             while (readIndex < writeIndex)
             {
-                dataX = lightUpdateBlockListX[readIndex];
-                dataY = lightUpdateBlockListY[readIndex];
-                dataZ = lightUpdateBlockListZ[readIndex];
+                dataX = lightUpdateBlockListX[readIndex] + centerX;
+                dataY = lightUpdateBlockListY[readIndex] + centerY;
+                dataZ = lightUpdateBlockListZ[readIndex] + centerZ;
                 dataLight = lightUpdateBlockList[readIndex++];
 
                 dataPos.setPos(dataX, dataY, dataZ);

@@ -48,7 +48,7 @@ import java.util.*;
 
 public abstract class World implements IBlockAccess, net.minecraftforge.common.capabilities.ICapabilityProvider
 {
-    private int[] lightUpdateBlockListX = new int[32768], lightUpdateBlockListY = new int[32768], lightUpdateBlockListZ = new int[32768];
+    private int[] lightUpdateBlockListX = new int[32768], lightUpdateBlockListY = new int[32768], lightUpdateBlockListZ = new int[32768]; //Luminous
 
     public static double MAX_ENTITY_RADIUS = 2.0D;
 
@@ -2951,10 +2951,10 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
 
     long[] times = new long[10000];
     int index = 0;
+
     public boolean checkLightFor(EnumSkyBlock lightType, BlockPos centerPos)
     {
         //Luminous start
-        //150x as fast as vanilla, with exact same behavior (other than additional profiling calls)
         profiler.startSection("checkLightFor");
         if (!isAreaLoaded(centerPos, 16, false)) return false;
 

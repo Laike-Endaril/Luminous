@@ -581,32 +581,34 @@ public class Chunk implements net.minecraftforge.common.capabilities.ICapability
     public int getLightFor(EnumSkyBlock type, BlockPos pos)
     {
         //Luminous start
-        //Returns light of bottom valid block instead of default type value when pos.y < 0
-        //Doesn't automatically return 0 if the world "doesn't have sky light", just because that might allow for more creative freedom in the future
-        //TODO I don't THINK these changes will cause any bugs (and it might fix some), but I'm leaving this note because if there are bugs, this should be checked
-        int yy = pos.getY();
-        if (yy > 255) return type == EnumSkyBlock.SKY && !world.provider.hasSkyLight() ? 0 : type.defaultLightValue;
-
-
-        if (yy < 0)
+        if (type == EnumSkyBlock.BLOCK)
         {
-            yy = 0;
-            pos = new BlockPos(pos.getX(), yy, pos.getZ());
+            int yy = pos.getY();
+            ExtendedBlockStorage extendedblockstorage = storageArrays[yy >> 4];
+            if (extendedblockstorage == null) return 0;
+
+
+            int modded = moddedBlockLights.getOrDefault(pos, 0);
+            if (modded == 15) return 15;
+
+
+            int xx = pos.getX() & 15;
+            int zz = pos.getZ() & 15;
+
+            int vanilla = extendedblockstorage.getBlockLight(xx, yy & 15, zz);
+
+            return modded < vanilla ? vanilla : modded;
         }
+        else
+        {
+            if (!world.provider.hasSkyLight()) return 0;
 
-        ExtendedBlockStorage extendedblockstorage = storageArrays[yy >> 4];
-        if (extendedblockstorage == null) return type.defaultLightValue;
+            int yy = pos.getY();
+            if (yy > 255) return 15;
 
-
-        if (type == EnumSkyBlock.SKY) return extendedblockstorage.getSkyLight(pos.getX() & 15, yy & 15, pos.getZ() & 15);
-
-
-        //BLOCK type lighting below this point
-        int modded = moddedBlockLights.getOrDefault(pos, 0);
-        if (modded == 15) return 15;
-
-        int vanilla = extendedblockstorage.getBlockLight(pos.getX() & 15, yy & 15, pos.getZ() & 15);
-        return modded < vanilla ? vanilla : modded;
+            ExtendedBlockStorage extendedblockstorage = storageArrays[yy >> 4];
+            return extendedblockstorage == null ? 0 : extendedblockstorage.getSkyLight(pos.getX() & 15, yy & 15, pos.getZ() & 15);
+        }
         //Luminous end
     }
 

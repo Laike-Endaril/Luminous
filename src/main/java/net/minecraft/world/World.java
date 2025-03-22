@@ -2947,6 +2947,8 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
         return l;
     }
 
+    long[] times = new long[10000];
+    int index = 0;
     public boolean checkLightFor(EnumSkyBlock lightType, BlockPos centerPos)
     {
         profiler.startSection("checkLightFor");
@@ -2967,6 +2969,7 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
         int xx, yy, zz;
         BlockPos.MutableBlockPos dataPos = new BlockPos.MutableBlockPos(), pos = new BlockPos.MutableBlockPos();
 
+        long time = System.nanoTime();
         profiler.startSection("Queue influence area");
         if (rawLightCenter > lightForCenter) lightUpdateBlockList[writeIndex++] = 133152; //light = 0, xOff = 0, yOff = 0, zOff = 0
         else if (rawLightCenter < lightForCenter)
@@ -3065,6 +3068,14 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
                     }
                 }
             }
+        }
+        times[index++] = System.nanoTime() - time;
+        if (index == times.length)
+        {
+            index = 0;
+            long total = 0;
+            for (long t : times) total += t;
+            System.out.println(total / times.length);
         }
 
         profiler.endSection();

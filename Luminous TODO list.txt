@@ -1,8 +1,13 @@
 REMEMBER TO DELETE MEMORY REPO IN MODS FOLDER!!!
 
+
+
+Well, my epically more efficient code wasn't epically more efficient after all.
+Maybe if I completely rewrote the lighting system I could make it more efficient though...I'll have to think it through a bit
+
+
+
 Get obfuscated ASM for all 3 classes and try applying it and testing
-
-
 
 Need to get obfuscated edited classes into the transformer somehow...
 * Auto-generate asm code to create obfuscated class? (attempting)
@@ -10,14 +15,6 @@ Need to get obfuscated edited classes into the transformer somehow...
 * See if an obfuscated bytestream works?
 
 
-
-Improve efficiency
-Fix moving light objects (don't work as well as the raw moving light test in Luminous class)
-Improve mod compat (maybe ASM instead of full class replacement)
-
-
-
-Possibly add Phosphor compat...unsure how difficult that would be
 
 BUILD NOTE:
 If any changes are made to replaced classes, build once, grab class files for them from jar, and put them in assets, then build again

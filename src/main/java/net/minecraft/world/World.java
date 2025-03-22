@@ -2956,7 +2956,6 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
     {
         //Luminous start
         long time = System.nanoTime();
-        profiler.startSection("checkLightFor");
         if (!isAreaLoaded(centerPos, 16, false)) return false;
 
 
@@ -2973,7 +2972,6 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
         int xx, yy, zz;
         BlockPos.MutableBlockPos dataPos = new BlockPos.MutableBlockPos(), pos = new BlockPos.MutableBlockPos();
 
-        profiler.startSection("Queue influence area");
         if (rawLightCenter > lightForCenter)
         {
             lightUpdateBlockListX[writeIndex] = 0;
@@ -3043,7 +3041,6 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
 
         int lightForDataPos, rawLightDataPos;
 
-        profiler.endStartSection("Recalc influence area");
         while (readIndex < writeIndex)
         {
             dataX = lightUpdateBlockListX[readIndex] + centerX;
@@ -3085,8 +3082,6 @@ public abstract class World implements IBlockAccess, net.minecraftforge.common.c
             }
         }
 
-        profiler.endSection();
-        profiler.endSection();
 
         times[index++] = System.nanoTime() - time;
         if (index == times.length)

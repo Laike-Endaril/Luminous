@@ -1,3 +1,10 @@
+A completely different approach to this could be to use normal entities, synced as normal from server to clients, which "emit light"
+Server side, the API could have getLight(double x, double y, double z), which would check all light entities within range for LoS, then return the resulting light level of those that hit
+Client side, a shader could render these as spherical lights with smooth gradients and hard shadows
+This would probably not be a good system to try to alter block-based light levels with, but it could be referenced directly from other mods as part of their light interaction systems
+
+
+
 REMEMBER TO DELETE MEMORY REPO IN MODS FOLDER!!!
 
 

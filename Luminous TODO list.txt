@@ -1,27 +1,4 @@
-A completely different approach to this could be to use normal entities, synced as normal from server to clients, which "emit light"
+Use normal entities, synced as normal from server to clients, which "emit light"
 Server side, the API could have getLight(double x, double y, double z), which would check all light entities within range for LoS, then return the resulting light level of those that hit
 Client side, a shader could render these as spherical lights with smooth gradients and hard shadows
 This would probably not be a good system to try to alter block-based light levels with, but it could be referenced directly from other mods as part of their light interaction systems
-
-
-
-REMEMBER TO DELETE MEMORY REPO IN MODS FOLDER!!!
-
-
-
-Well, my epically more efficient code wasn't epically more efficient after all.
-Maybe if I completely rewrote the lighting system I could make it more efficient though...I'll have to think it through a bit
-
-
-
-Get obfuscated ASM for all 3 classes and try applying it and testing
-
-Need to get obfuscated edited classes into the transformer somehow...
-* Auto-generate asm code to create obfuscated class? (attempting)
-* Write class visitors?
-* See if an obfuscated bytestream works?
-
-
-
-BUILD NOTE:
-If any changes are made to replaced classes, build once, grab class files for them from jar, and put them in assets, then build again

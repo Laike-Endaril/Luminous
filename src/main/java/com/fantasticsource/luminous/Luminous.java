@@ -1,110 +1,31 @@
 package com.fantasticsource.luminous;
 
-import com.fantasticsource.fantasticlib.api.FLibAPI;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.util.LinkedHashMap;
+import static com.fantasticsource.luminous.Luminous.*;
 
-import static com.fantasticsource.luminous.asm.LuminousCore.*;
-
-@Mod(modid = MODID, name = NAME, version = VERSION, dependencies = "required-after:fantasticlib@[1.12.2.051,);required-after:" + MODID + "core@[" + VERSION + ",)")
+@Mod(modid = MODID, name = NAME, version = VERSION, dependencies = "required-after:fantasticlib@[1.12.2.051,)")
 public class Luminous
 {
+    public static final String MODID = "luminous";
+    public static final String NAME = "Luminous";
+    public static final String VERSION = "1.12.2.000";
+
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event)
     {
-        Network.init();
         MinecraftForge.EVENT_BUS.register(Luminous.class);
-        FLibAPI.attachNBTCapToWorldIf(MODID, o -> o instanceof WorldServer);
-        MinecraftForge.EVENT_BUS.register(LightDataHandler.class);
-        MinecraftForge.EVENT_BUS.register(Test1.class);
     }
 
     @SubscribeEvent
     public static void saveConfig(ConfigChangedEvent.OnConfigChangedEvent event)
     {
         if (event.getModID().equals(MODID)) ConfigManager.sync(MODID, Config.Type.INSTANCE);
-    }
-
-
-    protected static final LinkedHashMap<EntityLivingBase, WorldServer> LIT_WORLDS = new LinkedHashMap<>();
-    protected static final LinkedHashMap<EntityLivingBase, BlockPos> LIT_POSITIONS = new LinkedHashMap<>();
-
-    public static EntityLivingBase tracked = null;
-    public static long trackTime = 0;
-    public static int badSpawns = 0;
-
-    @SubscribeEvent
-    public static void movingLightTest(LivingEvent.LivingUpdateEvent event)
-    {
-        EntityLivingBase livingBase = event.getEntityLiving();
-        if (livingBase.world.isRemote) return;
-
-
-        WorldServer world = (WorldServer) livingBase.world, litWorld = LIT_WORLDS.get(livingBase);
-        if (tracked == livingBase)
-        {
-            if (System.currentTimeMillis() - trackTime > 1000) tracked = null;
-        }
-        else if (tracked == null && litWorld == null)
-        {
-            tracked = livingBase;
-            trackTime = System.currentTimeMillis();
-        }
-
-        world.profiler.startSection(NAME + ": movingLightTest");
-
-        BlockPos eyePos = new BlockPos(livingBase.getPositionEyes(1)), litPosition = LIT_POSITIONS.get(livingBase);
-
-        if (!livingBase.isEntityAlive())
-        {
-            if (litWorld != null) LightDataHandler.setModdedLight(litWorld, litPosition, MODID, "" + livingBase.getUniqueID(), 0);
-            LIT_WORLDS.remove(livingBase);
-            LIT_POSITIONS.remove(livingBase);
-        }
-        else if (world != litWorld || !eyePos.equals(litPosition))
-        {
-            LightDataHandler.setModdedLight(world, eyePos, MODID, "" + livingBase.getUniqueID(), 15);
-            if (litWorld != null) LightDataHandler.setModdedLight(litWorld, litPosition, MODID, "" + livingBase.getUniqueID(), 0);
-            LIT_WORLDS.put(livingBase, world);
-            LIT_POSITIONS.put(livingBase, eyePos);
-        }
-
-        world.profiler.endSection();
-    }
-
-    @SubscribeEvent
-    public static void movingLightTest2(TickEvent.WorldTickEvent event)
-    {
-        World world = event.world;
-        if (world.isRemote) return;
-
-        for (EntityLivingBase livingBase : LIT_WORLDS.keySet().toArray(new EntityLivingBase[0]))
-        {
-            if (!livingBase.isEntityAlive())
-            {
-                WorldServer litWorld = LIT_WORLDS.get(livingBase);
-                if (litWorld != null) LightDataHandler.setModdedLight(litWorld, LIT_POSITIONS.get(livingBase), MODID, "" + livingBase.getUniqueID(), 0);
-                LIT_WORLDS.remove(livingBase);
-                LIT_POSITIONS.remove(livingBase);
-                if (tracked == livingBase)
-                {
-                    tracked = null;
-                    if (++badSpawns % 10 == 0) System.out.println("BAD + (" + (badSpawns) + ")");
-                }
-            }
-        }
     }
 }

@@ -1,3 +1,22 @@
+Do a basic game mechanic test with temporary hard-coded light creation
+
+Sync lights to clients
+
+Add custom shader for light render
+As a minimum, needs to have hard block shadows for spherical positioned lights
+Add seed-based light flickering support (render only; seed would be a combination of current time and some number unique to the light, maybe just the hash)?
+
+Add API method for creating lights attached to entities
+Add API method for creating lights attached itemstacks (affects held / worn items and ground items)
+
+
+Rename project (someone released another mod named Luminous)
+Release
+
+
+
+ORIGINAL CONCEPT NOTES:
+
 Use normal entities, synced as normal from server to clients, which "emit light"
 Server side, the API could have getLight(double x, double y, double z), which would check all light entities within range for LoS, then return the resulting light level of those that hit
 Client side, a shader could render these as spherical lights with smooth gradients and hard shadows

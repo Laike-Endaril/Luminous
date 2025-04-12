@@ -4,13 +4,12 @@ import com.fantasticsource.mctools.ImprovedRayTracing;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 
 public class LightSphere extends Light
 {
-    public LightSphere(World world, Vec3d position, Color color, double fadeStartDistance, double fadeEndDistance)
+    public LightSphere(Vec3d position, Color color, double fadeStartDistance, double fadeEndDistance)
     {
-        super(world, position, color, fadeStartDistance, fadeEndDistance);
+        super(position, color, fadeStartDistance, fadeEndDistance);
     }
 
     @Override

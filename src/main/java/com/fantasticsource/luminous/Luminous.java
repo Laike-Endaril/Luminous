@@ -1,6 +1,11 @@
 package com.fantasticsource.luminous;
 
 import com.fantasticsource.luminous.lights.Light;
+import com.fantasticsource.luminous.shaders.Shaders;
+import com.fantasticsource.luminous.shaders.VboRenderListEdit;
+import com.fantasticsource.tools.ReflectionTool;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.WorldServer;
@@ -10,8 +15,11 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -33,6 +41,15 @@ public class Luminous
     {
         MinecraftForge.EVENT_BUS.register(Luminous.class);
         Network.init();
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Mod.EventHandler
+    public static void postInit(FMLPostInitializationEvent event)
+    {
+        //TODO add variant for non-vbo mode
+        Shaders.init();
+        ReflectionTool.set(RenderGlobal.class, new String[]{"field_174996_N", "renderContainer"}, Minecraft.getMinecraft().renderGlobal, new VboRenderListEdit());
     }
 
     @SubscribeEvent

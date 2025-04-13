@@ -1,5 +1,5 @@
-Add custom shader for light render
-As a minimum, needs to have hard block shadows for spherical positioned lights
+Vanilla render (pass-through)
+Hard block shadows for spherical positioned lights (might be doable strictly in fragment shader with access to MVP matrix, to find 3D positions of 2D fragments, and light data)
 Add seed-based light flickering support (render only; seed would be a combination of current time and some number unique to the light, maybe just the hash)?
 
 Add API method for creating lights attached to entities

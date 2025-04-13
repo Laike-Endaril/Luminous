@@ -16,17 +16,9 @@ public class Shaders
 {
     public static final int
             NONE = 0,
-            LIGHTS_ATTRIB_POSITION = 0,
-            LIGHTS_ATTRIB_TEXTURE_COORDS = 1,
-            LIGHTS_ATTRIB_FADE = 3,
-            LIGHTS_ATTRIB_COLOR = 4,
-            LIGHTS_ATTRIB_NORMALS = 5,
             LIGHTS_FRAGDATA_COLOR = 0,
-            LIGHTS_VERT = createShader("shaders/lights.vert"),
             LIGHTS_FRAG = createShader("shaders/lights.frag"),
-            LIGHTS = createShaderProgram("lights"),
-            LIGHTS_UNIFORM_MVP = glGetUniformLocation(LIGHTS, "uniform_mvp"),
-            LIGHTS_UNIFORM_TEXTURE_SAMPLER = glGetUniformLocation(LIGHTS, "uniform_sampler");
+            LIGHTS = createShaderProgram("lights");
 
 
     public static void init()
@@ -45,14 +37,7 @@ public class Shaders
         {
             case "lights":
             {
-                glAttachShader(program, LIGHTS_VERT);
                 glAttachShader(program, LIGHTS_FRAG);
-
-                glBindAttribLocation(program, LIGHTS_ATTRIB_POSITION, "attrib_position");
-                glBindAttribLocation(program, LIGHTS_ATTRIB_TEXTURE_COORDS, "attrib_texture_coords");
-                glBindAttribLocation(program, LIGHTS_ATTRIB_FADE, "attrib_fade");
-                glBindAttribLocation(program, LIGHTS_ATTRIB_COLOR, "attrib_color");
-                glBindAttribLocation(program, LIGHTS_ATTRIB_NORMALS, "attrib_normals");
 
                 glBindFragDataLocation(program, LIGHTS_FRAGDATA_COLOR, "fragdata_color");
 

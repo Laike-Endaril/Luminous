@@ -1,5 +1,12 @@
-Vanilla render (pass-through)
-Hard block shadows for spherical positioned lights (might be doable strictly in fragment shader with access to MVP matrix, to find 3D positions of 2D fragments, and light data)
+Make pass-through vertex shader
+Multiply the vertex position by the model-view matrix (or model matrix if you're using separate matrices) to get the world position.
+Pass this world position to the fragment shader as a varying variable.
+Get world position data, interpolated, in fragment shader and test (set color based on world x/y/z)
+
+Make pass-through fragment shader
+Make client light data accessible in fragment shader
+Make hard block shadows for spherical positioned lights
+
 Add seed-based light flickering support (render only; seed would be a combination of current time and some number unique to the light, maybe just the hash)?
 
 Add API method for creating lights attached to entities

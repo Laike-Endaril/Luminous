@@ -1,6 +1,6 @@
 #version 330 core
 
-//Linked to outside world
+//Outputs
 out vec4 fragdata_color;
 
 void main (void)

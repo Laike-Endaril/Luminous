@@ -25,8 +25,15 @@ public class VboRenderListEdit extends ChunkRenderContainer
                 GlStateManager.pushMatrix();
                 preRenderChunk(renderchunk);
                 renderchunk.multModelviewMatrix();
+
                 vertexbuffer.bindBuffer();
-                setupArrayPointers();
+                GlStateManager.glVertexPointer(3, 5126, 28, 0);
+                GlStateManager.glColorPointer(4, 5121, 28, 12);
+                GlStateManager.glTexCoordPointer(2, 5126, 28, 16);
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
+                GlStateManager.glTexCoordPointer(2, 5122, 28, 24);
+                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+
                 vertexbuffer.drawArrays(7);
                 GlStateManager.popMatrix();
             }
@@ -37,15 +44,5 @@ public class VboRenderListEdit extends ChunkRenderContainer
 
             GL20.glUseProgram(0);
         }
-    }
-
-    private void setupArrayPointers()
-    {
-        GlStateManager.glVertexPointer(3, 5126, 28, 0);
-        GlStateManager.glColorPointer(4, 5121, 28, 12);
-        GlStateManager.glTexCoordPointer(2, 5126, 28, 16);
-        OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.glTexCoordPointer(2, 5122, 28, 24);
-        OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 }

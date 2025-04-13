@@ -1,5 +1,6 @@
 package com.fantasticsource.luminous.shaders;
 
+import com.fantasticsource.mctools.Render;
 import net.minecraft.client.renderer.ChunkRenderContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -10,6 +11,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL20;
 
+import static org.lwjgl.opengl.GL20.glUniformMatrix4;
+
 @SideOnly(Side.CLIENT)
 public class VboRenderListEdit extends ChunkRenderContainer
 {
@@ -18,6 +21,7 @@ public class VboRenderListEdit extends ChunkRenderContainer
         if (initialized)
         {
             GL20.glUseProgram(Shaders.LIGHTS);
+            glUniformMatrix4(Shaders.LIGHTS_UNIFORM_P, false, Render.getCurrentProjectionMatrix());
 
             for (RenderChunk renderchunk : renderChunks)
             {
@@ -25,6 +29,8 @@ public class VboRenderListEdit extends ChunkRenderContainer
                 GlStateManager.pushMatrix();
                 preRenderChunk(renderchunk);
                 renderchunk.multModelviewMatrix();
+
+                glUniformMatrix4(Shaders.LIGHTS_UNIFORM_MV, false, Render.getCurrentModelViewMatrix());
 
                 vertexbuffer.bindBuffer();
                 GlStateManager.glVertexPointer(3, 5126, 28, 0);

@@ -1,10 +1,16 @@
 #version 330 core
 
-//Outputs
-out vec4 fragdata_color;
+//From outside world
+uniform sampler2D uniform_texture_sampler;
+uniform sampler2D uniform_lightmap_sampler;
+
+//From previous shaders
+in vec4 color_blend;
+in vec2 texture_uv;
+in vec2 lightmap_uv;
 
 void main (void)
 {
-    //Out to fragdata location
-    fragdata_color = vec4(1, 0, 0, 1);
+    //Output to pipeline
+    gl_FragColor = texture(uniform_lightmap_sampler, lightmap_uv);
 }

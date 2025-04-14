@@ -21,7 +21,9 @@ public class Shaders
             LIGHTS_FRAG = createShader("shaders/lights.frag"),
             LIGHTS = createShaderProgram("lights"),
             LIGHTS_UNIFORM_MV = glGetUniformLocation(LIGHTS, "uniform_model_view"),
-            LIGHTS_UNIFORM_P = glGetUniformLocation(LIGHTS, "uniform_projection");
+            LIGHTS_UNIFORM_P = glGetUniformLocation(LIGHTS, "uniform_projection"),
+            LIGHTS_UNIFORM_TEXTURE_SAMPLER = glGetUniformLocation(LIGHTS, "uniform_texture_sampler"),
+            LIGHTS_UNIFORM_LIGHTMAP_SAMPLER = glGetUniformLocation(LIGHTS, "uniform_lightmap_sampler");
 
 
     public static void init()
@@ -42,8 +44,6 @@ public class Shaders
             {
                 glAttachShader(program, LIGHTS_VERT);
                 glAttachShader(program, LIGHTS_FRAG);
-
-                glBindFragDataLocation(program, LIGHTS_FRAGDATA_COLOR, "fragdata_color");
 
                 break;
             }

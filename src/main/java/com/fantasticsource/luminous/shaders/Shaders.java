@@ -10,14 +10,12 @@ import java.io.InputStreamReader;
 import static com.fantasticsource.luminous.Luminous.MODID;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 
 public class Shaders
 {
     public static final int
             NONE = 0,
             LIGHTS_VERT = createShader("shaders/lights.vert"),
-            LIGHTS_FRAGDATA_COLOR = 0,
             LIGHTS_FRAG = createShader("shaders/lights.frag"),
             LIGHTS = createShaderProgram("lights"),
             LIGHTS_UNIFORM_MV = glGetUniformLocation(LIGHTS, "uniform_model_view"),

@@ -1,4 +1,4 @@
-#version 120
+#version 330 core
 
 //From outside world
 uniform sampler2D uniform_texture_sampler;

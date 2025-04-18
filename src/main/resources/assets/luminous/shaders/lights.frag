@@ -1,4 +1,4 @@
-#version 330 core
+#version 120
 
 //From outside world
 uniform sampler2D uniform_texture_sampler;
@@ -12,5 +12,5 @@ in vec2 lightmap_uv;
 void main (void)
 {
     //Output to pipeline
-    gl_FragColor = texture(uniform_texture_sampler, texture_uv);
+    gl_FragColor = texture2D(uniform_texture_sampler, gl_TexCoord[0].st);
 }

@@ -40,7 +40,7 @@ public class Shaders
         {
             case "lights":
             {
-                glAttachShader(program, LIGHTS_VERT);
+//                glAttachShader(program, LIGHTS_VERT);
                 glAttachShader(program, LIGHTS_FRAG);
 
                 break;

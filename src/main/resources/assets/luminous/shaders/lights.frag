@@ -12,5 +12,5 @@ in vec2 lightmap_uv;
 void main (void)
 {
     //Output to pipeline
-    gl_FragColor = texture2D(uniform_texture_sampler, gl_TexCoord[0].st);
+    gl_FragColor = texture2D(uniform_texture_sampler, texture_uv);
 }

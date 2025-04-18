@@ -1,4 +1,7 @@
 Make pass-through vertex shader
+Figure out why regular block texture sampling is not working correctly
+I think vertex data is being initially buffered in ForgeBlockModelRenderer
+
 Multiply the vertex position by the model-view matrix (or model matrix if you're using separate matrices) to get the world position.
 Pass this world position to the fragment shader as a varying variable.
 Get world position data, interpolated, in fragment shader and test (set color based on world x/y/z)

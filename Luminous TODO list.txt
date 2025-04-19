@@ -1,12 +1,8 @@
-Make pass-through vertex shader
-Figure out why regular block texture sampling is not working correctly
-I think vertex data is being initially buffered in ForgeBlockModelRenderer
-
-Multiply the vertex position by the model-view matrix (or model matrix if you're using separate matrices) to get the world position.
-Pass this world position to the fragment shader as a varying variable.
+Multiply the vertex position by the model-view matrix (but not the projection matrix) to get the world position
+Pass this world position to the fragment shader
+gl_FragCoord is the final fragment coordinates, ie. is multiplied by the projection matrix, so it cannot be used as in-world coordinates
 Get world position data, interpolated, in fragment shader and test (set color based on world x/y/z)
 
-Make pass-through fragment shader
 Make client light data accessible in fragment shader
 Make hard block shadows for spherical positioned lights
 

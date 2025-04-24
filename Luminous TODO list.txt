@@ -1,4 +1,7 @@
-Multiply the vertex position by the model-view matrix (but not the projection matrix) to get the world position
+Multiply the vertex position by the MODEL matrix (NOT the modelveiw matrix) to get the world position
+...need to figure out how to get the model matrix
+...might be able to take the modelview matrix on CPU side and undo view transforms (reverse player pitch, player yaw, and player position transforms, probably in that order, then MAY need to adjust scale, not sure)
+
 Pass this world position to the fragment shader
 gl_FragCoord is the final fragment coordinates, ie. is multiplied by the projection matrix, so it cannot be used as in-world coordinates
 Get world position data, interpolated, in fragment shader and test (set color based on world x/y/z)

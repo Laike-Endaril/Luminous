@@ -1,4 +1,4 @@
-#version 120
+#version 130
 
 //From outside world
 uniform sampler2D uniform_texture_sampler;
